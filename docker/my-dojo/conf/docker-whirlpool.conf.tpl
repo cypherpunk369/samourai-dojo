@@ -8,7 +8,7 @@ WHIRLPOOL_INSTALL=on
 
 # Resynchronize mix counters on startup (startup will be slower)
 # Value: on | off
-WHIRLPOOL_RESYNC=off
+WHIRLPOOL_RESYNC=on
 
 
 #
