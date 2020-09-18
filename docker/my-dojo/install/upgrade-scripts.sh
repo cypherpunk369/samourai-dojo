@@ -84,7 +84,6 @@ update_config_files() {
   update_config_file ./conf/docker-mempool.conf ./conf/docker-mempool.conf.tpl
   echo "Initialized docker-mempool.conf"
 
-
   # Initialize config files for nginx and the maintenance tool
   if [ "$EXPLORER_INSTALL" == "on" ]; then
     cp ./nginx/explorer.conf ./nginx/dojo-explorer.conf

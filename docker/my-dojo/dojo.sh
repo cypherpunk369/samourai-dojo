@@ -276,6 +276,7 @@ clean() {
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
+  del_images_for samouraiwallet/dojo-mempool:"$DOJO_MEMPOOL_VERSION_TAG"
   docker image prune -f
 }
 
@@ -374,6 +375,11 @@ onion() {
     V3_ADDR_EXPLORER=$( docker exec -it tor cat /var/lib/tor/hsv3explorer/hostname )
     echo "Block Explorer = $V3_ADDR_EXPLORER"
     echo " "
+  fi
+
+  if [ "$MEMPOOL_INSTALL" == "on" ]; then
+    V3_ADDR_MEMPOOL=$( docker exec -it tor cat /var/lib/tor/hsv3mempool/hostname )
+    echo "Mempool hidden service address = $V3_ADDR_MEMPOOL"
   fi
 
   if [ "$MEMPOOL_INSTALL" == "on" ]; then
