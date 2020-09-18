@@ -1,8 +1,5 @@
 FROM alpine:latest
 
-RUN addgroup --system -gid 1111 mempool && \
-    adduser --system --ingroup mempool -uid 1112 mempool
-
 RUN mkdir /mempool.space/
 COPY ./backend /mempool.space/backend/
 COPY ./frontend /mempool.space/frontend/
@@ -30,7 +27,7 @@ COPY ./nginx-nossl-docker.conf /etc/nginx/nginx.conf
 
 ENV ENV dev
 ENV DB_HOST localhost
-ENV DB_PORT 3309
+ENV DB_PORT 3306
 ENV DB_USER mempool
 ENV DB_PASSWORD mempool
 ENV DB_DATABASE mempool
@@ -42,8 +39,8 @@ ENV DEFAULT_PROJECTED_BLOCKS_AMOUNT 3
 ENV KEEP_BLOCK_AMOUNT 24
 ENV BITCOIN_NODE_HOST 172.28.1.5
 ENV BITCOIN_NODE_PORT 28256
-ENV BITCOIN_NODE_USER bitcoinuser #use sed
-ENV BITCOIN_NODE_PASS bitcoinpass #use sed
+ENV BITCOIN_NODE_USER bitcoinuser
+ENV BITCOIN_NODE_PASS bitcoinpass
 ENV TX_PER_SECOND_SPAN_SECONDS 150
 ENV BACKEND_API bitcoind
 ENV ELECTRS_API_URL https://www.blockstream.info/api
@@ -55,10 +52,7 @@ RUN cd /mempool.space/frontend/ && \
 COPY ./entrypoint.sh /mempool.space/entrypoint.sh
 RUN chmod +x /mempool.space/entrypoint.sh
 WORKDIR /mempool.space
-RUN chown -R mempool:mempool /mempool.space
 
 EXPOSE 4080
-
-USER mempool
 
 CMD ["/mempool.space/entrypoint.sh"]

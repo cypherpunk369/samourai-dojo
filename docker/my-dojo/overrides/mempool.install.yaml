@@ -7,11 +7,7 @@ services:
     build:
       context: ./mempool
     env_file:
-      - ./.env
-      - ./conf/docker-common.conf
-      - ./conf/docker-bitcoind.conf
       - ./conf/docker-mempool.conf
-      - ./conf/docker-tor.conf
     restart: on-failure
     command: "/mempool.space/entrypoint.sh"
     expose:
