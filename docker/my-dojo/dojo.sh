@@ -14,6 +14,7 @@ source_file() {
 }
 
 # Source config files
+source_file "$DIR/conf/docker-mempool.conf"
 source_file "$DIR/conf/docker-whirlpool.conf"
 source_file "$DIR/conf/docker-indexer.conf"
 source_file "$DIR/conf/docker-bitcoind.conf"
@@ -46,6 +47,10 @@ select_yaml_files() {
 
   if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
     yamlFiles="$yamlFiles -f $DIR/overrides/whirlpool.install.yaml"
+  fi
+
+  if [ "$MEMPOOL_INSTALL" == "on" ]; then
+    yamlFiles="$yamlFiles -f $DIR/overrides/mempool.install.yaml"
   fi
 
   # Return yamlFiles
@@ -371,6 +376,14 @@ onion() {
     echo " "
   fi
 
+  if [ "$MEMPOOL_INSTALL" == "on" ]; then
+    V3_ADDR_MEMPOOL=$( docker exec -it tor cat /var/lib/tor/hsv3mempool/hostname )
+    echo "Mempool hidden service address = $V3_ADDR_MEMPOOL"
+  fi
+
+  V3_ADDR=$( docker exec -it tor cat /var/lib/tor/hsv3dojo/hostname )
+  echo "Maintenance Tool hidden service address = $V3_ADDR"
+
   if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
     V3_ADDR_WHIRLPOOL=$( docker exec -it tor cat /var/lib/tor/hsv3whirlpool/hostname )
     echo "Your private Whirlpool client (do not share) = $V3_ADDR_WHIRLPOOL"
@@ -463,6 +476,13 @@ logs() {
         echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a whirlpool client"
       fi
       ;;
+    mempool )
+      if [ "$MEMPOOL_INSTALL" == "on" ]; then
+        display_logs $1 $2
+      else
+        echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a mempool space"
+      fi
+      ;;
     * )
       services="nginx node tor db"
       if [ "$BITCOIND_INSTALL" == "on" ]; then
@@ -476,6 +496,9 @@ logs() {
       fi
       if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
         services="$services whirlpool"
+      fi
+      if [ "$MEMPOOL_INSTALL" == "on" ]; then
+        services="$services mempool"
       fi
       display_logs "$services" $2
       ;;
@@ -514,6 +537,7 @@ help() {
   echo "                                  dojo.sh logs node           : display the logs of NodeJS modules (API, Tracker, PushTx API, Orchestrator)"
   echo "                                  dojo.sh logs explorer       : display the logs of the Explorer"
   echo "                                  dojo.sh logs whirlpool      : display the logs of the Whirlpool client"
+  echo "                                  dojo.sh logs mempool        : display the logs of the Mempool.space"
   echo " "
   echo "                                Available options:"
   echo "                                  -n [VALUE]                  : display the last VALUE lines"

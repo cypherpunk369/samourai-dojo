@@ -41,6 +41,13 @@ if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
   tor_options+=(--HiddenServiceDirGroupReadable 1)
 fi
 
+if [ "$MEMPOOL_INSTALL" == "on" ]; then
+  tor_options+=(--HiddenServiceDir /var/lib/tor/hsv3mempool)
+  tor_options+=(--HiddenServiceVersion 3)
+  tor_options+=(--HiddenServicePort "80 172.28.1.9:4080")
+  tor_options+=(--HiddenServiceDirGroupReadable 1)
+fi
+
 if [ "$TOR_USE_BRIDGES" == "on" ]; then
   tor_options+=(--ClientTransportPlugin "obfs4 exec /usr/local/bin/obfs4proxy")
   tor_options+=(--UseBridges 1)

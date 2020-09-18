@@ -24,6 +24,12 @@ else
   source ./conf/docker-whirlpool.conf.tpl
 fi
 
+if [ -f ./conf/docker-mempool.conf ]; then
+  source ./conf/docker-mempool.conf
+else
+  source ./conf/docker-mempool.conf.tpl
+fi
+
 source ./conf/docker-bitcoind.conf
 
 # Confirm upgrade operation

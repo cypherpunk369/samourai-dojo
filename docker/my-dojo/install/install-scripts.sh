@@ -30,6 +30,12 @@ else
   source ./conf/docker-common.conf.tpl
 fi
 
+if [ -f ./conf/docker-mempool.conf ]; then
+  source ./conf/docker-mempool.conf
+else
+  source ./conf/docker-mempool.conf.tpl
+fi
+
 # Confirm installation
 get_confirmation() {
   while true; do
@@ -90,6 +96,9 @@ init_config_files() {
 
   cp ./conf/docker-whirlpool.conf.tpl ./conf/docker-whirlpool.conf
   echo "Initialized docker-whirlpool.conf"
+
+  cp ./conf/docker-mempool.conf.tpl ./conf/docker-mempool.conf
+  echo "Initialized docker-mempool.conf"
 
   if [ "$EXPLORER_INSTALL" == "on" ]; then
     cp ./nginx/explorer.conf ./nginx/dojo-explorer.conf
