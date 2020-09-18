@@ -24,6 +24,12 @@ else
   source ./conf/docker-common.conf.tpl
 fi
 
+if [ -f ./conf/docker-mempool.conf ]; then
+  source ./conf/docker-mempool.conf
+else
+  source ./conf/docker-mempool.conf.tpl
+fi
+
 # Confirm installation
 get_confirmation() {
   while true; do
@@ -66,10 +72,10 @@ init_config_files() {
 
   cp ./conf/docker-bitcoind.conf.tpl ./conf/docker-bitcoind.conf
   echo "Initialized docker-bitcoind.conf"
-  
+
   cp ./conf/docker-mysql.conf.tpl ./conf/docker-mysql.conf
   echo "Initialized docker-mysql.conf"
-  
+
   cp ./conf/docker-node.conf.tpl ./conf/docker-node.conf
   echo "Initialized docker-node.conf"
 
@@ -85,6 +91,9 @@ init_config_files() {
   cp ./conf/docker-whirlpool.conf.tpl ./conf/docker-whirlpool.conf
   echo "Initialized docker-whirlpool.conf"
 
+  cp ./conf/docker-mempool.conf.tpl ./conf/docker-mempool.conf
+  echo "Initialized docker-mempool.conf"
+
   if [ "$EXPLORER_INSTALL" == "on" ]; then
     cp ./nginx/explorer.conf ./nginx/dojo-explorer.conf
   else
@@ -99,7 +108,7 @@ init_config_files() {
   fi
   echo "Initialized dojo-whirlpool.conf (nginx)"
 
-  # Initialize config files for nginx and the maintenance tool 
+  # Initialize config files for nginx and the maintenance tool
   if [ "$COMMON_BTC_NETWORK" == "testnet" ]; then
     cp ./nginx/testnet.conf ./nginx/dojo.conf
     echo "Initialized dojo.conf (nginx)"

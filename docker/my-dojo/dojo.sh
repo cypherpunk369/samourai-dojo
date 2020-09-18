@@ -14,6 +14,7 @@ source_file() {
 }
 
 # Source config files
+source_file "$DIR/conf/docker-mempool.conf"
 source_file "$DIR/conf/docker-whirlpool.conf"
 source_file "$DIR/conf/docker-indexer.conf"
 source_file "$DIR/conf/docker-bitcoind.conf"
@@ -48,6 +49,10 @@ select_yaml_files() {
     yamlFiles="$yamlFiles -f $DIR/overrides/whirlpool.install.yaml"
   fi
 
+  if [ "$MEMPOOL_INSTALL" == "on" ]; then
+    yamlFiles="$yamlFiles -f $DIR/overrides/mempool.install.yaml"
+  fi
+
   # Return yamlFiles
   echo "$yamlFiles"
 }
@@ -57,7 +62,7 @@ docker_up() {
   yamlFiles=$(select_yaml_files)
   eval "docker-compose $yamlFiles up $1 -d"
 }
-  
+
 # Start
 start() {
   # Check if dojo is running (check the db container)
@@ -244,6 +249,7 @@ uninstall() {
     docker image rm -f samouraiwallet/dojo-tor:"$DOJO_TOR_VERSION_TAG"
     docker image rm -f samouraiwallet/dojo-indexer:"$DOJO_INDEXER_VERSION_TAG"
     docker image rm -f samouraiwallet/dojo-whirlpool:"$DOJO_WHIRLPOOL_VERSION_TAG"
+    docker image rm -f samouraiwallet/dojo-mempool:"$DOJO_MEMPOOL_VERSION_TAG"
 
     docker volume prune -f
     return 0
@@ -256,7 +262,7 @@ uninstall() {
 del_images_for() {
   # $1: image name
   # $2: most recent version of the image (do not delete this one)
-  docker image ls | grep "$1" | sed "s/ \+/,/g" | cut -d"," -f2 | while read -r version ; do 
+  docker image ls | grep "$1" | sed "s/ \+/,/g" | cut -d"," -f2 | while read -r version ; do
     if [ "$2" != "$version" ]; then
       docker image rm "$1:$version"
     fi
@@ -273,6 +279,8 @@ clean() {
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
+  del_images_for samouraiwallet/dojo-mempool:"$DOJO_MEMPOOL_VERSION_TAG"
+
 }
 
 # Upgrade
@@ -342,6 +350,11 @@ onion() {
     echo "Explorer hidden service address = $V3_ADDR_EXPLORER"
   fi
 
+  if [ "$MEMPOOL_INSTALL" == "on" ]; then
+    V3_ADDR_MEMPOOL=$( docker exec -it tor cat /var/lib/tor/hsv3mempool/hostname )
+    echo "Mempool hidden service address = $V3_ADDR_MEMPOOL"
+  fi
+
   V3_ADDR=$( docker exec -it tor cat /var/lib/tor/hsv3dojo/hostname )
   echo "Maintenance Tool hidden service address = $V3_ADDR"
 
@@ -391,7 +404,7 @@ display_logs() {
     docker-compose $yamlFiles logs --tail=50 --follow $1
   else
     docker-compose $yamlFiles logs --tail=$2 $1
-  fi 
+  fi
 }
 
 logs() {
@@ -433,8 +446,15 @@ logs() {
         echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a whirlpool client"
       fi
       ;;
+    mempool )
+      if [ "$MEMPOOL_INSTALL" == "on" ]; then
+        display_logs $1 $2
+      else
+        echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a mempool space"
+      fi
+      ;;
     * )
-      services="nginx node tor db" 
+      services="nginx node tor db"
       if [ "$BITCOIND_INSTALL" == "on" ]; then
         services="$services bitcoind"
       fi
@@ -446,6 +466,9 @@ logs() {
       fi
       if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
         services="$services whirlpool"
+      fi
+      if [ "$MEMPOOL_INSTALL" == "on" ]; then
+        services="$services mempool"
       fi
       display_logs "$services" $2
       ;;
@@ -484,6 +507,7 @@ help() {
   echo "                                  dojo.sh logs node           : display the logs of NodeJS modules (API, Tracker, PushTx API, Orchestrator)"
   echo "                                  dojo.sh logs explorer       : display the logs of the Explorer"
   echo "                                  dojo.sh logs whirlpool      : display the logs of the Whirlpool client"
+  echo "                                  dojo.sh logs mempool        : display the logs of the Mempool.space"
   echo " "
   echo "                                Available options:"
   echo "                                  -n [VALUE]                  : display the last VALUE lines"
