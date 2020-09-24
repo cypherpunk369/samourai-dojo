@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.8.0](#1_8_0)
 - [v1.7.0](#1_7_0)
 - [v1.6.0](#1_6_0)
 - [v1.5.0](#1_5_0)
@@ -11,6 +12,93 @@
 - [v1.3.0](#1_3_0)
 - [v1.2.0](#1_2_0)
 - [v1.1.0](#1_1_0)
+
+
+<a name="1_8_0"/>
+
+## Samourai Dojo v1.8.0 ##
+
+
+### Notable changes ###
+
+
+#### New version of the Maintenance Tool ####
+
+This release introduces a new version of Dojo Maintenance Tool (DMT).
+
+The DMT has been revamped in order to provide a more user-friendly experience.
+
+
+#### New configuration property BITCOIND_RPC_WORK_QUEUE ####
+
+This new configuration property added to docker-bitcoind.conf allows to set a custom max depth for the RPC work queue of the full node.
+
+Increasing the value set for this property may help users running Dojo on slower devices when recurring "work queue depth exceeded" errors appear in the logs.
+
+
+#### New configuration property BITCOIND_SHUTDOWN_DELAY ####
+
+This new configuration property added to docker-bitcoind.conf allows to set a custom delay before Dojo forces the shutdown of its full node (default delay is 180 seconds).
+
+Increasing the value set for this property may help users running Dojo on slower devices requiring a longer delay for a clean shutdown of the full node.
+
+
+#### Automatic fallback to a mirror of the Tor archive ####
+
+If Dojo fails to contact the Tor servers (archive.torproject.org) during an installation or an upgrade, it will automatically try to download Tor source code from a mirror hosted by the EFF (tor.eff.org).
+
+
+#### Upgrade of bitcoind to v0.20.1 ####
+
+Upgrade to Bitcoin Core v0.20.1
+
+
+#### New /wallet API endpoint ####
+
+This new API endpoint combines the results previously returned by the /multiaddr, /unspent and /fees endpoints. See this [doc](https://github.com/Samourai-Wallet/samourai-dojo/blob/master/doc/GET_wallet.md) for more details.
+
+Starting with this version, the /multiaddr and /unspent endpoints are marked as deprecated.
+
+
+### Change log ###
+
+
+#### MyDojo ####
+
+- [#mr151](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/151) add new /wallet api endpoint
+- [#mr153](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/153) add new BITCOIND_RPC_WORK_QUEUE parameter to docker-bitcoind.conf.tpl
+- [#mr154](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/154) add new /xpub/impot/status endpoint
+- [#mr155](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/155) upgrade bitcoind to bitcoin core 0.20.1
+- [#mr156](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/156) automatic fallback to mirror of tor archive
+- [#mr157](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/157) add new config property BITCOIND_SHUTDOWN_DELAY
+- [#mr160](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/160) new version of the maintenance tool
+- [#mr161](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/161) improve the xpub tools screen
+- [#mr162](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/162) rework response returned by dojo.sh onion
+- [#mr163](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/163) improve presentation of response returned by dojo.sh onion
+- [a548bce6](https://code.samourai.io/dojo/samourai-dojo/-/commit/a548bce6dea78297f21368c1e04ee1a021f1f524) bump dojo version in index-example.js
+
+
+#### Bug fixes ####
+
+- [#mr158](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/158) fix parsing of message in notification service
+- [dbf61217](https://code.samourai.io/dojo/samourai-dojo/-/commit/dbf6121779385f19e99167298ac8a6bf3411422a) fix presentation of message returned by dojo.sh onion
+
+
+#### Security ####
+
+- [#mr152](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/152) update nodejs modules
+- [#mr159](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/159) update version of minimist and helmet
+
+
+#### Credits ###
+
+- Crazyk031
+- kenshin-samourai
+- LaurentMT
+- RockyRococo
+- sarath
+- SatoshiThreepwood
+- zeroleak
 
 
 <a name="1_7_0"/>
@@ -25,7 +113,7 @@
 
 A new optional "strict mode" is added to the /pushtx and /pushtx/schedule endpoints of the API.
 
-This strict mode enforces a few additional checks on a selected subset of the outputs of a transaction before it's pushed on the P2P network or before it's scheduled for a delayed push. 
+This strict mode enforces a few additional checks on a selected subset of the outputs of a transaction before it's pushed on the P2P network or before it's scheduled for a delayed push.
 
 See this [doc](https://code.samourai.io/dojo/samourai-dojo/-/blob/develop/doc/POST_pushtx.md) for detailed information.
 
@@ -42,14 +130,14 @@ A new config parameter `WHIRLPOOL_RESYNC` is added to docker-whirlpool.conf. Whe
 
 #### MyDojo ####
 
-- [#mr142](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/142) add setup of explorer in keys.index.js 
-- [#mr143](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/143) update doc and package.json with url of new repository 
-- [#mr144](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/144) switch addrindexrs repo to gitlab 
+- [#mr142](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/142) add setup of explorer in keys.index.js
+- [#mr143](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/143) update doc and package.json with url of new repository
+- [#mr144](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/144) switch addrindexrs repo to gitlab
 - [#mr145](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/145) explicitely set algo used for jwt signatures
 - [#mr146](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/146) upgrade whirlpool to whirlpool-cli 0.10.7
 - [#mr147](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/147) add new optional strict_mode_vouts to pushtx endpoints
 - [#mr148](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/148) status code pushtx endpoints
-- [#mr149](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/149) upgrade whirlpool to whirlpool-cli 0.10.8 
+- [#mr149](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/149) upgrade whirlpool to whirlpool-cli 0.10.8
 
 
 #### Credits ###
