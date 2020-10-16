@@ -74,7 +74,7 @@ start() {
 # Stop
 stop() {
   echo "Preparing shutdown of Dojo. Please wait."
-    # Check if dojo is running (check the db container)
+  # Check if dojo is running (check the db container)
   isRunning=$(docker inspect --format="{{.State.Running}}" db 2> /dev/null)
   if [ $? -eq 1 ] || [ "$isRunning" == "false" ]; then
     echo "Dojo is already stopped."
@@ -306,6 +306,14 @@ upgrade() {
   if [ $launchUpgrade -eq 0 ]; then
     # Select yaml files
     yamlFiles=$(select_yaml_files)
+    # Check if dojo is running (check the db container)
+    isRunning=$(docker inspect --format="{{.State.Running}}" db 2> /dev/null)
+    if [ $? -eq 1 ] || [ "$isRunning" == "false" ]; then
+      echo -e "\nChecked that Dojo isn't running."
+    else
+      echo -e "\nStopping Dojo before processing the upgrade.\n"
+      stop
+    fi
     # Update config files
     update_config_files
     # Cleanup
@@ -315,9 +323,10 @@ upgrade() {
     export BITCOIND_RPC_EXTERNAL_IP
     # Rebuild the images (with or without cache)
     if [ $noCache -eq 0 ]; then
-      echo -e "\nDeleting containers and images"
+      echo -e "\nDeleting Dojo containers and images."
       eval "docker-compose $yamlFiles down --rmi all"
     fi
+    echo -e "\nStarting build of Dojo.\n"
     docker_up --build --force-recreate --remove-orphans
     buildResult=$?
     if [ $buildResult -eq 0 ]; then
