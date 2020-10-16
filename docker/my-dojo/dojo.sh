@@ -267,7 +267,7 @@ del_images_for() {
   # $2: most recent version of the image (do not delete this one)
   docker image ls | grep "$1" | sed "s/ \+/,/g" | cut -d"," -f2 | while read -r version ; do
     if [ "$2" != "$version" ]; then
-      docker image rm "$1:$version"
+      docker image rm -f "$1:$version"
     fi
   done
 }
@@ -281,7 +281,7 @@ clean() {
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
-  docker image prune
+  docker image prune -f
 }
 
 # Upgrade
