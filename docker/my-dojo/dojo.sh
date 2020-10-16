@@ -311,10 +311,11 @@ upgrade() {
     if [ $? -eq 1 ] || [ "$isRunning" == "false" ]; then
       echo -e "\nChecked that Dojo isn't running."
     else
-      echo -e "\nStopping Dojo before processing the upgrade.\n"
+      echo " "
       stop
     fi
     # Update config files
+    echo -e "\nPreparing the upgrade of Dojo.\n"
     update_config_files
     # Cleanup
     cleanup
@@ -326,7 +327,7 @@ upgrade() {
       echo -e "\nDeleting Dojo containers and images."
       eval "docker-compose $yamlFiles down --rmi all"
     fi
-    echo -e "\nStarting build of Dojo.\n"
+    echo -e "\nStarting the upgrade of Dojo.\n"
     docker_up --build --force-recreate --remove-orphans
     buildResult=$?
     if [ $buildResult -eq 0 ]; then
