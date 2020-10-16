@@ -200,9 +200,16 @@ install() {
     init_config_files
     # Build and start Dojo
     docker_up --remove-orphans
-    # Display the logs
-    if [ $noLog -eq 1 ]; then
-      logs "" 0
+    buildResult=$?
+    if [ $buildResult -eq 0 ]; then
+      # Display the logs
+      if [ $noLog -eq 1 ]; then
+        logs "" 0
+      fi
+    else
+      # Return an error
+      echo -e "\nInstallation of Dojo failed. See the above error message."
+      exit $buildResult
     fi
   fi
 }
