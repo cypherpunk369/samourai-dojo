@@ -165,7 +165,7 @@ install() {
   if [ $launchInstall -eq 0 ]; then
     pastInstallsfound=$(docker image ls | grep samouraiwallet/dojo-db | wc -l)
     if [ $pastInstallsfound -ne 0 ]; then
-      # Past installation found. Ask confirmation forreinstall
+      # Past installation found. Ask confirmation for reinstall
       echo -e "\nWarning: Found traces of a previous installation of Dojo on this machine."
       echo "A new installation requires to remove these elements first."
       if [ $auto -eq 0 ]; then
@@ -343,7 +343,7 @@ upgrade() {
       fi
     else
       # Return an error
-      echo -e "Upgrade of Dojo failed. See the above error message."
+      echo -e "\nUpgrade of Dojo failed. See the above error message."
       exit $buildResult
     fi
   fi
