@@ -55,7 +55,7 @@ select_yaml_files() {
 # Docker up
 docker_up() {
   yamlFiles=$(select_yaml_files)
-  eval "docker-compose $yamlFiles up $1 -d"
+  eval "docker-compose $yamlFiles up $@ -d"
 }
 
 # Start
