@@ -273,7 +273,6 @@ del_images_for() {
 }
 
 clean() {
-  docker image prune
   del_images_for samouraiwallet/dojo-db "$DOJO_DB_VERSION_TAG"
   del_images_for samouraiwallet/dojo-bitcoind "$DOJO_BITCOIND_VERSION_TAG"
   del_images_for samouraiwallet/dojo-explorer "$DOJO_EXPLORER_VERSION_TAG"
@@ -282,6 +281,7 @@ clean() {
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
+  docker image prune
 }
 
 # Upgrade
