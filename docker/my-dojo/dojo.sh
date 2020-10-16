@@ -327,19 +327,24 @@ upgrade() {
     export BITCOIND_RPC_EXTERNAL_IP
     # Rebuild the images (with or without cache)
     if [ $noCache -eq 0 ]; then
-      eval "docker-compose $yamlFiles build --no-cache"
-    else
-      eval "docker-compose $yamlFiles build"
+      echo -e "\nDeleting containers and images"
+      eval "docker-compose $yamlFiles down --rmi all"
     fi
-    # Start Dojo
-    docker_up --remove-orphans
-    # Post start clean-up
-    post_start_cleanup
-    # Update the database
-    update_dojo_db
-    # Display the logs
-    if [ $noLog -eq 1 ]; then
-      logs "" 0
+    docker_up --build --force-recreate --remove-orphans
+    buildResult=$?
+    if [ $buildResult -eq 0 ]; then
+      # Post start clean-up
+      post_start_cleanup
+      # Update the database
+      update_dojo_db
+      # Display the logs
+      if [ $noLog -eq 1 ]; then
+        logs "" 0
+      fi
+    else
+      # Return an error
+      echo -e "Upgrade of Dojo failed. See the above error message."
+      exit $buildResult
     fi
   fi
 }
