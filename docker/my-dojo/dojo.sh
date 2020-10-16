@@ -240,20 +240,8 @@ uninstall() {
   fi
 
   if [ $launchUninstall -eq 0 ]; then
-    docker-compose rm -f
-
     yamlFiles=$(select_yaml_files)
-    eval "docker-compose $yamlFiles down"
-
-    docker image rm -f samouraiwallet/dojo-db:"$DOJO_DB_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-bitcoind:"$DOJO_BITCOIND_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-explorer:"$DOJO_EXPLORER_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-nodejs:"$DOJO_NODEJS_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-nginx:"$DOJO_NGINX_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-tor:"$DOJO_TOR_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-indexer:"$DOJO_INDEXER_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-whirlpool:"$DOJO_WHIRLPOOL_VERSION_TAG"
-
+    eval "docker-compose $yamlFiles down --rmi all"
     docker volume prune -f
     return 0
   else
