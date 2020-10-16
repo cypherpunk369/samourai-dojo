@@ -334,6 +334,7 @@ upgrade() {
     buildResult=$?
     if [ $buildResult -eq 0 ]; then
       # Post start clean-up
+      clean
       post_start_cleanup
       # Update the database
       update_dojo_db
