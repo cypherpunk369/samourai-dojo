@@ -443,6 +443,7 @@ logs() {
   source_file "$DIR/conf/docker-explorer.conf"
   source_file "$DIR/conf/docker-whirlpool.conf"
   source_file "$DIR/conf/docker-common.conf"
+  source_file "$DIR/conf/docker-mempool.conf"
 
   case $1 in
     db | tor | nginx | node )
