@@ -14,6 +14,7 @@ source_file() {
 }
 
 # Source config files
+source_file "$DIR/conf/docker-mempool.conf"
 source_file "$DIR/conf/docker-whirlpool.conf"
 source_file "$DIR/conf/docker-indexer.conf"
 source_file "$DIR/conf/docker-bitcoind.conf"
@@ -48,6 +49,10 @@ select_yaml_files() {
     yamlFiles="$yamlFiles -f $DIR/overrides/whirlpool.install.yaml"
   fi
 
+  if [ "$MEMPOOL_INSTALL" == "on" ]; then
+    yamlFiles="$yamlFiles -f $DIR/overrides/mempool.install.yaml"
+  fi
+
   # Return yamlFiles
   echo "$yamlFiles"
 }
@@ -55,7 +60,7 @@ select_yaml_files() {
 # Docker up
 docker_up() {
   yamlFiles=$(select_yaml_files)
-  eval "docker-compose $yamlFiles up $1 -d"
+  eval "docker-compose $yamlFiles up $@ -d"
 }
 
 # Start
@@ -74,7 +79,7 @@ start() {
 # Stop
 stop() {
   echo "Preparing shutdown of Dojo. Please wait."
-    # Check if dojo is running (check the db container)
+  # Check if dojo is running (check the db container)
   isRunning=$(docker inspect --format="{{.State.Running}}" db 2> /dev/null)
   if [ $? -eq 1 ] || [ "$isRunning" == "false" ]; then
     echo "Dojo is already stopped."
@@ -83,8 +88,10 @@ stop() {
   # Shutdown the bitcoin daemon
   if [ "$BITCOIND_INSTALL" == "on" ]; then
     # Renewal of bitcoind onion address
-    if [ "$BITCOIND_EPHEMERAL_HS" = "on" ]; then
-      $( docker exec -it tor rm -rf /var/lib/tor/hsv2bitcoind ) &> /dev/null
+    if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
+      if [ "$BITCOIND_EPHEMERAL_HS" = "on" ]; then
+        $( docker exec -it tor rm -rf /var/lib/tor/hsv2bitcoind ) &> /dev/null
+      fi
     fi
     # Stop the bitcoin daemon
     $( docker exec -it bitcoind  bitcoin-cli \
@@ -163,7 +170,7 @@ install() {
   if [ $launchInstall -eq 0 ]; then
     pastInstallsfound=$(docker image ls | grep samouraiwallet/dojo-db | wc -l)
     if [ $pastInstallsfound -ne 0 ]; then
-      # Past installation found. Ask confirmation forreinstall
+      # Past installation found. Ask confirmation for reinstall
       echo -e "\nWarning: Found traces of a previous installation of Dojo on this machine."
       echo "A new installation requires to remove these elements first."
       if [ $auto -eq 0 ]; then
@@ -198,9 +205,16 @@ install() {
     init_config_files
     # Build and start Dojo
     docker_up --remove-orphans
-    # Display the logs
-    if [ $noLog -eq 1 ]; then
-      logs "" 0
+    buildResult=$?
+    if [ $buildResult -eq 0 ]; then
+      # Display the logs
+      if [ $noLog -eq 1 ]; then
+        logs "" 0
+      fi
+    else
+      # Return an error
+      echo -e "\nInstallation of Dojo failed. See the above error message."
+      exit $buildResult
     fi
   fi
 }
@@ -231,20 +245,8 @@ uninstall() {
   fi
 
   if [ $launchUninstall -eq 0 ]; then
-    docker-compose rm -f
-
     yamlFiles=$(select_yaml_files)
-    eval "docker-compose $yamlFiles down"
-
-    docker image rm -f samouraiwallet/dojo-db:"$DOJO_DB_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-bitcoind:"$DOJO_BITCOIND_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-explorer:"$DOJO_EXPLORER_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-nodejs:"$DOJO_NODEJS_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-nginx:"$DOJO_NGINX_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-tor:"$DOJO_TOR_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-indexer:"$DOJO_INDEXER_VERSION_TAG"
-    docker image rm -f samouraiwallet/dojo-whirlpool:"$DOJO_WHIRLPOOL_VERSION_TAG"
-
+    eval "docker-compose $yamlFiles down --rmi all"
     docker volume prune -f
     return 0
   else
@@ -258,13 +260,12 @@ del_images_for() {
   # $2: most recent version of the image (do not delete this one)
   docker image ls | grep "$1" | sed "s/ \+/,/g" | cut -d"," -f2 | while read -r version ; do
     if [ "$2" != "$version" ]; then
-      docker image rm "$1:$version"
+      docker image rm -f "$1:$version"
     fi
   done
 }
 
 clean() {
-  docker image prune
   del_images_for samouraiwallet/dojo-db "$DOJO_DB_VERSION_TAG"
   del_images_for samouraiwallet/dojo-bitcoind "$DOJO_BITCOIND_VERSION_TAG"
   del_images_for samouraiwallet/dojo-explorer "$DOJO_EXPLORER_VERSION_TAG"
@@ -273,6 +274,8 @@ clean() {
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
+  del_images_for samouraiwallet/dojo-mempool:"$DOJO_MEMPOOL_VERSION_TAG"
+  docker image prune -f
 }
 
 # Upgrade
@@ -309,7 +312,16 @@ upgrade() {
   if [ $launchUpgrade -eq 0 ]; then
     # Select yaml files
     yamlFiles=$(select_yaml_files)
+    # Check if dojo is running (check the db container)
+    isRunning=$(docker inspect --format="{{.State.Running}}" db 2> /dev/null)
+    if [ $? -eq 1 ] || [ "$isRunning" == "false" ]; then
+      echo -e "\nChecked that Dojo isn't running."
+    else
+      echo " "
+      stop
+    fi
     # Update config files
+    echo -e "\nPreparing the upgrade of Dojo.\n"
     update_config_files
     # Cleanup
     cleanup
@@ -318,19 +330,26 @@ upgrade() {
     export BITCOIND_RPC_EXTERNAL_IP
     # Rebuild the images (with or without cache)
     if [ $noCache -eq 0 ]; then
-      eval "docker-compose $yamlFiles build --no-cache"
-    else
-      eval "docker-compose $yamlFiles build"
+      echo -e "\nDeleting Dojo containers and images."
+      eval "docker-compose $yamlFiles down --rmi all"
     fi
-    # Start Dojo
-    docker_up --remove-orphans
-    # Post start clean-up
-    post_start_cleanup
-    # Update the database
-    update_dojo_db
-    # Display the logs
-    if [ $noLog -eq 1 ]; then
-      logs "" 0
+    echo -e "\nStarting the upgrade of Dojo.\n"
+    docker_up --build --force-recreate --remove-orphans
+    buildResult=$?
+    if [ $buildResult -eq 0 ]; then
+      # Post start clean-up
+      clean
+      post_start_cleanup
+      # Update the database
+      update_dojo_db
+      # Display the logs
+      if [ $noLog -eq 1 ]; then
+        logs "" 0
+      fi
+    else
+      # Return an error
+      echo -e "\nUpgrade of Dojo failed. See the above error message."
+      exit $buildResult
     fi
   fi
 }
@@ -339,29 +358,41 @@ upgrade() {
 onion() {
   echo " "
   echo "WARNING: Do not share these onion addresses with anyone!"
-  echo "         To allow another person to use this Dojo with her Samourai Wallet,"
+  echo "         To allow another person to use this Dojo with their Samourai Wallet,"
   echo "         you should share the QRCodes provided by the Maintenance Tool."
   echo " "
 
   V3_ADDR=$( docker exec -it tor cat /var/lib/tor/hsv3dojo/hostname )
-  echo " * Dojo API and Maintenance Tool = $V3_ADDR"
+  echo "Dojo API and Maintenance Tool = $V3_ADDR"
+  echo " "
 
   if [ "$EXPLORER_INSTALL" == "on" ]; then
     V3_ADDR_EXPLORER=$( docker exec -it tor cat /var/lib/tor/hsv3explorer/hostname )
-    echo " * Block Explorer = $V3_ADDR_EXPLORER"
+    echo "Block Explorer = $V3_ADDR_EXPLORER"
+    echo " "
   fi
+
+  if [ "$MEMPOOL_INSTALL" == "on" ]; then
+    V3_ADDR_MEMPOOL=$( docker exec -it tor cat /var/lib/tor/hsv3mempool/hostname )
+    echo "Mempool hidden service address = $V3_ADDR_MEMPOOL"
+  fi
+
+  V3_ADDR=$( docker exec -it tor cat /var/lib/tor/hsv3dojo/hostname )
+  echo "Maintenance Tool hidden service address = $V3_ADDR"
 
   if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
     V3_ADDR_WHIRLPOOL=$( docker exec -it tor cat /var/lib/tor/hsv3whirlpool/hostname )
-    echo " * Your personal Whirlpool client running on this Dojo (do not share) = $V3_ADDR_WHIRLPOOL"
+    echo "Your private Whirlpool client (do not share) = $V3_ADDR_WHIRLPOOL"
+    echo " "
   fi
 
   if [ "$BITCOIND_INSTALL" == "on" ]; then
-    V2_ADDR_BTCD=$( docker exec -it tor cat /var/lib/tor/hsv2bitcoind/hostname )
-    echo " * Your local bitcoind (do not share) = $V2_ADDR_BTCD"
+    if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
+      V2_ADDR_BTCD=$( docker exec -it tor cat /var/lib/tor/hsv2bitcoind/hostname )
+      echo "Your local bitcoind (do not share) = $V2_ADDR_BTCD"
+      echo " "
+    fi
   fi
-
-  echo " "
 }
 
 # Display the version of this dojo
@@ -408,6 +439,7 @@ logs() {
   source_file "$DIR/conf/docker-explorer.conf"
   source_file "$DIR/conf/docker-whirlpool.conf"
   source_file "$DIR/conf/docker-common.conf"
+  source_file "$DIR/conf/docker-mempool.conf"
 
   case $1 in
     db | tor | nginx | node )
@@ -441,6 +473,13 @@ logs() {
         echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a whirlpool client"
       fi
       ;;
+    mempool )
+      if [ "$MEMPOOL_INSTALL" == "on" ]; then
+        display_logs $1 $2
+      else
+        echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a mempool space"
+      fi
+      ;;
     * )
       services="nginx node tor db"
       if [ "$BITCOIND_INSTALL" == "on" ]; then
@@ -454,6 +493,9 @@ logs() {
       fi
       if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
         services="$services whirlpool"
+      fi
+      if [ "$MEMPOOL_INSTALL" == "on" ]; then
+        services="$services mempool"
       fi
       display_logs "$services" $2
       ;;
@@ -492,6 +534,7 @@ help() {
   echo "                                  dojo.sh logs node           : display the logs of NodeJS modules (API, Tracker, PushTx API, Orchestrator)"
   echo "                                  dojo.sh logs explorer       : display the logs of the Explorer"
   echo "                                  dojo.sh logs whirlpool      : display the logs of the Whirlpool client"
+  echo "                                  dojo.sh logs mempool        : display the logs of the Mempool.space"
   echo " "
   echo "                                Available options:"
   echo "                                  -n [VALUE]                  : display the last VALUE lines"

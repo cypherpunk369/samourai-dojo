@@ -1,0 +1,29 @@
+version: "3.2"
+
+services:
+  mempool:
+    image: "samouraiwallet/dojo-mempool:${DOJO_MEMPOOL_VERSION_TAG}"
+    container_name: mempool
+    build:
+      context: ./mempool
+    env_file:
+      - ./conf/docker-mempool.conf
+    restart: on-failure
+    command: "/mempool.space/entrypoint.sh"
+    expose:
+      - "4080"
+    volumes:
+      - data-mempool:/var/lib/mysql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "10"
+    depends_on:
+      - tor
+    networks:
+      dojonet:
+        ipv4_address: 172.28.1.9
+
+volumes:
+  data-mempool:

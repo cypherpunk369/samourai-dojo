@@ -3,6 +3,7 @@ const screenXpubsToolsScript = {
   explorerInfo: null,
   currentXpub: null,
   isReimport: false,
+  rescanStatusTimerId: null,
 
   initPage: function() {
     this.getExplorerInfo()
@@ -32,8 +33,7 @@ const screenXpubsToolsScript = {
     lib_api.getExplorerPairingInfo().then(explorerInfo => {
       this.explorerInfo = explorerInfo
     }).catch(e => {
-      lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-      console.log(e)
+      lib_errors.processError(e)
     })
   },
 
@@ -70,14 +70,13 @@ const screenXpubsToolsScript = {
         this.showImportForm(false)
       }
     }).catch(e => {
-      lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-      console.log(e)
+      lib_errors.processError(e)
       throw e
     })
   },
 
   importXpub: function() {
-    lib_msg.displayMessage('Processing xpub import...');
+    lib_msg.displayMessage('Processing xpub import. Please wait...');
 
     const jsonData = {
       'xpub': this.currentXpub,
@@ -95,33 +94,61 @@ const screenXpubsToolsScript = {
         jsonData['segwit'] = 'bip84'
     }
 
-    return lib_api.postXpub(jsonData)
-      .then(result => {
+    try {
+      lib_api.postXpub(jsonData)
+      // Wait for import completion and display progress
+      this.checkRescanStatus(() => {
         this._searchXpub(this.currentXpub).then(() => {
           lib_msg.displayInfo('Import complete')
         })
-      }).catch(e => {
-        lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-        console.log(e)
       })
+    } catch(e) {
+      lib_errors.processError(e)
+    }
   },
 
   rescanXpub: function() {
-    lib_msg.displayMessage('Processing xpub rescan...');
+    lib_msg.displayMessage('Processing xpub rescan. Please wait...');
     let startIdx = $('#rescan-start-idx').val()
     startIdx = (startIdx == null) ? 0 : parseInt(startIdx)
     let lookahead = $('#rescan-lookahead').val()
     lookahead = (lookahead == null) ? 100 : parseInt(lookahead)
-    return lib_api.getXpubRescan(this.currentXpub, lookahead, startIdx)
-      .then(result => {
+
+    try {
+      lib_api.getXpubRescan(this.currentXpub, lookahead, startIdx)
+      // Wait for rescan completion and display progress
+      this.checkRescanStatus(() => {
         this.hideRescanForm()
         this._searchXpub(this.currentXpub).then(() => {
           lib_msg.displayInfo('Rescan complete')
         })
-      }).catch(e => {
-        lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-        console.log(e)
       })
+    } catch(e) {
+      lib_errors.processError(e)
+    }
+  },
+
+  checkRescanStatus: function(callback) {
+    this.rescanStatusTimerId = setTimeout(() => {
+      lib_api.getXpubRescanStatus(this.currentXpub)
+        .then(result => {
+          const data = result['data']
+          if (data['import_in_progress']) {
+            const lblOp = (data['status'] == 'rescan') ? 'Rescan' : 'Import'
+            const lblHits = (data['status'] == 'rescan') ? 'hits detected' : 'transactions imported'
+            const msg = `${lblOp} in progress (${data['hits']} ${lblHits})`
+            lib_msg.displayMessage(msg)
+            return this.checkRescanStatus(callback)
+          } else {
+            clearTimeout(this.rescanStatusTimerId)
+            return callback()
+          }
+        }).catch(e => {
+          lib_errors.processError(e)
+          lib_msg.displayMessage('Rescan in progress. Please wait...')
+          return this.checkRescanStatus(callback)
+        })
+      }, 1000)
   },
 
   setXpubDetails: function(xpubInfo) {
