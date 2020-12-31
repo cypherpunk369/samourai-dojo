@@ -95,6 +95,7 @@ services:
       - ./conf/docker-bitcoind.conf
       - ./conf/docker-explorer.conf
       - ./conf/docker-whirlpool.conf
+      - ./conf/docker-indexer.conf
       - ./conf/docker-tor.conf
       - ./conf/docker-mempool.conf
     restart: always
