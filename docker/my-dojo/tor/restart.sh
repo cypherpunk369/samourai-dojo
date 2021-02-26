@@ -62,12 +62,12 @@ fi
 if [ "$SOROBAN_INSTALL" == "on" ]; then
   tor_options+=(--HiddenServiceDir /var/lib/tor/hsv2soroban)
   tor_options+=(--HiddenServiceVersion 2)
-  tor_options+=(--HiddenServicePort "80 172.29.1.3:4242")
+  tor_options+=(--HiddenServicePort "80 $NET_DMZ_NGINX_IPV4:4242")
   tor_options+=(--HiddenServiceDirGroupReadable 1)
 
   tor_options+=(--HiddenServiceDir /var/lib/tor/hsv3soroban)
   tor_options+=(--HiddenServiceVersion 3)
-  tor_options+=(--HiddenServicePort "80 172.29.1.3:4242")
+  tor_options+=(--HiddenServicePort "80 $NET_DMZ_NGINX_IPV4:4242")
   tor_options+=(--HiddenServiceDirGroupReadable 1)
 fi
 

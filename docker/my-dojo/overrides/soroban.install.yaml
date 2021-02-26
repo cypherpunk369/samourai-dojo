@@ -23,4 +23,4 @@ services:
         max-file: "10"
     networks:
       dojonet:
-        ipv4_address: 172.28.1.9
+        ipv4_address: ${NET_DOJO_SOROBAN_IPV4}

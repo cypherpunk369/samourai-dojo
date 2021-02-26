@@ -2,7 +2,7 @@
 set -e
 
 soroban_options=(
-  --hostname=172.28.1.9
+  --hostname="$NET_DOJO_SOROBAN_IPV4"
   --port=4242
   --log=info
 )
