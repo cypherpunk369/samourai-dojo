@@ -22,6 +22,16 @@ if (process.env.EXPLORER_INSTALL == 'on') {
   } catch(e) {}
 }
 
+// Retrieve Soroban config from conf files
+let sorobanTorUrl = 'http://sorob4sg7yiopktgz4eom7hl5mcodr6quvhmdpljl5qqhmt6po7oebid.onion/rpc'
+let sorobanPublishUrl = sorobanTorUrl
+if (process.env.SOROBAN_INSTALL == 'on') {
+  try {
+    const torOnionAddr = fs.readFileSync('/var/lib/tor/hsv3soroban/hostname', 'utf8').replace('\n', '')
+    sorobanTorUrl = `http://${torOnionAddr}/rpc`
+    sorobanPublishUrl = 'http://172.28.1.3:4242/rpc'
+  } catch(e) {}
+}
 
 /**
  * Desired structure of /keys/index.js, which is ignored in the repository.
@@ -247,6 +257,24 @@ module.exports = {
       mempoolProcessPeriod: parseInt(process.env.NODE_TRACKER_MEMPOOL_PERIOD),
       // Processing of unconfirmed transactions (periodicity in ms)
       unconfirmedTxsProcessPeriod: parseInt(process.env.NODE_TRACKER_UNCONF_TXS_PERIOD)
+    },
+    /*
+     * Notifications
+     */
+    notifications: {
+      // Notifications through Soroban
+      soroban: {
+        // Tor URI of the Soroban gateway used for the notifications
+        torUri: sorobanTorUrl,
+        // Clearnet URI of the Soroban gateway used for the notifications
+        clearnetUri: null,
+        // Specific uri used by Dojo to publish notifications over Soroban
+        // If null, tor or clearnet URIs will be used
+        publishUri: sorobanPublishUrl,
+        // Use a SOCKS5 proxy for all communications with external services
+        // Values: null if no socks5 proxy used, otherwise the url of the socks5 proxy
+        socks5Proxy: 'socks5h://172.28.1.4:9050'
+      }
     }
   }
 

@@ -10,6 +10,7 @@ const WebSocket = require('websocket')
 const Logger = require('../../lib/logger')
 const network = require('../../lib/bitcoin/network')
 const keys = require('../../keys')[network.key]
+const SorobanNotifsService = require('./soroban-service')
 const WebsocketsNotifsService = require('./websockets-service')
 
 
@@ -27,6 +28,7 @@ class NotificationsServer {
     this.maxConn = 0
     this.httpServer = null
     this.wsSvc= null
+    this.srbSvc = null
     // Initialize the zmq socket
     // for communications with the tracker
     this._initTrackerSocket()
@@ -41,6 +43,9 @@ class NotificationsServer {
 
     if (this.wsSvc == null)
       this.wsSvc = new WebsocketsNotifsService(this)
+
+    if (this.srbSvc == null)
+      this.srbSvc = new SorobanNotifsService(this)
   }
 
 
@@ -58,6 +63,7 @@ class NotificationsServer {
         case 'block':
           try {
             const header = JSON.parse(message.toString())
+            this.srbSvc.notifyBlock(header)
             this.wsSvc.notifyBlock(header)
           } catch(e) {
             Logger.error(e, 'API : NotificationsServer : Error while sending a block message')
@@ -66,6 +72,7 @@ class NotificationsServer {
         case 'transaction':
           try {
             const tx = JSON.parse(message.toString())
+            this.srbSvc.notifyTransaction(tx)
             this.wsSvc.notifyTransaction(tx)
           } catch(e) {
             Logger.error(e, 'API : NotificationServer : Error while sending a transaction message')
