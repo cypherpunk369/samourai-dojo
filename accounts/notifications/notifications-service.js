@@ -18,15 +18,17 @@ const debug = !!(process.argv.indexOf('ws-debug') > -1)
 
 
 /**
- * A class providing a notifications server over web sockets
+ * A class providing a notifications service over web sockets
  */
 class NotificationsService {
 
   /**
    * Constructor
-   * @param {object} server - listening instance of a http server
+   * @param {NotificationServer} server - notification server
    */
   constructor(server) {
+    // NotificationServer
+    this.server = server
     // Web sockets server
     this.ws = null
     // Dictionary of connections
@@ -49,15 +51,14 @@ class NotificationsService {
     })
 
     // Initialize the web socket server
-    this._initWSServer(server)
+    this._initWSServer()
   }
 
   /**
    * Initialize the web sockets server
-   * @param {object} server - listening instance of a http server
    */
-  _initWSServer(server) {
-    this.ws = new WebSocket.server({httpServer: server})
+  _initWSServer() {
+    this.ws = new WebSocket.server({httpServer: this.server.httpServer.server})
 
     Logger.info('API : Created WebSocket server')
 

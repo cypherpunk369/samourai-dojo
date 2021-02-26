@@ -15,7 +15,7 @@ const NotificationsService = require('./notifications-service')
 
 
 /**
- * A singleton providing a notifications server over web sockets
+ * A singleton providing a notifications server
  */
 class NotificationsServer {
 
@@ -41,7 +41,7 @@ class NotificationsServer {
 
     if (this.notifService !== null) return
 
-    this.notifService = new NotificationsService(httpServer.server)
+    this.notifService = new NotificationsService(this)
   }
 
 
