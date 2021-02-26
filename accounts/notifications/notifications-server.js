@@ -10,7 +10,6 @@ const WebSocket = require('websocket')
 const Logger = require('../../lib/logger')
 const network = require('../../lib/bitcoin/network')
 const keys = require('../../keys')[network.key]
-const status = require('../status')
 const NotificationsService = require('./notifications-service')
 
 
@@ -23,6 +22,9 @@ class NotificationsServer {
    * Constructor
    */
   constructor() {
+    this.clients = 0
+    this.sessions = 0
+    this.maxConn = 0
     // Http server
     this.httpServer = null
     // Notifications service

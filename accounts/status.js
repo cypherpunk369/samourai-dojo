@@ -10,6 +10,7 @@ const util = require('../lib/util')
 const Logger = require('../lib/logger')
 const db = require('../lib/db/mysql-db-wrapper')
 const remote = require('../lib/remote-importer/remote-importer')
+const notifServer = require('./notifications/notifications-server')
 
 
 /**
@@ -22,9 +23,6 @@ class Status {
    */
   constructor() {
     this.t0 = Date.now()
-    this.clients = 0
-    this.sessions = 0
-    this.maxConn = 0
   }
 
   /**
@@ -66,9 +64,9 @@ class Status {
       uptime: uptime,
       memory: memory,
       ws: {
-        clients: this.clients,
-        sessions: this.sessions,
-        max: this.maxConn
+        clients: notifServer.clients,
+        sessions: notifServer.sessions,
+        max: notifServer.maxConn
       },
       blocks: dbMaxHeight,
       indexer: {

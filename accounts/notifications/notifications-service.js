@@ -11,7 +11,6 @@ const Logger = require('../../lib/logger')
 const network = require('../../lib/bitcoin/network')
 const keys = require('../../keys')[network.key]
 const apiHelper = require('../api-helper')
-const status = require('../status')
 const authMgr = require('../../lib/auth/authorizations-manager')
 
 const debug = !!(process.argv.indexOf('ws-debug') > -1)
@@ -27,7 +26,7 @@ class NotificationsService {
    * @param {NotificationServer} server - notification server
    */
   constructor(server) {
-    // NotificationServer
+    // Notifications server
     this.server = server
     // Web sockets server
     this.ws = null
@@ -65,7 +64,7 @@ class NotificationsService {
     this.ws.on('request', req => {
       try {
         let conn = req.accept(null, req.origin)
-        conn.id = status.sessions++
+        conn.id = this.server.sessions++
         conn.subs = []
 
         debug && Logger.info(`API : Client ${conn.id} connected`)
@@ -88,8 +87,8 @@ class NotificationsService {
         })
 
         this.conn[conn.id] = conn
-        status.clients = status.clients + 1
-        status.maxConn = Math.max(status.maxConn, Object.keys(this.conn).length)
+        this.server.clients = this.server.clients + 1
+        this.server.maxConn = Math.max(this.server.maxConn, Object.keys(this.conn).length)
 
       } catch(e) {
         Logger.error(e, `API : NotificationsService._initWSServer() : Error during request accept`)
@@ -114,7 +113,7 @@ class NotificationsService {
 
       if (this.conn[conn.id]) {
         delete this.conn[conn.id]
-        status.clients = status.clients - 1
+        this.server.clients = this.server.clients - 1
       }
 
       // Close initiated by server, drop the connection
