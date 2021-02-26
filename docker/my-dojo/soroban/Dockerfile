@@ -3,10 +3,13 @@ FROM    golang:1.13-buster
 ENV     SOROBAN_SRC_DIR     /src
 ENV     SOROBAN_STAGE_DIR   /stage
 
+ARG     SOROBAN_LINUX_UID
+ARG     SOROBAN_LINUX_GID
+
 RUN     set -ex && \
         mkdir -p "$SOROBAN_STAGE_DIR" && \
-        addgroup --system -gid 1114 soroban && \
-        adduser --system --ingroup soroban -uid 1111 soroban
+        addgroup --system -gid ${SOROBAN_LINUX_GID} soroban && \
+        adduser --system --ingroup soroban -uid ${SOROBAN_LINUX_UID} soroban
 
 ENV     SOROBAN_URL         https://code.samourai.io/wallet/samourai-soroban/-/archive
 ENV     SOROBAN_VERSION     0.1.0

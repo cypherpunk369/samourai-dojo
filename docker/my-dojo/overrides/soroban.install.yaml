@@ -6,6 +6,9 @@ services:
     container_name: soroban
     build:
       context: ./soroban
+      args:
+        SOROBAN_LINUX_UID: ${SOROBAN_LINUX_UID}
+        SOROBAN_LINUX_GID: ${SOROBAN_LINUX_GID}
     env_file:
       - ./.env
       - ./conf/docker-soroban.conf
