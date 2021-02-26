@@ -164,6 +164,8 @@ class AbstractNotifsService {
    */
   notifyBlock(header) {
     try {
+      this.conn.prune()
+
       if (!this.subs['block'])
         return
 
@@ -239,6 +241,8 @@ class AbstractNotifsService {
    */
   notifyTransaction(tx) {
     try {
+      this.conn.prune()
+
       // Topics extracted from the transaction
       const topics = {}
       // Client subscriptions: {[cid]: [topic1, topic2, ...]}
