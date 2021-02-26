@@ -19,7 +19,7 @@
   const HeadersRestApi = require('./headers-rest-api')
   const TransactionsRestApi = require('./transactions-rest-api')
   const StatusRestApi = require('./status-rest-api')
-  const notifServer = require('./notifications-server')
+  const notifServer = require('./notifications/notifications-server')
   const WalletRestApi = require('./wallet-rest-api')
   const MultiaddrRestApi = require('./multiaddr-rest-api')
   const UnspentRestApi = require('./unspent-rest-api')
@@ -31,7 +31,7 @@
    */
   Logger.info('API : Process ID: ' + process.pid)
   Logger.info('API : Preparing the REST API')
-  
+
   // Wait for Bitcoind RPC API
   // being ready to process requests
   await RpcClient.waitForBitcoindRpcApi()
