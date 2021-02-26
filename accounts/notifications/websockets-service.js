@@ -1,5 +1,5 @@
 /*!
- * accounts/notifications/notification-service.js
+ * accounts/notifications/websockets-service.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
 'use strict'
@@ -19,7 +19,7 @@ const debug = !!(process.argv.indexOf('ws-debug') > -1)
 /**
  * A class providing a notifications service over web sockets
  */
-class NotificationsService {
+class WebsocketsNotifsService {
 
   /**
    * Constructor
@@ -74,7 +74,7 @@ class NotificationsService {
         })
 
         conn.on('error', err => {
-          Logger.error(err, `API : NotificationsService : Error on connection ${conn.id}`)
+          Logger.error(err, `API : WebsocketsNotifsService : Error on connection ${conn.id}`)
           if (conn.connected)
             this._closeWSConnection(conn, true)
         })
@@ -91,7 +91,7 @@ class NotificationsService {
         this.server.maxConn = Math.max(this.server.maxConn, Object.keys(this.conn).length)
 
       } catch(e) {
-        Logger.error(e, `API : NotificationsService._initWSServer() : Error during request accept`)
+        Logger.error(e, `API : WebsocketsNotifsService._initWSServer() : Error during request accept`)
       }
     })
   }
@@ -123,7 +123,7 @@ class NotificationsService {
       debug && Logger.info(`API : Client ${conn.id} disconnected`)
 
     } catch(e) {
-      Logger.error(e, 'API : NotificationsService._closeWSConnection()')
+      Logger.error(e, 'API : WebsocketsNotifsService._closeWSConnection()')
     }
   }
 
@@ -183,7 +183,7 @@ class NotificationsService {
           break
       }
     } catch(e) {
-      Logger.error(e, 'API : NotificationsService._handleWSMessage() : WebSocket message error')
+      Logger.error(e, 'API : ._handleWSMessage() : WebSocket message error')
     }
   }
 
@@ -267,7 +267,7 @@ class NotificationsService {
       try {
         this.conn[cid].sendUTF(msg)
       } catch(e) {
-        Logger.error(e, `API : NotificationsService.dispatch() : Error sending dispatch for ${topic} to client ${cid}`)
+        Logger.error(e, `API : WebsocketsNotifsService.dispatch() : Error sending dispatch for ${topic} to client ${cid}`)
       }
     }
   }
@@ -284,7 +284,7 @@ class NotificationsService {
       }
       this.dispatch('block', JSON.stringify(data))
     } catch(e) {
-      Logger.error(e, `API : NotificationsService.notifyBlock()`)
+      Logger.error(e, `API : WebsocketsNotifsService.notifyBlock()`)
     }
   }
 
@@ -442,12 +442,12 @@ class NotificationsService {
           this.conn[cid].sendUTF(JSON.stringify(data))
           debug && Logger.error(`API : Sent ctx ${ctx.hash} to client ${cid}`)
         } catch(e) {
-          Logger.error(e, `API : NotificationsService.notifyTransaction() : Trouble sending ctx to client ${cid}`)
+          Logger.error(e, `API : .notifyTransaction() : Trouble sending ctx to client ${cid}`)
         }
       }
 
     } catch(e) {
-      Logger.error(e, `API : NotificationsService.notifyTransaction()`)
+      Logger.error(e, `API : WebsocketsNotifsService.notifyTransaction()`)
     }
   }
 
@@ -466,11 +466,11 @@ class NotificationsService {
       this.conn[cid].sendUTF(JSON.stringify(data))
       debug && Logger.error(`API : Sent authentication error to client ${cid}`)
     } catch(e) {
-      Logger.error(e, `API : NotificationsService.notifyAuthError() : Trouble sending authentication error to client ${cid}`)
+      Logger.error(e, `API : WebsocketsNotifsService.notifyAuthError() : Trouble sending authentication error to client ${cid}`)
     }
   }
 
 
 }
 
-module.exports = NotificationsService
+module.exports = WebsocketsNotifsService

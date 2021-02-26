@@ -10,7 +10,7 @@ const util = require('../lib/util')
 const Logger = require('../lib/logger')
 const db = require('../lib/db/mysql-db-wrapper')
 const remote = require('../lib/remote-importer/remote-importer')
-const notifServer = require('./notifications/notifications-server')
+const notifServer = require('./notifications/server')
 
 
 /**
