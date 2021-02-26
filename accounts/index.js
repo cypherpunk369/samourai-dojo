@@ -52,10 +52,11 @@
   // in an external process
   hdaHelper.activateExternalDerivation()
 
-  // Initialize the http server
+  // Initialize and start the http server
   const host = keys.apiBind
   const port = keys.ports.account
   const httpServer = new HttpServer(port, host)
+  httpServer.start()
 
   // Initialize the rest api endpoints
   const authRestApi = new AuthRestApi(httpServer)
@@ -68,9 +69,6 @@
   const multiaddrRestApi = new MultiaddrRestApi(httpServer)
   const unspentRestApi = new UnspentRestApi(httpServer)
   const supportRestApi = new SupportRestApi(httpServer)
-
-  // Start the http server
-  httpServer.start()
 
   // Attach the web sockets server to the web server
   notifServer.attach(httpServer)
