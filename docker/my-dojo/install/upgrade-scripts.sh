@@ -18,6 +18,12 @@ else
   source ./conf/docker-whirlpool.conf.tpl
 fi
 
+if [ -f ./conf/docker-soroban.conf ]; then
+  source ./conf/docker-soroban.conf
+else
+  source ./conf/docker-soroban.conf.tpl
+fi
+
 source ./conf/docker-bitcoind.conf
 
 # Confirm upgrade operation
@@ -69,7 +75,10 @@ update_config_files() {
   update_config_file ./conf/docker-whirlpool.conf ./conf/docker-whirlpool.conf.tpl
   echo "Initialized docker-whirlpool.conf"
 
-  # Initialize config files for nginx and the maintenance tool
+  update_config_file ./conf/docker-soroban.conf ./conf/docker-soroban.conf.tpl
+  echo "Initialized docker-soroban.conf"
+
+  # Initialize nginx config file for explorer
   if [ "$EXPLORER_INSTALL" == "on" ]; then
     cp ./nginx/explorer.conf ./nginx/dojo-explorer.conf
   else
@@ -77,6 +86,7 @@ update_config_files() {
   fi
   echo "Initialized dojo-explorer.conf (nginx)"
 
+  # Initialize nginx config file for whirlpool
   if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
     cp ./nginx/whirlpool.conf ./nginx/dojo-whirlpool.conf
   else
@@ -84,6 +94,15 @@ update_config_files() {
   fi
   echo "Initialized dojo-whirlpool.conf (nginx)"
 
+  # Initialize nginx config file for soroban
+  if [ "$SOROBAN_INSTALL" == "on" ]; then
+    cp ./nginx/soroban.conf ./nginx/dojo-soroban.conf
+  else
+    cp /dev/null ./nginx/dojo-soroban.conf
+  fi
+  echo "Initialized dojo-soroban.conf (nginx)"
+
+  # Initialize config files for the maintenance tool
   if [ "$COMMON_BTC_NETWORK" == "testnet" ]; then
     cp ./nginx/testnet.conf ./nginx/dojo.conf
     echo "Initialized dojo.conf (nginx)"

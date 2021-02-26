@@ -14,6 +14,7 @@ source_file() {
 }
 
 # Source config files
+source_file "$DIR/conf/docker-soroban.conf"
 source_file "$DIR/conf/docker-whirlpool.conf"
 source_file "$DIR/conf/docker-indexer.conf"
 source_file "$DIR/conf/docker-bitcoind.conf"
@@ -46,6 +47,10 @@ select_yaml_files() {
 
   if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
     yamlFiles="$yamlFiles -f $DIR/overrides/whirlpool.install.yaml"
+  fi
+
+  if [ "$SOROBAN_INSTALL" == "on" ]; then
+    yamlFiles="$yamlFiles -f $DIR/overrides/soroban.install.yaml"
   fi
 
   # Return yamlFiles
@@ -272,6 +277,7 @@ clean() {
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
+  del_images_for samouraiwallet/dojo-soroban "$DOJO_SOROBAN_VERSION_TAG"
   docker image prune -f
 }
 
@@ -387,6 +393,12 @@ onion() {
       echo " "
     fi
 
+    if [ "$SOROBAN_INSTALL" == "on" ]; then
+      V3_ADDR_SOROBAN=$( docker exec -it tor cat /var/lib/tor/hsv3soroban/hostname )
+      echo "Soroban server = $V3_ADDR_SOROBAN"
+      echo " "
+    fi
+
     if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
       V3_ADDR_WHIRLPOOL=$( docker exec -it tor cat /var/lib/tor/hsv3whirlpool/hostname )
       echo "Your private Whirlpool client (do not share) = $V3_ADDR_WHIRLPOOL"
@@ -410,6 +422,12 @@ onion() {
     if [ "$EXPLORER_INSTALL" == "on" ]; then
       V2_ADDR_EXPLORER=$( docker exec -it tor cat /var/lib/tor/hsv2explorer/hostname )
       echo "Block Explorer = $V2_ADDR_EXPLORER"
+      echo " "
+    fi
+
+    if [ "$SOROBAN_INSTALL" == "on" ]; then
+      V2_ADDR_SOROBAN=$( docker exec -it tor cat /var/lib/tor/hsv2soroban/hostname )
+      echo "Soroban server = $V2_ADDR_SOROBAN"
       echo " "
     fi
 
@@ -472,6 +490,7 @@ logs() {
   source_file "$DIR/conf/docker-indexer.conf"
   source_file "$DIR/conf/docker-explorer.conf"
   source_file "$DIR/conf/docker-whirlpool.conf"
+  source_file "$DIR/conf/docker-soroban.conf"
   source_file "$DIR/conf/docker-common.conf"
 
   case $1 in
@@ -506,6 +525,13 @@ logs() {
         echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a whirlpool client"
       fi
       ;;
+    soroban )
+      if [ "$SOROBAN_INSTALL" == "on" ]; then
+        display_logs $1 $2
+      else
+        echo -e "Command not supported for your setup.\nCause: Your Dojo is not running the soroban server"
+      fi
+      ;;
     * )
       services="nginx node tor db"
       if [ "$BITCOIND_INSTALL" == "on" ]; then
@@ -519,6 +545,9 @@ logs() {
       fi
       if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
         services="$services whirlpool"
+      fi
+      if [ "$SOROBAN_INSTALL" == "on" ]; then
+        services="$services soroban"
       fi
       display_logs "$services" $2
       ;;
@@ -557,6 +586,7 @@ help() {
   echo "                                  dojo.sh logs node           : display the logs of NodeJS modules (API, Tracker, PushTx API, Orchestrator)"
   echo "                                  dojo.sh logs explorer       : display the logs of the Explorer"
   echo "                                  dojo.sh logs whirlpool      : display the logs of the Whirlpool client"
+  echo "                                  dojo.sh logs soroban        : display the logs of the Soroban server"
   echo " "
   echo "                                Available options:"
   echo "                                  -n [VALUE]                  : display the last VALUE lines"

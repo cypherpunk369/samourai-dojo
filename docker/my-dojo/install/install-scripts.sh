@@ -18,6 +18,12 @@ else
   source ./conf/docker-whirlpool.conf.tpl
 fi
 
+if [ -f ./conf/docker-soroban.conf ]; then
+  source ./conf/docker-soroban.conf
+else
+  source ./conf/docker-soroban.conf.tpl
+fi
+
 if [ -f ./conf/docker-common.conf ]; then
   source ./conf/docker-common.conf
 else
@@ -66,10 +72,10 @@ init_config_files() {
 
   cp ./conf/docker-bitcoind.conf.tpl ./conf/docker-bitcoind.conf
   echo "Initialized docker-bitcoind.conf"
-  
+
   cp ./conf/docker-mysql.conf.tpl ./conf/docker-mysql.conf
   echo "Initialized docker-mysql.conf"
-  
+
   cp ./conf/docker-node.conf.tpl ./conf/docker-node.conf
   echo "Initialized docker-node.conf"
 
@@ -85,6 +91,10 @@ init_config_files() {
   cp ./conf/docker-whirlpool.conf.tpl ./conf/docker-whirlpool.conf
   echo "Initialized docker-whirlpool.conf"
 
+  cp ./conf/docker-soroban.conf.tpl ./conf/docker-soroban.conf
+  echo "Initialized docker-soroban.conf"
+
+  # Initialize nginx config file for explorer
   if [ "$EXPLORER_INSTALL" == "on" ]; then
     cp ./nginx/explorer.conf ./nginx/dojo-explorer.conf
   else
@@ -92,6 +102,7 @@ init_config_files() {
   fi
   echo "Initialized dojo-explorer.conf (nginx)"
 
+  # Initialize nginx config file for whirlpool
   if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
     cp ./nginx/whirlpool.conf ./nginx/dojo-whirlpool.conf
   else
@@ -99,7 +110,15 @@ init_config_files() {
   fi
   echo "Initialized dojo-whirlpool.conf (nginx)"
 
-  # Initialize config files for nginx and the maintenance tool 
+  # Initialize nginx config file for soroban
+  if [ "$SOROBAN_INSTALL" == "on" ]; then
+    cp ./nginx/soroban.conf ./nginx/dojo-soroban.conf
+  else
+    cp /dev/null ./nginx/dojo-soroban.conf
+  fi
+  echo "Initialized dojo-soroban.conf (nginx)"
+
+  # Initialize config files for nginx and the maintenance tool
   if [ "$COMMON_BTC_NETWORK" == "testnet" ]; then
     cp ./nginx/testnet.conf ./nginx/dojo.conf
     echo "Initialized dojo.conf (nginx)"

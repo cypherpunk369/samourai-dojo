@@ -5,6 +5,7 @@ COPY      ./nginx.conf /etc/nginx/nginx.conf
 COPY      ./dojo.conf /etc/nginx/sites-enabled/dojo.conf
 COPY      ./dojo-explorer.conf /etc/nginx/sites-enabled/dojo-explorer.conf
 COPY      ./dojo-whirlpool.conf /etc/nginx/sites-enabled/dojo-whirlpool.conf
+COPY      ./dojo-soroban.conf /etc/nginx/sites-enabled/dojo-soroban.conf
 
 # Copy wait-for script
 COPY      ./wait-for /wait-for
