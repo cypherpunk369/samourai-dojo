@@ -8,6 +8,7 @@ const Buffer = require('safe-buffer').Buffer
 const crypto = require('crypto')
 const bitcoin = require('bitcoinjs-lib')
 const Logger = require('../../lib/logger')
+const Z85 = require('../../lib/z85')
 const network = require('../../lib/bitcoin/network')
 const keys = require('../../keys')[network.key]
 const SorobanRpcClient = require('../../lib/soroban/soroban-rpc-client')
@@ -70,7 +71,7 @@ class SorobanConnection {
   async send(msg) {
     const msgBuffer = new Buffer(msg, 'utf8')
     const encrypted = CryptoUtil.encrypt(msgBuffer, this.sharedSecret)
-    return this._sendPayload(encrypted.toString('utf8'))
+    return this._sendPayload(Z85.encode(encrypted))
   }
 
   /**
@@ -98,7 +99,7 @@ class SorobanConnection {
       }
 
       const rpcClient = new SorobanRpcClient(opts)
-      Logger.info(`Sending payload ${payload} on chan ${this.channel}`)
+      //Logger.info(`Sending payload ${payload} on chan ${this.channel}`)
       await rpcClient.add(this.channel, payload, SorobanRpcClient.NORMAL_MODE)
       return true
     } catch(e) {
