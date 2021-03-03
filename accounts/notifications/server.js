@@ -33,7 +33,7 @@ class NotificationsServer {
   }
 
   /**
-   * Attach the web sockets server to the listening web server
+   * Attach the notifications server to the listening web server
    * @param {pushtx.HttpServer} httpServer - HTTP server
    */
   attach(httpServer) {
