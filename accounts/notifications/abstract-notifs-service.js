@@ -7,6 +7,8 @@
 const _ = require('lodash')
 const LRU = require('lru-cache')
 const Logger = require('../../lib/logger')
+const network = require('../../lib/bitcoin/network')
+const keys = require('../../keys')[network.key]
 const WalletEntities = require('../../lib/wallet/wallet-entities')
 
 const debug = !!(process.argv.indexOf('ws-debug') > -1)
@@ -32,7 +34,7 @@ class AbstractNotifsService {
     this.conn = LRU({
       max: 0,
       length: (n, key) => 1,
-      maxAge: 3600000,
+      maxAge: keys.auth.jwt.refreshToken.expires * 1000,
       noDisposeOnSet: true,
       dispose: (k,v) => {
         for (let topic of v.subs) {

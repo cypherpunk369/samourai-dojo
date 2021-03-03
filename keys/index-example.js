@@ -225,6 +225,24 @@ module.exports = {
       mempoolProcessPeriod: 2000,
       // Processing of unconfirmed transactions (periodicity in ms)
       unconfirmedTxsProcessPeriod: 300000
+    },
+    /*
+     * Notifications
+     */
+    notifications: {
+      // Notifications through Soroban
+      soroban: {
+        // Tor URI of the Soroban gateway used for the notifications
+        torUri: 'http://sorob4sg7yiopktgz4eom7hl5mcodr6quvhmdpljl5qqhmt6po7oebid.onion/rpc',
+        // Clearnet URI of the Soroban gateway used for the notifications
+        clearnetUri: 'https://soroban.samouraiwallet.com/rpc',
+        // Specific uri used by Dojo to publish notifications over Soroban
+        // If null, tor or clearnet URIs will be used
+        publishUri: null,
+        // Use a SOCKS5 proxy for all communications with external services
+        // Values: null if no socks5 proxy used, otherwise the url of the socks5 proxy
+        socks5Proxy: null
+      }
     }
   },
 
@@ -326,6 +344,14 @@ module.exports = {
     tracker: {
       mempoolProcessPeriod: 2000,
       unconfirmedTxsProcessPeriod: 300000
+    },
+    notifications: {
+      soroban: {
+        torUri: 'http://sorob4sg7yiopktgz4eom7hl5mcodr6quvhmdpljl5qqhmt6po7oebid.onion/test/rpc',
+        clearnetUri: 'https://soroban.samouraiwallet.com/test/rpc',
+        publishUri: null,
+        socks5Proxy: null
+      }
     }
   }
 }
