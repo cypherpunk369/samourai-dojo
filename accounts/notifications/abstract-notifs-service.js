@@ -24,22 +24,30 @@ class AbstractNotifsService {
   constructor(server) {
     // Notifications server
     this.server = server
-    // Dictionary of connections
-    this.conn = {}
     // Dictionary of subscriptions
     this.subs = {}
     // Dictionary mapping addresses to pubkeys
     this.cachePubKeys = {}
-
+    // Dictionary of connections
+    this.conn = LRU({
+      max: 0,
+      length: (n, key) => 1,
+      maxAge: 3600000,
+      noDisposeOnSet: true,
+      dispose: (k,v) => {
+        for (let topic of v.subs) {
+          this._unsub(topic, k)
+          if (this.cacheSubs.has(topic))
+            this.cacheSubs.del(topic)
+        }
+      }
+    })
     // Cache registering the most recent subscriptions received
     // Used to filter multiple subscriptions sent by external apps.
     this.cacheSubs = LRU({
-      // Maximum number of subscriptions to store in cache
       // Estimate: 1000 clients with an average of 5 subscriptions
       max: 5000,
-      // Function used to compute length of item
       length: (n, key) => 1,
-      // Maximum age for items in the cache (1mn)
       maxAge: 60000
     })
   }
@@ -51,10 +59,10 @@ class AbstractNotifsService {
   registerConnection(conn) {
     conn.id = this.server.sessions++
     conn.subs = []
-    debug && Logger.info(`API : Client ${conn.id} connected`)
-    this.conn[conn.id] = conn
+    this.conn.set(conn.id, conn)
     this.server.clients = this.server.clients + 1
-    this.server.maxConn = Math.max(this.server.maxConn, Object.keys(this.conn).length)
+    this.server.maxConn = Math.max(this.server.maxConn, this.conn.itemCount)
+    debug && Logger.info(`API : Client ${conn.id} connected`)
     return conn
   }
 
@@ -65,17 +73,12 @@ class AbstractNotifsService {
    */
   _closeConnection(conn, forcedClose) {
     try {
-      for (let topic of conn.subs) {
-        this._unsub(topic, conn.id)
-        // Close initiated by client, remove subscriptions from cache
-        if (!forcedClose && this.cacheSubs.has(topic))
-          this.cacheSubs.del(topic)
-      }
-      if (this.conn[conn.id]) {
-        delete this.conn[conn.id]
+      if (this.conn.has(conn.id)) {
+        this.conn.del(conn.id)
+        this.conn.prune()
         this.server.clients = this.server.clients - 1
+        debug && Logger.info(`API : Client ${conn.id} disconnected`)
       }
-      debug && Logger.info(`API : Client ${conn.id} disconnected`)
     } catch(e) {
       Logger.error(e, 'API :')
     }
@@ -128,7 +131,6 @@ class AbstractNotifsService {
       this.subs[topic] = []
 
     this.subs[topic].push(conn.id)
-
     debug && Logger.info(`API : Client ${conn.id} subscribed to ${topic}`)
   }
 
@@ -168,7 +170,7 @@ class AbstractNotifsService {
       const data = {op: 'block', x: header}
 
       for (let cid of this.subs['block']) {
-        if (!this.conn[cid])
+        if (!this.conn.has(cid))
           continue
 
         try {

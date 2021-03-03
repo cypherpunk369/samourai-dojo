@@ -135,7 +135,10 @@ class WebsocketsNotifsService extends AbstractNotifsService {
    * @param {string} msg - message
    */
   _send(cid, msg) {
-    this.conn[cid].sendUTF(msg)
+    if (this.conn.has(cid)) {
+      const conn = this.conn.get(cid)
+      conn.sendUTF(msg)
+    }
   }
 
   /**
