@@ -39,9 +39,8 @@ class NotificationsServer {
   attach(httpServer) {
     this.httpServer = httpServer
 
-    if (this.wsSvc !== null) return
-
-    this.wsSvc = new WebsocketsNotifsService(this)
+    if (this.wsSvc == null)
+      this.wsSvc = new WebsocketsNotifsService(this)
   }
 
 
@@ -61,7 +60,7 @@ class NotificationsServer {
             const header = JSON.parse(message.toString())
             this.wsSvc.notifyBlock(header)
           } catch(e) {
-            Logger.error(e, 'API : NotificationServer._initTrackerSocket() : Error in block message')
+            Logger.error(e, 'API : NotificationsServer : Error while sending a block message')
           }
           break
         case 'transaction':
@@ -69,7 +68,7 @@ class NotificationsServer {
             const tx = JSON.parse(message.toString())
             this.wsSvc.notifyTransaction(tx)
           } catch(e) {
-            Logger.error(e, 'API : NotificationServer._initTrackerSocket() : Error in transaction message')
+            Logger.error(e, 'API : NotificationServer : Error while sending a transaction message')
           }
           break
         default:
