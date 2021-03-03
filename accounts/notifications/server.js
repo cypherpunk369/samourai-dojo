@@ -1,5 +1,5 @@
 /*!
- * accounts/notifications/notification-serverjs
+ * accounts/notifications/server.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
 'use strict'
@@ -10,7 +10,7 @@ const WebSocket = require('websocket')
 const Logger = require('../../lib/logger')
 const network = require('../../lib/bitcoin/network')
 const keys = require('../../keys')[network.key]
-const NotificationsService = require('./notifications-service')
+const WebsocketsNotifsService = require('./websockets-service')
 
 
 /**
@@ -25,12 +25,10 @@ class NotificationsServer {
     this.clients = 0
     this.sessions = 0
     this.maxConn = 0
-    // Http server
     this.httpServer = null
-    // Notifications service
-    this.notifService = null
-    // Initialize the zmq socket for communications
-    // with the tracker
+    this.wsSvc= null
+    // Initialize the zmq socket
+    // for communications with the tracker
     this._initTrackerSocket()
   }
 
@@ -41,9 +39,9 @@ class NotificationsServer {
   attach(httpServer) {
     this.httpServer = httpServer
 
-    if (this.notifService !== null) return
+    if (this.wsSvc !== null) return
 
-    this.notifService = new NotificationsService(this)
+    this.wsSvc = new WebsocketsNotifsService(this)
   }
 
 
@@ -61,7 +59,7 @@ class NotificationsServer {
         case 'block':
           try {
             const header = JSON.parse(message.toString())
-            this.notifService.notifyBlock(header)
+            this.wsSvc.notifyBlock(header)
           } catch(e) {
             Logger.error(e, 'API : NotificationServer._initTrackerSocket() : Error in block message')
           }
@@ -69,7 +67,7 @@ class NotificationsServer {
         case 'transaction':
           try {
             const tx = JSON.parse(message.toString())
-            this.notifService.notifyTransaction(tx)
+            this.wsSvc.notifyTransaction(tx)
           } catch(e) {
             Logger.error(e, 'API : NotificationServer._initTrackerSocket() : Error in transaction message')
           }

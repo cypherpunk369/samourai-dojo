@@ -19,7 +19,7 @@
   const HeadersRestApi = require('./headers-rest-api')
   const TransactionsRestApi = require('./transactions-rest-api')
   const StatusRestApi = require('./status-rest-api')
-  const notifServer = require('./notifications/notifications-server')
+  const notifServer = require('./notifications/server')
   const WalletRestApi = require('./wallet-rest-api')
   const MultiaddrRestApi = require('./multiaddr-rest-api')
   const UnspentRestApi = require('./unspent-rest-api')
