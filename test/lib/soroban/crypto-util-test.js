@@ -1,5 +1,5 @@
 /*!
- * test/lib/soroban/crypto-util.js
+ * test/lib/soroban/crypto-util-test.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
 
