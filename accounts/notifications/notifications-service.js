@@ -1,5 +1,5 @@
 /*!
- * accounts/notification-web-sockets.js
+ * accounts/notifications/notification-service.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
 'use strict'
@@ -7,12 +7,12 @@
 const _ = require('lodash')
 const LRU = require('lru-cache')
 const WebSocket = require('websocket')
-const Logger = require('../lib/logger')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const apiHelper = require('./api-helper')
-const status = require('./status')
-const authMgr = require('../lib/auth/authorizations-manager')
+const Logger = require('../../lib/logger')
+const network = require('../../lib/bitcoin/network')
+const keys = require('../../keys')[network.key]
+const apiHelper = require('../api-helper')
+const status = require('../status')
+const authMgr = require('../../lib/auth/authorizations-manager')
 
 const debug = !!(process.argv.indexOf('ws-debug') > -1)
 

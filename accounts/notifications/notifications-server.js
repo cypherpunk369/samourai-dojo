@@ -1,5 +1,5 @@
 /*!
- * accounts/notification-web-sockets.js
+ * accounts/notifications/notification-serverjs
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
 'use strict'
@@ -7,10 +7,10 @@
 const _ = require('lodash')
 const zmq = require('zeromq')
 const WebSocket = require('websocket')
-const Logger = require('../lib/logger')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const status = require('./status')
+const Logger = require('../../lib/logger')
+const network = require('../../lib/bitcoin/network')
+const keys = require('../../keys')[network.key]
+const status = require('../status')
 const NotificationsService = require('./notifications-service')
 
 
@@ -40,7 +40,7 @@ class NotificationsServer {
     this.httpServer = httpServer
 
     if (this.notifService !== null) return
-    
+
     this.notifService = new NotificationsService(httpServer.server)
   }
 
