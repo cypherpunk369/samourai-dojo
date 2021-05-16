@@ -1,9 +1,9 @@
-FROM    debian:buster
+FROM    debian:buster-slim
 
 ENV     TOR_HOME            /var/lib/tor
 ENV     TOR_URL             https://dist.torproject.org
 ENV     TOR_MIRROR_URL      https://tor.eff.org/dist
-ENV     TOR_VERSION         0.4.4.7
+ENV     TOR_VERSION         0.4.4.8
 ENV     TOR_GPG_KS_URI      hkp://keyserver.ubuntu.com:80
 ENV     TOR_GPG_KEY1        0xEB5A896A28988BF5
 ENV     TOR_GPG_KEY2        0xC218525819F78451
@@ -17,11 +17,14 @@ ENV     GOLANG_SHA256       227b718923e20c846460bbecddde9cb86bad73acc5fb6f8e1a96
 ENV     OBFS4_URL           https://github.com/Yawning/obfs4.git
 ENV     OBFS4_VERSION       0.0.11
 
+ARG     TOR_LINUX_UID
+ARG     TOR_LINUX_GID
+
 
 # Install Tor
 RUN     set -ex && \
         apt-get update && \
-        apt-get install -y git libevent-dev zlib1g-dev libssl-dev gcc make automake ca-certificates autoconf musl-dev coreutils gpg wget && \
+        apt-get install -y git libevent-dev zlib1g-dev libssl-dev gcc make automake ca-certificates autoconf musl-dev coreutils gpg wget python3 && \
         mkdir -p /usr/local/src/ && \
         cd /usr/local/src && \
         res=0; \
@@ -68,8 +71,8 @@ RUN     cd /usr/local/src && \
         rm -rf obfs4proxy
 
 # Create group & user tor
-RUN     addgroup --system -gid 1107 tor && \
-        adduser --system --ingroup tor -uid 1104 tor
+RUN     addgroup --system -gid ${TOR_LINUX_GID} tor && \
+        adduser --system --ingroup tor -uid ${TOR_LINUX_UID} tor
 
 # Create /etc/tor directory
 RUN     mkdir -p /etc/tor/ && \

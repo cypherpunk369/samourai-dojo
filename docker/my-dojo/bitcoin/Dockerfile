@@ -1,16 +1,21 @@
-FROM    debian:buster
+FROM    debian:buster-slim
 
 
 #################################################################
 # INSTALL BITCOIN
 #################################################################
 ENV     BITCOIN_HOME        /home/bitcoin
-ENV     BITCOIN_VERSION     0.21.0
-ENV     BITCOIN_URL         https://bitcoincore.org/bin/bitcoin-core-0.21.0/bitcoin-0.21.0-aarch64-linux-gnu.tar.gz
-ENV     BITCOIN_SHA256      43416854330914992bbba2d0e9adf2a6fff4130be9af8ae2ef1186e743d9a3fe
-ENV     BITCOIN_ASC_URL     https://bitcoincore.org/bin/bitcoin-core-0.21.0/SHA256SUMS.asc
+ENV     BITCOIN_VERSION     0.21.1
+ENV     BITCOIN_URL         https://bitcoincore.org/bin/bitcoin-core-0.21.1/bitcoin-0.21.1-aarch64-linux-gnu.tar.gz
+ENV     BITCOIN_SHA256      28264751c982d30b9330e6c1475ddb9ed28be6a2601e8a5f33b6ba49a3d9f5f2
+ENV     BITCOIN_ASC_URL     https://bitcoincore.org/bin/bitcoin-core-0.21.1/SHA256SUMS.asc
 ENV     BITCOIN_PGP_KS_URI  hkp://keyserver.ubuntu.com:80
 ENV     BITCOIN_PGP_KEY     01EA5486DE18A882D4C2684590C8019E36C2E964
+
+ARG     BITCOIND_LINUX_UID
+ARG     BITCOIND_LINUX_GID
+ARG     TOR_LINUX_GID
+
 
 RUN     set -ex && \
         apt-get update && \
@@ -30,9 +35,9 @@ RUN     set -ex && \
 
 # Create groups bitcoin & tor
 # Create user bitcoin and add it to groups
-RUN     addgroup --system -gid 1108 bitcoin && \
-        addgroup --system -gid 1107 tor && \
-        adduser --system --ingroup bitcoin -uid 1105 bitcoin && \
+RUN     addgroup --system -gid ${BITCOIND_LINUX_GID} bitcoin && \
+        addgroup --system -gid ${TOR_LINUX_GID} tor && \
+        adduser --system --ingroup bitcoin -uid ${BITCOIND_LINUX_UID} bitcoin && \
         usermod -a -G tor bitcoin
 
 # Create data directory

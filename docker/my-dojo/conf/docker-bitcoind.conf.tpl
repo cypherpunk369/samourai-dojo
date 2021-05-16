@@ -16,7 +16,7 @@ BITCOIND_MAX_CONNECTIONS=16
 
 # Mempool maximum size in MB
 # Type: integer
-BITCOIND_MAX_MEMPOOL=1024
+BITCOIND_MAX_MEMPOOL=2048
 
 # Db cache size in MB
 # Type: integer
@@ -24,7 +24,7 @@ BITCOIND_DB_CACHE=1024
 
 # Number of threads to service RPC calls
 # Type: integer
-BITCOIND_RPC_THREADS=6
+BITCOIND_RPC_THREADS=12
 
 # RPC Work queue size
 # Type: integer
