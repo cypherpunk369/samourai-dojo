@@ -71,7 +71,6 @@ ENV     WHIRLPOOL_VERSION_HASH        21d25ed02cceb91f4aa95b6389b9da9c
 ENV     WHIRLPOOL_JAR                 "whirlpool-client-cli-$WHIRLPOOL_VERSION-run.jar"
 ENV     WHIRLPOOL_SHA256              09e574743851db2d5374bc7d4e66fd0c29f07b95b4e32b3d70c2187b724d5745
 
-
 RUN     set -ex && \
         cd "$WHIRLPOOL_DIR" && \
         echo "$WHIRLPOOL_SHA256 *$WHIRLPOOL_JAR" > WHIRLPOOL_CHECKSUMS && \
