@@ -483,7 +483,7 @@ logs() {
         echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a whirlpool client"
       fi
       ;;
-    mempool )
+    mempool_api )
       if [ "$MEMPOOL_INSTALL" == "on" ]; then
         display_logs $1 $2
       else
@@ -505,7 +505,7 @@ logs() {
         services="$services whirlpool"
       fi
       if [ "$MEMPOOL_INSTALL" == "on" ]; then
-        services="$services mempool"
+        services="$services mempool_api"
       fi
       display_logs "$services" $2
       ;;

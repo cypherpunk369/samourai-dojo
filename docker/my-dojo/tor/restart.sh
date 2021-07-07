@@ -51,7 +51,7 @@ fi
 if [ "$MEMPOOL_INSTALL" == "on" ]; then
   tor_options+=(--HiddenServiceDir /var/lib/tor/hsv3mempool)
   tor_options+=(--HiddenServiceVersion 3)
-  tor_options+=(--HiddenServicePort "80 172.28.1.9:4080")
+  tor_options+=(--HiddenServicePort "80 $NET_DOJO_MEMPOOL_WEB_IPV4:8051")
   tor_options+=(--HiddenServiceDirGroupReadable 1)
 fi
 
