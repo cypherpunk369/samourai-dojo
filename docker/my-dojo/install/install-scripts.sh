@@ -136,7 +136,6 @@ init_config_files() {
   echo "Initialized mysql-dojo.cnf (mysql)"
 
   # Initialize mempool db for mysql
-  wget https://raw.githubusercontent.com/mempool/mempool/master/mariadb-structure.sql ./mempool/mysql/mariadb-structure.sql.tpl
   if [ "$MEMPOOL_INSTALL" == "on" ]; then
     cp ./mempool/mysql/mariadb-structure.sql.tpl ./mempool/mysql/mariadb-structure.sql
   fi

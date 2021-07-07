@@ -15,6 +15,6 @@ fi
 
 ### Initiate mempool database 
 if [ -f /docker-entrypoint-initdb.d/mariadb-structure.sql]; then
-   mysql -h"db" -u"mempool" -p"$MEMPOOL_MYSQL_PASSWORD" "$MEMPOOL_MYSQL_DATABASE" < /docker-entrypoint-initdb.d/mariadb-structure.sql
+   mysql -h"db" -u"$MEMPOOL_MYSQL_USER" -p"$MEMPOOL_MYSQL_PASSWORD" "$MEMPOOL_MYSQL_DATABASE" < /docker-entrypoint-initdb.d/mariadb-structure.sql
    echo "Mempool database init process in progress..."
 fi
