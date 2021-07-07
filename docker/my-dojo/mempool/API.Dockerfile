@@ -23,6 +23,8 @@ WORKDIR /backend
 
 COPY --from=builder /build/ .
 
+COPY ./start.sh /backend/start.sh
+
 RUN chmod +x /backend/start.sh
 RUN chmod +x /backend/wait-for-it.sh
 
