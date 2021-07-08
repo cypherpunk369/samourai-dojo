@@ -11,21 +11,21 @@ ENV CYPRESS_INSTALL_BINARY=0
 
 WORKDIR /build
 RUN apt-get update
-RUN apt-get install -y build-essential rsync
+RUN apt-get install -y build-essential rsync git
 RUN cd ${MEMPOOL_API_HOME} && git clone -b ${MEMPOOL_API_VERSION} ${MEMPOOL_API_URL}
-RUN cd mempool/frontend 
-RUN npm i
-RUN npm run build
+RUN cd mempool/frontend && \
+        npm i && \
+        npm run build
 
 FROM nginx:1.17.8-alpine
 
 WORKDIR /patch
 
-COPY --from=builder /build/entrypoint.sh .
-COPY --from=builder /build/wait-for .
-COPY --from=builder /build/dist/mempool /var/www/mempool
-COPY --from=builder /build/nginx.conf /etc/nginx/
-COPY --from=builder /build/nginx-mempool.conf /etc/nginx/conf.d/
+COPY --from=builder /build/mempool/docker/frontend/entrypoint.sh .
+COPY --from=builder /build/mempool/docker/frontend/wait-for .
+COPY --from=builder /build/mempool/frontend/dist/mempool /var/www/mempool
+COPY --from=builder /build/mempool/nginx.conf /etc/nginx/
+COPY --from=builder /build/mempool/nginx-mempool.conf /etc/nginx/conf.d/
 
 RUN chmod +x /patch/entrypoint.sh
 RUN chmod +x /patch/wait-for

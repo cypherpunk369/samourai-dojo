@@ -13,4 +13,4 @@ RUN     chmod u+x /update-db.sh && \
 COPY    ./db-scripts/ /docker-entrypoint-initdb.d
 
 # Copy content of mysql structure into /docker-entrypoint-initdb.d for MEMPOOL
-COPY    ./mempool/mysql/ /docker-entrypoint-initdb.d
+COPY    ./docker/my-dojo/mempool/mysql/ /docker-entrypoint-initdb.d

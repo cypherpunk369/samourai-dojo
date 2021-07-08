@@ -10,18 +10,18 @@ ARG     MEMPOOL_API_LINUX_UID
 WORKDIR /build
 
 RUN apt-get update
-RUN apt-get install -y build-essential python3 pkg-config
+RUN apt-get install -y build-essential python3 pkg-config git
 RUN cd ${MEMPOOL_API_HOME} && git clone -b ${MEMPOOL_API_VERSION} ${MEMPOOL_API_URL} 
-RUN cd mempool/backend
-RUN npm ci --production
-RUN npm i typescript
-RUN npm run build
+RUN cd mempool/backend && \
+    npm ci --production && \
+    npm i typescript && \
+    npm run build
 
 FROM node:12-buster-slim
 
 WORKDIR /backend
 
-COPY --from=builder /build/ .
+COPY --from=builder /build/mempool/backend .
 
 COPY ./start.sh /backend/start.sh
 
