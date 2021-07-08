@@ -3,7 +3,9 @@ version: "3.7"
 services:
     mempool_api:
         image: "samouraiwallet/dojo-mempool_api:${DOJO_MEMPOOL_API_VERSION_TAG}"
-container_name: "mempool_api"
+        container_name: "mempool_api"
+        build:
+          dockerfile: ./docker/my-dojo/mempool/API/Dockerfile
         args:
             MEMPOOL_API_LINUX_UID: ${MEMPOOL_API_LINUX_UID}
             MEMPOOL_API_LINUX_GID: ${MEMPOOL_API_LINUX_GID}
@@ -30,8 +32,10 @@ services:
                 ipv4_address: ${NET_DOJO_MEMPOOL_API_IPV4}
 
     mempool_web:
-       image: "samouraiwallet/dojo-mempool_web:${DOJO_MEMPOOL_WEB_VERSION_TAG}"
-container_name: "mempool_web"
+        image: "samouraiwallet/dojo-mempool_web:${DOJO_MEMPOOL_WEB_VERSION_TAG}"
+        container_name: "mempool_web"
+        build:
+          dockerfile: ./docker/my-dojo/mempool/WEB/Dockerfile
         args:
             MEMPOOL_WEB_LINUX_UID: ${MEMPOOL_WEB_LINUX_UID}
             MEMPOOL_WEB_LINUX_GID: ${MEMPOOL_WEB_LINUX_GID}

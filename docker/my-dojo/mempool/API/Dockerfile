@@ -16,6 +16,7 @@ RUN cd mempool/backend && \
     npm ci --production && \
     npm i typescript && \
     npm run build
+RUN cp /build/mempool/docker/backend/wait-for-it.sh
 
 FROM node:12-buster-slim
 

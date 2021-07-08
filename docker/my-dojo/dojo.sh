@@ -276,7 +276,8 @@ clean() {
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-mempool:"$DOJO_MEMPOOL_VERSION_TAG"
+  del_images_for samouraiwallet/dojo-mempool_api:"$DOJO_MEMPOOL__API_VERSION_TAG"
+  del_images_for samouraiwallet/dojo-mempool_web:"$DOJO_MEMPOOL__WEB_VERSION_TAG"
   docker image prune -f
 }
 
@@ -544,7 +545,7 @@ help() {
   echo "                                  dojo.sh logs node           : display the logs of NodeJS modules (API, Tracker, PushTx API, Orchestrator)"
   echo "                                  dojo.sh logs explorer       : display the logs of the Explorer"
   echo "                                  dojo.sh logs whirlpool      : display the logs of the Whirlpool client"
-  echo "                                  dojo.sh logs mempool        : display the logs of the Mempool.space"
+  echo "                                  dojo.sh logs mempool_api    : display the logs of the Mempool.space"
   echo " "
   echo "                                Available options:"
   echo "                                  -n [VALUE]                  : display the last VALUE lines"

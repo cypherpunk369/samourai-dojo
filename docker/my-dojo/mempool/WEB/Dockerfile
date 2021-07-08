@@ -12,7 +12,7 @@ ENV CYPRESS_INSTALL_BINARY=0
 WORKDIR /build
 RUN apt-get update
 RUN apt-get install -y build-essential rsync git
-RUN cd ${MEMPOOL_API_HOME} && git clone -b ${MEMPOOL_API_VERSION} ${MEMPOOL_API_URL}
+RUN cd ${MEMPOOL_WEB_HOME} && git clone -b ${MEMPOOL_WEB_VERSION} ${MEMPOOL_WEB_URL}
 RUN cd mempool/frontend && \
         npm i && \
         npm run build
@@ -30,7 +30,7 @@ COPY --from=builder /build/mempool/nginx-mempool.conf /etc/nginx/conf.d/
 RUN chmod +x /patch/entrypoint.sh
 RUN chmod +x /patch/wait-for
 
-RUN chown -R ${MEMPOOL_WEB_LINUX_UID}:${MEMPOOL_WEB_LINUX_GID} /patch && chmod -R 755 /patch && #\
+RUN chown -R ${MEMPOOL_WEB_LINUX_UID}:${MEMPOOL_WEB_LINUX_GID} /patch && chmod -R 755 /patch && \
         chown -R ${MEMPOOL_WEB_LINUX_UID}:${MEMPOOL_WEB_LINUX_GID} /var/cache/nginx && \
         chown -R ${MEMPOOL_WEB_LINUX_UID}:${MEMPOOL_WEB_LINUX_GID} /var/log/nginx && \
         chown -R ${MEMPOOL_WEB_LINUX_UID}:${MEMPOOL_WEB_LINUX_GID} /etc/nginx/nginx.conf && \
