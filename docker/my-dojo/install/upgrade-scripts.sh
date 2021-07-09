@@ -118,11 +118,6 @@ update_config_files() {
     cp ./mysql/mysql-default.cnf ./mysql/mysql-dojo.cnf
   fi
   echo "Initialized mysql-dojo.cnf (mysql)"
-
-  # Initialize mempool db for mysql
-  if [ "$MEMPOOL_INSTALL" == "on" ]; then
-    cp ./mempool/mysql/mariadb-structure.sql.tpl ./mempool/mysql/mariadb-structure.sql
-  fi
 }
 
 # Update a configuration file from template

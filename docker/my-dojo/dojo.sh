@@ -25,6 +25,13 @@ source_file "$DIR/.env"
 # Export some variables for compose
 export BITCOIND_RPC_EXTERNAL_IP
 
+# Eexport env variables for mempool compose
+export BITCOIND_RPC_PORT
+export BITCOIND_RPC_USER
+export BITCOIND_RPC_PASSWORD
+export INDEXER_RPC_PORT
+export NET_DOJO_MEMPOOL_API_IPV4
+
 # Select YAML files
 select_yaml_files() {
   yamlFiles="-f $DIR/docker-compose.yaml"
@@ -276,8 +283,6 @@ clean() {
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-mempool_api:"$DOJO_MEMPOOL__API_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-mempool_web:"$DOJO_MEMPOOL__WEB_VERSION_TAG"
   docker image prune -f
 }
 
@@ -491,6 +496,20 @@ logs() {
         echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a mempool space"
       fi
       ;;
+    mempool_db )
+      if [ "$MEMPOOL_INSTALL" == "on" ]; then
+        display_logs $1 $2
+      else
+        echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a mempool space"
+      fi
+      ;;
+    mempool_web )
+      if [ "$MEMPOOL_INSTALL" == "on" ]; then
+        display_logs $1 $2
+      else
+        echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a mempool space"
+      fi
+      ;;
     * )
       services="nginx node tor db"
       if [ "$BITCOIND_INSTALL" == "on" ]; then
@@ -507,6 +526,8 @@ logs() {
       fi
       if [ "$MEMPOOL_INSTALL" == "on" ]; then
         services="$services mempool_api"
+        services="$services mempool_db"
+        services="$services mempool_web"
       fi
       display_logs "$services" $2
       ;;
