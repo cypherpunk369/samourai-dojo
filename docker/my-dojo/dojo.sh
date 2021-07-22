@@ -24,6 +24,8 @@ source_file "$DIR/.env"
 # Export some variables for compose
 export BITCOIND_RPC_EXTERNAL_IP
 
+export FALLBACK_MODE="off"
+
 # Select YAML files
 select_yaml_files() {
   yamlFiles="-f $DIR/docker-compose.yaml"
@@ -48,6 +50,10 @@ select_yaml_files() {
     yamlFiles="$yamlFiles -f $DIR/overrides/whirlpool.install.yaml"
   fi
 
+  if [ "$FALLBACK_MODE" == "on" ]; then
+    yamlFiles="$yamlFiles -f $DIR/overrides/tunnel.yaml"
+  fi
+
   # Return yamlFiles
   echo "$yamlFiles"
 }
@@ -64,6 +70,24 @@ start() {
   isRunning=$(docker inspect --format="{{.State.Running}}" db 2> /dev/null)
 
   if [ $? -eq 1 ] || [ "$isRunning" == "false" ]; then
+
+    fallback=0
+
+    # Extract install options from arguments
+    if [ $# -gt 0 ]; then
+      for option in $@
+      do
+        case "$option" in
+          --fallback )    fallback=1 ;;
+          * )             break ;;
+        esac
+      done
+    fi
+
+    if [ $fallback -eq 1 ]; then
+      export FALLBACK_MODE="on"
+    fi
+
     echo "Starting Dojo. Please wait."
     docker_up --remove-orphans
   else
@@ -123,6 +147,12 @@ stop() {
       echo "Force shutdown of Bitcoin server."
     fi
   fi
+
+  isTunnelRunning=$(docker inspect --format="{{.State.Running}}" tunnel 2> /dev/null)
+  if [ "$isTunnelRunning" == "true" ]; then
+    local FALLBACK_MODE="on"
+  fi
+
   # Stop docker containers
   yamlFiles=$(select_yaml_files)
   eval "docker-compose $yamlFiles stop"
@@ -272,6 +302,7 @@ clean() {
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
+  del_images_for samouraiwallet/dojo-tunnel "$DOJO_TUNNEL_VERSION_TAG"
   docker image prune -f
 }
 
@@ -367,6 +398,20 @@ onion() {
         * )      break ;;
       esac
     done
+  fi
+
+  isTunnelRunning=$(docker inspect --format="{{.State.Running}}" tunnel 2> /dev/null)
+  if [ "$isTunnelRunning" == "true" ]; then
+    echo " "
+    echo "WARNING: Your Dojo is running in fallback mode."
+    echo "         Displaying only fallback mode URL."
+    echo " "
+
+    FALLBACK_MODE_URL=$( docker exec -it tunnel cat /home/node/tunnel/hostname )
+    echo "Fallback mode URL = $FALLBACK_MODE_URL"
+    echo " "
+
+    exit 1
   fi
 
   echo " "
@@ -506,6 +551,15 @@ logs() {
         echo -e "Command not supported for your setup.\nCause: Your Dojo is not running a whirlpool client"
       fi
       ;;
+    tunnel )
+      isTunnelRunning=$(docker inspect --format="{{.State.Running}}" tunnel 2> /dev/null)
+      if [ "$isTunnelRunning" == "true" ]; then
+        local FALLBACK_MODE="on"
+        display_logs $1 $2
+      else
+        echo -e "Command not supported for your setup.\nCause: Your Dojo is not running in fallback mode"
+      fi
+      ;;
     * )
       services="nginx node tor db"
       if [ "$BITCOIND_INSTALL" == "on" ]; then
@@ -519,6 +573,11 @@ logs() {
       fi
       if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
         services="$services whirlpool"
+      fi
+      isTunnelRunning=$(docker inspect --format="{{.State.Running}}" tunnel 2> /dev/null)
+      if [ "$isTunnelRunning" == "true" ]; then
+        local FALLBACK_MODE="on"
+        services="$services tunnel"
       fi
       display_logs "$services" $2
       ;;
@@ -569,7 +628,10 @@ help() {
   echo " "
   echo "  restart                       Restart your dojo."
   echo " "
-  echo "  start                         Start your dojo."
+  echo "  start [options]               Start your dojo."
+  echo " "
+  echo "                                Available options:"
+  echo "                                  --fallback     : start dojo in a fallback mode."
   echo " "
   echo "  stop                          Stop your dojo."
   echo " "
@@ -665,7 +727,7 @@ case "$subcommand" in
     restart
     ;;
   start )
-    start
+    start "$@"
     ;;
   stop )
     stop

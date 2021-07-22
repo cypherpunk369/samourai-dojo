@@ -75,6 +75,9 @@ class Status {
         type: indexerType,
         url: indexerUrl,
         maxHeight: indexerMaxHeight
+      },
+      fallbackMode: {
+        active: process.env.FALLBACK_MODE === 'on'
       }
     }
   }

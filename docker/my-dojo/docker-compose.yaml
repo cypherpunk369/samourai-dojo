@@ -40,6 +40,8 @@ services:
       - ./conf/docker-explorer.conf
       - ./conf/docker-indexer.conf
       - ./conf/docker-node.conf
+    environment:
+      - FALLBACK_MODE=${FALLBACK_MODE}
     restart: always
     command: "/home/node/app/wait-for-it.sh db:3306 --timeout=720 --strict -- /home/node/app/restart.sh"
     expose:
