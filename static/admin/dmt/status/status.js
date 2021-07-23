@@ -64,6 +64,10 @@ const statusScript = {
             $('#indexer-url').text(indexerUrl)
         }
 
+        if (apiStatus['fallbackMode'] && apiStatus['fallbackMode'].active) {
+          $('#fallback-status').text('Your Dojo is running in a fallback mode. Go to Pairing page to pair with your Dojo via fallback URL.')
+        }
+
         this.checkChaintips()
         //lib_msg.cleanMessagesUi()
       }

@@ -801,6 +801,14 @@ button {
   margin: 5px 0 10px 10px;
 }
 
+#fallback-status {
+  margin: 16px 0;
+  padding: 6px 0;
+  font-size: 18px;
+  border-bottom: 2px dashed #dc1111;
+  border-top: 2px dashed #dc1111;
+}
+
 
 /* SPACERS */
 .spacer10 { height: 10px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
