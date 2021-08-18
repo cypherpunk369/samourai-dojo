@@ -21,4 +21,4 @@ MYSQL_PASSWORD=password
 #   default = default configuration parameters
 #   low_mem = configuration minimizing the RAM consumed by the database
 # Values: default | low_mem
-MYSQL_CONF_PROFILE=default
+MYSQL_CONF_PROFILE=low_mem
