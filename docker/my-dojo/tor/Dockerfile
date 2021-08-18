@@ -11,8 +11,8 @@ ENV     TOR_GPG_KEY3        0x21194EBB165733EA
 ENV     TOR_GPG_KEY4        0x6AFEE6D49E92B601
 
 ENV     GOLANG_DL_URL       https://dl.google.com/go
-ENV     GOLANG_ARCHIVE      go1.17.linux-arm64.tar.gz
-ENV     GOLANG_SHA256       6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d
+ENV     GOLANG_ARCHIVE      go1.16.7.linux-arm64.tar.gz
+ENV     GOLANG_SHA256       63d6b53ecbd2b05c1f0e9903c92042663f2f68afdbb67f4d0d12700156869bac
 ENV     OBFS4_URL           https://github.com/Yawning/obfs4.git
 ENV     OBFS4_VERSION       0.0.11
 
