@@ -25,7 +25,7 @@ source_file "$DIR/.env"
 # Export some variables for compose
 export BITCOIND_RPC_EXTERNAL_IP
 
-# Eexport env variables for mempool compose
+# Export variables for mempool.space
 export BITCOIND_RPC_PORT
 export BITCOIND_RPC_USER
 export BITCOIND_RPC_PASSWORD
