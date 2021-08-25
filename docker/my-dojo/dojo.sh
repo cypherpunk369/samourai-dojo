@@ -30,7 +30,7 @@ export BITCOIND_RPC_PORT
 export BITCOIND_RPC_USER
 export BITCOIND_RPC_PASSWORD
 export INDEXER_RPC_PORT
-export NET_DOJO_MEMPOOL_API_IPV4
+export NET_MEMPOOL_API_IPV4
 
 # Select YAML files
 select_yaml_files() {
@@ -283,6 +283,9 @@ clean() {
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
+  del_images_for mempool/backend "$MEMPOOL_API_VERSION_TAG"
+  del_images_for mempool/frontend "$MEMPOOL_WEB_VERSION_TAG"
+  del_images_for mariadb "$MEMPOOL_DB_VERSION_TAG"
   docker image prune -f
 }
 

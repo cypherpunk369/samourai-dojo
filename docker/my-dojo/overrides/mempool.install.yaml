@@ -3,7 +3,7 @@ version: "3.7"
 services:
     mempool_api:
         container_name: "mempool_api"
-        image: mempool/backend:v2.2.1
+        image: mempool/backend:v${MEMPOOL_API_VERSION_TAG}
         user: "1000:1000"
         restart: on-failure
         stop_grace_period: 1m
@@ -23,6 +23,7 @@ services:
             ELECTRUM_TLS: "false"
             MYSQL_HOST: "mempool_db"
             MYSQL_PORT: "3306"
+            MYSQL_PASS: ${MYSQL_PASSWORD}
             BACKEND_MAINNET_HTTP_PORT: "8999"
             CACHE_DIR: "/backend/cache"
             MEMPOOL_CLEAR_PROTECTION_MINUTES: "20"
@@ -37,11 +38,11 @@ services:
             - mempool_db
         networks:
             dojonet:
-                ipv4_address: ${NET_DOJO_MEMPOOL_API_IPV4}
+                ipv4_address: ${NET_MEMPOOL_API_IPV4}
 
     mempool_web:
         container_name: "mempool_web"
-        image: mempool/frontend:v2.2.1
+        image: mempool/frontend:v${MEMPOOL_WEB_VERSION_TAG}
         user: "1000:1000"
         restart: on-failure
         stop_grace_period: 1m
@@ -50,7 +51,7 @@ services:
             - ./.env
         environment:
             FRONTEND_HTTP_PORT: "8080"
-            BACKEND_MAINNET_HTTP_HOST: ${NET_DOJO_MEMPOOL_API_IPV4}
+            BACKEND_MAINNET_HTTP_HOST: ${NET_MEMPOOL_API_IPV4}
         logging:
             driver: "json-file"
             options:
@@ -60,11 +61,11 @@ services:
             - mempool_db
         networks:
             dojonet:
-                ipv4_address: ${NET_DOJO_MEMPOOL_WEB_IPV4}
+                ipv4_address: ${NET_MEMPOOL_WEB_IPV4}
 
     mempool_db:
         container_name: "mempool_db"
-        image: mariadb:10.5.8
+        image: mariadb:${MEMPOOL_DB_VERSION_TAG}
         restart: on-failure
         stop_grace_period: 1m
         volumes:
@@ -79,7 +80,7 @@ services:
                 max-file: "10"
         networks:
             dojonet:
-                ipv4_address: ${NET_DOJO_MEMPOOL_DB_IPV4}
+                ipv4_address: ${NET_MEMPOOL_DB_IPV4}
 
 volumes:
     data-mempool_api:
