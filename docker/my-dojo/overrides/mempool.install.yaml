@@ -23,7 +23,6 @@ services:
             ELECTRUM_TLS: "false"
             MYSQL_HOST: "mempool_db"
             MYSQL_PORT: "3306"
-            MYSQL_PASS: ${MYSQL_PASSWORD}
             BACKEND_MAINNET_HTTP_PORT: "8999"
             CACHE_DIR: "/backend/cache"
             MEMPOOL_CLEAR_PROTECTION_MINUTES: "20"
@@ -73,6 +72,8 @@ services:
             - ./mempool/mysql/db-scripts:/docker-entrypoint-initdb.d
         env_file:
             - ./conf/docker-mempool.conf
+        environment:
+            MYSQL_PASSWORD: ${MYSQL_PASS}
         logging:
             driver: "json-file"
             options:

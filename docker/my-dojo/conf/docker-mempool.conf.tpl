@@ -14,7 +14,7 @@ MYSQL_USER=mempool
 # Password of of user account
 # Warning: This option must not be modified after the first installation
 # Type: alphanumeric
-MYSQL_PASSWORD=mempool
+MYSQL_PASS=mempool
 
 # Root password for database
 # Warning: This option must not be modified after the first installation
