@@ -1,8 +1,11 @@
 {
   "name": "samourai-dojo",
-  "version": "1.10.1",
+  "version": "1.11.0",
   "description": "Backend server for Samourai Wallet",
   "main": "accounts/index.js",
+  "engines": {
+    "node": "14.x.x"
+  },
   "scripts": {
     "test": "mocha --recursive --reporter spec"
   },
@@ -37,7 +40,7 @@
     "validator": "13.6.0",
     "websocket": "1.0.34",
     "workerpool": "6.1.5",
-    "zeromq": "6.0.0-beta.6"
+    "zeromq": "6.0.0-beta.5"
   },
   "devDependencies": {
     "mocha": "9.0.3"
