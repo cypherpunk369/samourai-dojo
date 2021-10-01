@@ -25,13 +25,6 @@ source_file "$DIR/.env"
 # Export some variables for compose
 export BITCOIND_RPC_EXTERNAL_IP
 
-# Export variables for mempool.space
-export BITCOIND_RPC_PORT
-export BITCOIND_RPC_USER
-export BITCOIND_RPC_PASSWORD
-export INDEXER_RPC_PORT
-export NET_MEMPOOL_API_IPV4
-
 # Select YAML files
 select_yaml_files() {
   yamlFiles="-f $DIR/docker-compose.yaml"
