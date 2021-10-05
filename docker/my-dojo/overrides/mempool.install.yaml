@@ -12,8 +12,6 @@ services:
             - data-mempool_api:/backend/cache
         env_file:
             - ./.env
-            - ./conf/docker-indexer.conf
-            - ./conf/docker-bitcoind.conf
             - ./conf/docker-mempool.conf
         environment:
             RPC_HOST: "bitcoind"
