@@ -41,7 +41,7 @@ services:
         container_name: "mempool_web"
         image: mempool/frontend:v${MEMPOOL_WEB_VERSION_TAG}
         user: "1000:1000"
-        restart: on-failure
+        restart: always
         stop_grace_period: 1m
         command: "./wait-for mempool_db:3306 --timeout=720 -- nginx -g 'daemon off;'"
         env_file:
@@ -63,7 +63,7 @@ services:
     mempool_db:
         container_name: "mempool_db"
         image: mariadb:${MEMPOOL_DB_VERSION_TAG}
-        restart: on-failure
+        restart: always
         stop_grace_period: 1m
         volumes:
             - data-mempool_db:/var/lib/mysql
