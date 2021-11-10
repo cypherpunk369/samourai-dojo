@@ -1,4 +1,4 @@
-FROM    node:12-alpine
+FROM    node:14-alpine
 
 ENV     NODE_ENV production
 
@@ -6,7 +6,7 @@ ENV     APP_DIR                 /home/node/app
 ARG     TOR_LINUX_GID
 
 RUN     set -ex && \
-        apk --no-cache add shadow bash gcc g++ make python3
+        apk --no-cache add shadow bash gcc g++ make cmake curl python3
 
 # Add node user to tor group
 RUN     addgroup -S -g ${TOR_LINUX_GID} tor && \

@@ -5,7 +5,7 @@
 'use strict'
 
 const os = require('os')
-const Sema = require('async-sema')
+const { Sema } = require('async-sema')
 const { Worker } = require('worker_threads')
 const Logger = require('../lib/logger')
 const util = require('../lib/util')
@@ -32,10 +32,10 @@ module.exports.nbWorkers = nbWorkers
 
 /**
  * Initialize the processor
- * @param {object} notifSock - ZMQ socket used for notifications
+ * @param {object} aNotifSock - ZMQ socket used for notifications
  */
-function init(notifSock) {
-  notifSock = notifSock
+function init(aNotifSock) {
+  notifSock = aNotifSock
 
   for (let i = 0; i < nbWorkers; i++) {
     const worker = new Worker(
@@ -90,11 +90,11 @@ async function processWorkerMessage(msg) {
 
   if (!msg.status) {
     Logger.error(msg.res, 'Tracker : processWorkerMessage()')
-  } else if (msg.op == blockWorker.OP_CONFIRM) {
+  } else if (msg.op === blockWorker.OP_CONFIRM) {
     txsForBroadcast = txsForBroadcast.concat(msg.res)
   }
 
-  if (nbTasksCompleted == nbTasksEnqueued) {
+  if (nbTasksCompleted === nbTasksEnqueued) {
     switch (msg.op) {
       case blockWorker.OP_INIT:
         // Process the transaction outputs
@@ -139,7 +139,7 @@ async function processWorkerMessage(msg) {
 
 /**
  * Execute an operation processing a block
- * @param {integer} op - operation
+ * @param {number} op - operation
  * @param {*} args
  */
 function processTask(op, args) {
@@ -204,7 +204,7 @@ function notifyBlock(header) {
 /**
  * Store a block in db
  * @param {object} header - block header
- * @returns {Promise - int} returns the id of the block
+ * @returns {Promise<number>} returns the id of the block
  */
 async function registerBlock(header) {
   const prevBlock = await dbProcessor.getBlockByHash(header.previousblockhash)

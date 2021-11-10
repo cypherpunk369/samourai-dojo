@@ -3,6 +3,11 @@
 
 ## Releases ##
 
+- [v1.12.1](#1_12_1)
+- [v1.12.0](#1_12_0)
+- [v1.11.0](#1_11_0)
+- [v1.10.1](#1_10_1)
+- [v1.10.0](#1_10_0)
 - [v1.9.0](#1_9_0)
 - [v1.8.1](#1_8_1)
 - [v1.8.0](#1_8_0)
@@ -14,6 +19,204 @@
 - [v1.3.0](#1_3_0)
 - [v1.2.0](#1_2_0)
 - [v1.1.0](#1_1_0)
+
+<a name="1_12_1"/>
+
+## Samourai Dojo v1.12.1 ##
+
+### Change log ###
+
+#### Bug fixes ####
+- [#mr254](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/254) added missing container dependencies for zeromq build
+- [#mr255](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/255) fixed imports/rescans not being processed correctly
+
+#### Credits ####
+- pajasevi
+- Taylor Helsper
+
+<a name="1_12_0"/>
+
+## Samourai Dojo v1.12.0 ##
+
+### Notable changes ###
+
+#### Upgrade of bitcoind to v22.0 ####
+
+Upgrade to Bitcoin Core v22.0
+
+#### Upgrade of Tor to v0.4.6.7 ####
+
+Upgrade to Tor v0.4.6.7 which removes support for outdated v2 onion services
+
+#### Upgrade of BTC-RPC Explorer to v3.2.0 ####
+
+Upgrade to BTC-RPC Explorer v3.2.0
+
+#### Stability improvements ####
+
+Dojo stability has been improved by raising RPC timeout value and fixing uncaught promise rejections.
+Stability issues have been encountered on non-standard installations which contain LND.
+
+### Change log ###
+
+#### Features ####
+- [#mr252](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/252) updated Tor to 0.4.6.7
+- [#mr249](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/249) updated Nginx to 1.21.3
+- [#mr247](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/247) updated Bitcoin Core to 22.0
+- [#mr246](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/246) updated BTC-RPC Explorer to 3.2.0
+- [#mr248](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/248) added uacomment to identify Dojo bitcoind nodes on the network
+
+#### Bug fixes ####
+- [#mr251](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/251) raised RPC timeout value, fixed uncaught promise rejections
+
+#### Credits ####
+- pajasevi
+- Ketominer
+
+<a name="1_11_0"/>
+
+## Samourai Dojo v1.11.0 ##
+
+## Breaking ##
+- Dojo now requires Node.js v14
+
+#### Features ####
+
+- [#mr242](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/242) postmix decoy change addresses
+- [#mr241](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/241) update ZeroMQ and Node.js
+- [#mr240](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/240) update Node.js dependencies
+- [#mr239](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/239) update Tor and remove v2 onion addresses
+- [#mr238](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/238) use RPC auth instead of basic auth
+- other minor improvements
+
+#### Bug fixes ####
+
+- [#mr237](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/237) fix tracker initialization
+- [commit 3ee4ecc6](https://code.samourai.io/dojo/samourai-dojo/-/commit/3ee4ecc645dc88632f4e7bfd00fafe602bcaef13) fix importing from local_bitcoind
+- other minor fixes
+
+<a name="1_10_1"/>
+
+## Samourai Dojo v1.10.1 ##
+
+#### Bug fixes ####
+
+- [#mr236](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/236) fix auth errors
+- [#mr237](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/237) fix zmq block notifications
+
+#### Security ####
+
+- [#mr235](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/235) apply middleware in correct order
+
+#### Credits ###
+
+- pajasevi
+- lukechilds
+- kenshin-samourai
+- zeroleak
+
+
+<a name="1_10_0"/>
+
+## Samourai Dojo v1.10.0 ##
+
+
+### Notable changes ###
+
+
+#### Performances optimization ####
+
+This release provides faster IBD, synchronization and rescans thanks to the optimization of multiple components of Dojo (Tracker, Importer, etc)
+
+
+#### Export of XPUB activity ####
+
+The Maintenance Tool now allows to export the activity history of a XPUB in CSV format
+
+
+#### Upgrade of bitcoind to v0.21.1 ####
+
+Upgrade to Bitcoin Core v0.21.1
+
+
+#### Upgrade of whirlpool to v0.10.11 ####
+
+Upgrade to whirlpool-cli 0.10.11
+
+
+#### Upgrade of explorer to v3.1.1 ####
+
+Upgrade to btc-rpc-explorer 3.1.1
+
+
+#### Upgrade of tor to v0.4.4.8 ####
+
+Upgrade to Tor v0.4.4.8
+
+
+#### Upgrade of indexer to v0.5.0 ####
+
+Upgrade to addrindexrs v0.5.0
+
+
+
+### Change log ###
+
+
+#### MyDojo ####
+
+- [#mr199](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/199) manage linux uids and gids as dojo system parameters
+- [#mr200](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/200) manage ip addresses of containers as dojo system parameters
+- [#mr201](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/201) disable rescan-lookahead field if data source is third_party_explorer
+- [#mr202](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/202) reference db container by its ip address
+- [#mr203](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/203) add export of xpub history in csv format
+- [#mr204](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/204) upgrade whirlpool to whirlpool cli v0 10 10
+- [#mr206](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/206) add support of config profiles for mysql
+- [#mr207](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/207) upgrade tor to tor 0.4.4.8
+- [#mr208](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/208) improve performances of blocks processing by the tracker
+- [#mr209](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/209) improve performances of api
+- [#mr210](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/210) better seriesCall
+- [#mr211](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/211) add support of rest api provided by addrindexrs
+- [#mr212](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/212) minor optimizations
+- [#mr214](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/214) upgrade explorer to btc rpc explorer 3.0.0
+- [#mr215](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/215) handle Error in sendError method
+- [#mr217](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/217) optimize tracker (parallel processing of blocks)
+- [#mr218](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/218) optimize derivation of addresses
+- [#mr219](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/219) optimize remote importer
+- [#mr221](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/221) implement util.splitList() with slice() instead of splice()
+- [#mr222](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/222) determine bitcoin network based on config file instead of cli argument
+- [#mr223](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/223) upgrade bitcoind to bitcoin core 0.21.1
+- [#mr224](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/224) switch to buster-slim and alpine images
+- [#mr226](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/226) upgrade btc-rpc-explorer to v3.1.1
+- [#mr227](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/227) switch from express to tiny-http
+- [#mr228](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/228) set NODE_ENV to production for optimization purposes
+- [#mr232](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/232) upgrade whirlpool to whirlpool-cli v0.10.11
+
+
+#### Bug fixes ####
+
+- [#mr220](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/220) switch tx isolation mode to read-committed
+
+
+#### Security ####
+
+- [#mr216](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/216) upgrade node packages
+- [#mr229](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/229) update node dependencies
+
+
+#### Documentation ####
+
+- [#mr225](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/225) update docker_advanced_setups.md - fix typo
+
+
+#### Credits ###
+
+- flatcloud0b3
+- kenshin-samourai
+- LaurentMT
+- MrHash
+- pajasevi
+
 
 
 <a name="1_9_0"/>
@@ -310,7 +513,6 @@ A new config parameter `WHIRLPOOL_RESYNC` is added to docker-whirlpool.conf. Whe
 - kenshin-samourai
 - zeroleak
 
-
 <a name="1_6_0"/>
 
 ## Samourai Dojo v1.6.0 ##
@@ -413,7 +615,6 @@ Upgrade to [addrindexrs](https://github.com/Samourai-Wallet/addrindexrs) v0.3.0
 - mikispag
 - pajasevi
 - zeroleak
-
 
 <a name="1_5_0"/>
 

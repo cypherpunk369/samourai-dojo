@@ -15,7 +15,7 @@ const network = require('../lib/bitcoin/network')
 const apiHelper = require('./api-helper')
 const keys = require('../keys')[network.key]
 
-const debugApi = !!(process.argv.indexOf('api-debug') > -1)
+const debugApi = process.argv.indexOf('api-debug') > -1
 
 
 /**
@@ -36,7 +36,6 @@ class TransactionsRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsGetTransaction.bind(this),
       this.getTransaction.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
@@ -45,7 +44,6 @@ class TransactionsRestApi {
       apiHelper.validateEntitiesParams.bind(apiHelper),
       this.validateArgsGetTransactions.bind(this),
       this.getTransactions.bind(this),
-      HttpServer.sendAuthError
     )
   }
 
@@ -88,7 +86,7 @@ class TransactionsRestApi {
       const result = await walletService.getWalletTransactions(active, page, count)
       if (excludeNullXfer) {
         result.txs = result.txs.filter(tx => {
-          return tx['result'] != 0
+          return tx['result'] !== 0
         })
       }
 

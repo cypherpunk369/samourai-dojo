@@ -9,16 +9,14 @@ const bodyParser = require('body-parser')
 const errors = require('../lib/errors')
 const network = require('../lib/bitcoin/network')
 const Logger = require('../lib/logger')
-const db = require('../lib/db/mysql-db-wrapper')
 const hdaHelper = require('../lib/bitcoin/hd-accounts-helper')
 const hdaService = require('../lib/bitcoin/hd-accounts-service')
-const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
 const HdAccountInfo = require('../lib/wallet/hd-account-info')
 const authMgr = require('../lib/auth/authorizations-manager')
 const HttpServer = require('../lib/http-server/http-server')
 const remoteImporter = require('../lib/remote-importer/remote-importer')
 
-const debugApi = !!(process.argv.indexOf('api-debug') > -1)
+const debugApi = process.argv.indexOf('api-debug') > -1
 const gap = require('../keys/')[network.key].gap
 
 
@@ -34,9 +32,6 @@ class XPubRestApi {
   constructor(httpServer) {
     this.httpServer = httpServer
 
-    // Initialize the rpc client
-    this.rpcClient = new RpcClient()
-
     // Establish routes
     const urlencodedParser = bodyParser.urlencoded({ extended: true })
 
@@ -46,7 +41,6 @@ class XPubRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsPostXpub.bind(this),
       this.postXpub.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
@@ -54,7 +48,6 @@ class XPubRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsGetXpub.bind(this),
       this.getXpubImportStatus.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
@@ -62,7 +55,6 @@ class XPubRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsGetXpub.bind(this),
       this.getXpub.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.post(
@@ -71,7 +63,6 @@ class XPubRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsPostLockXpub.bind(this),
       this.postLockXpub.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.delete(
@@ -80,7 +71,6 @@ class XPubRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsDeleteXpub.bind(this),
       this.deleteXpub.bind(this),
-      HttpServer.sendAuthError
     )
   }
 
@@ -123,9 +113,9 @@ class XPubRestApi {
 
       if (argSegwit) {
         const segwit = argSegwit.toLowerCase()
-        if (segwit == 'bip49')
+        if (segwit === 'bip49')
           scheme = hdaHelper.BIP49
-        else if (segwit == 'bip84')
+        else if (segwit === 'bip84')
           scheme = hdaHelper.BIP84
         else
           return HttpServer.sendError(res, errors.xpub.SEGWIT)
@@ -135,7 +125,7 @@ class XPubRestApi {
       const forceOverride = argForceOverride ? argForceOverride : false
 
       // Process action
-      if (argAction == 'new') {
+      if (argAction === 'new') {
         // New hd account
         try {
           await hdaService.createHdAccount(xpub, scheme)
@@ -143,7 +133,7 @@ class XPubRestApi {
         } catch(e) {
           HttpServer.sendError(res, e)
         }
-      } else if (argAction == 'restore') {
+      } else if (argAction === 'restore') {
         // Restore hd account
         try {
           await hdaService.restoreHdAccount(xpub, scheme, forceOverride)
@@ -239,7 +229,7 @@ class XPubRestApi {
       if (status != null) {
         ret['import_in_progress'] = true
         ret['status'] = status['status']
-        if (ret['status'] == remoteImporter.STATUS_RESCAN)
+        if (ret['status'] === remoteImporter.STATUS_RESCAN)
           ret['hits'] = status['txs_int'] + status['txs_ext']
         else
           ret['hits'] = status['txs']
@@ -278,7 +268,7 @@ class XPubRestApi {
       if (!req.body.message)
         return HttpServer.sendError(res, errors.body.NOMSG)
 
-      if (!(req.body.message == 'lock' || req.body.message == 'unlock'))
+      if (!(req.body.message === 'lock' || req.body.message === 'unlock'))
         return HttpServer.sendError(res, errors.sig.INVMSG)
 
       // Extract arguments
@@ -299,7 +289,7 @@ class XPubRestApi {
       try {
         // Check the signature and process the request
         await hdaService.verifyXpubSignature(xpub, argAddr, argSig, argMsg, scheme)
-        const lock = (argMsg == 'unlock') ? false : true
+        const lock = argMsg !== 'unlock'
         const ret = await hdaService.lockHdAccount(xpub, lock)
         HttpServer.sendOkData(res, {derivation: ret})
       } catch(e) {
@@ -395,7 +385,7 @@ class XPubRestApi {
       }
 
     } catch(e) {
-      const err = (e == errors.xpub.PRIVKEY) ? e : errors.xpub.INVALID
+      const err = (e === errors.xpub.PRIVKEY) ? e : errors.xpub.INVALID
       throw err
     }
   }

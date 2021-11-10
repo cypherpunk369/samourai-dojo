@@ -3,7 +3,7 @@ FROM    debian:buster-slim
 ENV     TOR_HOME            /var/lib/tor
 ENV     TOR_URL             https://dist.torproject.org
 ENV     TOR_MIRROR_URL      https://tor.eff.org/dist
-ENV     TOR_VERSION         0.4.4.8
+ENV     TOR_VERSION         0.4.6.7
 ENV     TOR_GPG_KS_URI      hkp://keyserver.ubuntu.com:80
 ENV     TOR_GPG_KEY1        0xEB5A896A28988BF5
 ENV     TOR_GPG_KEY2        0xC218525819F78451
@@ -11,9 +11,8 @@ ENV     TOR_GPG_KEY3        0x21194EBB165733EA
 ENV     TOR_GPG_KEY4        0x6AFEE6D49E92B601
 
 ENV     GOLANG_DL_URL       https://dl.google.com/go
-ENV     GOLANG_ARCHIVE      go1.13.5.linux-arm64.tar.gz
-ENV     GOLANG_SHA256       227b718923e20c846460bbecddde9cb86bad73acc5fb6f8e1a96b81b5c84668b
-
+ENV     GOLANG_ARCHIVE      go1.17.linux-arm64.tar.gz
+ENV     GOLANG_SHA256       01a9af009ada22122d3fcb9816049c1d21842524b38ef5d5a0e2ee4b26d7c3e7
 ENV     OBFS4_URL           https://github.com/Yawning/obfs4.git
 ENV     OBFS4_VERSION       0.0.11
 

@@ -5,13 +5,13 @@
 'use strict'
 
 const _ = require('lodash')
-const zmq = require('zeromq')
-const Sema = require('async-sema')
+const zmq = require('zeromq/v5-compat')
+const { Sema } = require('async-sema')
 const util = require('../lib/util')
 const Logger = require('../lib/logger')
 const db = require('../lib/db/mysql-db-wrapper')
 const network = require('../lib/bitcoin/network')
-const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
+const { createRpcClient, waitForBitcoindRpcApi } = require('../lib/bitcoind-rpc/rpc-client')
 const keys = require('../keys')[network.key]
 const Block = require('./block')
 const blocksProcessor = require('./blocks-processor')
@@ -28,7 +28,7 @@ class BlockchainProcessor {
    */
   constructor(notifSock) {
     // RPC client
-    this.client = new RpcClient()
+    this.client = createRpcClient()
     // ZeroMQ socket for bitcoind blocks messages
     this.blkSock = null
     // Initialize a semaphor protecting the onBlockHash() method
@@ -43,7 +43,7 @@ class BlockchainProcessor {
 
   /**
    * Start processing the blockchain
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async start() {
     await this.catchup()
@@ -57,19 +57,26 @@ class BlockchainProcessor {
 
   /**
    * Tracker process startup
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async catchup() {
-    const [highest, info] = await Promise.all([db.getHighestBlock(), this.client.getblockchaininfo()])
-    const daemonNbHeaders = info.headers
+    try {
+      await waitForBitcoindRpcApi()
+      const [highest, info] = await Promise.all([db.getHighestBlock(), this.client.getblockchaininfo()])
+      const daemonNbHeaders = info.headers
 
-    // Consider that we are in IBD mode if Dojo is far in the past (> 13,000 blocks)
-    this.isIBD = (highest.blockHeight < 655000) || (highest.blockHeight < daemonNbHeaders - 13000)
+      // Consider that we are in IBD mode if Dojo is far in the past (> 13,000 blocks)
+      this.isIBD = (highest.blockHeight < 681000) || (highest.blockHeight < daemonNbHeaders - 13000)
 
-    if (this.isIBD)
-      return this.catchupIBDMode()
-    else
-      return this.catchupNormalMode()
+      if (this.isIBD)
+        return this.catchupIBDMode()
+      else
+        return this.catchupNormalMode()
+    } catch (err) {
+      Logger.error(err, 'Tracker : BlockchainProcessor.catchup()');
+      await util.delay(2000)
+      return this.catchup()
+    }
   }
 
   /**
@@ -78,7 +85,7 @@ class BlockchainProcessor {
    * 2. Pull all block headers after database last known height
    * 3. Process those block headers
    *
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async catchupIBDMode() {
     try {
@@ -93,7 +100,7 @@ class BlockchainProcessor {
       let prevBlockId = highest.blockID
 
       // If no header or block loaded by bitcoind => try later
-      if (daemonNbHeaders == 0 || daemonNbBlocks == 0) {
+      if (daemonNbHeaders === 0 || daemonNbBlocks === 0) {
         Logger.info('Tracker : New attempt scheduled in 30s (waiting for block headers)')
         return util.delay(30000).then(() => {
           return this.catchupIBDMode()
@@ -117,8 +124,8 @@ class BlockchainProcessor {
 
           await util.seriesCall(blockRange, async height => {
             try {
-              const blockHash = await this.client.getblockhash(height)
-              const header = await this.client.getblockheader(blockHash, true)
+              const blockHash = await this.client.getblockhash({ height })
+              const header = await this.client.getblockheader({ blockhash: blockHash, verbose: true })
               prevBlockId = await this.processBlockHeader(header, prevBlockId)
             } catch(e) {
               Logger.error(e, 'Tracker : BlockchainProcessor.catchupIBDMode()')
@@ -148,7 +155,7 @@ class BlockchainProcessor {
    * 2. Pull all block headers after database last known height
    * 3. Process those block headers
    *
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async catchupNormalMode() {
     try {
@@ -159,7 +166,7 @@ class BlockchainProcessor {
       const daemonNbBlocks = info.blocks
 
       if (highest == null) return null
-      if (daemonNbBlocks == highest.blockHeight) return null
+      if (daemonNbBlocks === highest.blockHeight) return null
 
       const blockRange = _.range(highest.blockHeight, daemonNbBlocks + 1)
 
@@ -225,7 +232,7 @@ class BlockchainProcessor {
    * block confirmation.
    *
    * @param {Buffer} buf - block
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async onBlockHash(buf) {
     try {
@@ -236,7 +243,7 @@ class BlockchainProcessor {
       let headers = null
 
       try {
-        const header = await this.client.getblockheader(blockHash, true)
+        const header = await this.client.getblockheader({ blockhash: blockHash, verbose: true })
         Logger.info(`Tracker : Block #${header.height} ${blockHash}`)
         // Grab all headers between this block and last known
         headers = await this.chainBacktrace([header])
@@ -286,7 +293,7 @@ class BlockchainProcessor {
 
     if (block == null) {
       // Previous block does not exist in database. Grab from bitcoind
-      const header = await this.client.getblockheader(deepest.previousblockhash, true)
+      const header = await this.client.getblockheader({ blockhash: deepest.previousblockhash, verbose: true })
       headers.push(header)
       return this.chainBacktrace(headers)
     } else {
@@ -298,8 +305,8 @@ class BlockchainProcessor {
   /**
    * Cancel confirmation of transactions
    * and delete blocks after a given height
-   * @param {integer} height - height of last block maintained
-   * @returns {Promise}
+   * @param {number} height - height of last block maintained
+   * @returns {Promise<void>}
    */
   async rewind(height) {
     // Retrieve transactions confirmed in reorg'd blocks
@@ -317,8 +324,8 @@ class BlockchainProcessor {
 
   /**
    * Rescan a range of blocks
-   * @param {integer} fromHeight - height of first block
-   * @param {integer} toHeight - height of last block
+   * @param {number} fromHeight - height of first block
+   * @param {number} toHeight - height of last block
    * @returns {Promise}
    */
   async rescanBlocks(fromHeight, toHeight) {
@@ -356,15 +363,15 @@ class BlockchainProcessor {
 
   /**
    * Process a range of blocks
-   * @param {int[]} heights - a range of block heights
+   * @param {number[]} heights - a range of block heights
    */
   async processBlockRange(heights) {
     const chunks = util.splitList(heights, blocksProcessor.nbWorkers)
 
     return util.seriesCall(chunks, async chunk => {
       const headers = await util.parallelCall(chunk, async height => {
-        const hash = await this.client.getblockhash(height)
-        return await this.client.getblockheader(hash)
+        const hash = await this.client.getblockhash({ height })
+        return await this.client.getblockheader({ blockhash: hash })
       })
       return this.processBlocks(headers)
     })
@@ -373,7 +380,7 @@ class BlockchainProcessor {
   /**
    * Process a block header
    * @param {object} header - block header
-   * @param {int} prevBlockID - id of previous block
+   * @param {number} prevBlockID - id of previous block
    * @returns {Promise}
    */
   async processBlockHeader(header, prevBlockID) {

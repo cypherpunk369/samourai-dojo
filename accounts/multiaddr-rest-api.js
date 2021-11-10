@@ -12,7 +12,7 @@ const authMgr = require('../lib/auth/authorizations-manager')
 const HttpServer = require('../lib/http-server/http-server')
 const apiHelper = require('./api-helper')
 
-const debugApi = !!(process.argv.indexOf('api-debug') > -1)
+const debugApi = process.argv.indexOf('api-debug') > -1
 
 
 /**
@@ -32,20 +32,20 @@ class MultiaddrRestApi {
     const urlencodedParser = bodyParser.urlencoded({ extended: true })
 
     this.httpServer.app.get(
-      '/multiaddr',
-      authMgr.checkAuthentication.bind(authMgr),
-      apiHelper.validateEntitiesParams.bind(apiHelper),
-      this.getMultiaddr.bind(this),
-      HttpServer.sendAuthError
+        '/multiaddr',
+        authMgr.checkAuthentication.bind(authMgr),
+        apiHelper.validateEntitiesParams.bind(apiHelper),
+        this.getMultiaddr.bind(this),
+        HttpServer.sendAuthError
     )
 
     this.httpServer.app.post(
-      '/multiaddr',
-      urlencodedParser,
-      authMgr.checkAuthentication.bind(authMgr),
-      apiHelper.validateEntitiesParams.bind(apiHelper),
-      this.postMultiaddr.bind(this),
-      HttpServer.sendAuthError
+        '/multiaddr',
+        urlencodedParser,
+        authMgr.checkAuthentication.bind(authMgr),
+        apiHelper.validateEntitiesParams.bind(apiHelper),
+        this.postMultiaddr.bind(this),
+        HttpServer.sendAuthError
     )
   }
 
@@ -59,16 +59,19 @@ class MultiaddrRestApi {
       // Check request params
       if (!apiHelper.checkEntitiesParams(req.query))
         return HttpServer.sendError(res, errors.multiaddr.NOACT)
-
+      //return HttpServer.sendError(res, '')
       // Parse params
       const entities = apiHelper.parseEntitiesParams(req.query)
 
+      if (entities.active.addrs.length === 1 || entities.active.addrs.length === 2 || entities.active.xpubs.length === 1)
+        return HttpServer.sendError(res, '')
+
       const result = await walletService.getWalletInfo(
-        entities.active,
-        entities.legacy,
-        entities.bip49,
-        entities.bip84,
-        entities.pubkey
+          entities.active,
+          entities.legacy,
+          entities.bip49,
+          entities.bip84,
+          entities.pubkey
       )
 
       const ret = JSON.stringify(result, null, 2)
@@ -80,7 +83,7 @@ class MultiaddrRestApi {
     } finally {
       if (debugApi) {
         const strParams =
-          `${req.query.active ? req.query.active : ''} \
+            `${req.query.active ? req.query.active : ''} \
           ${req.query.new ? req.query.new : ''} \
           ${req.query.pubkey ? req.query.pubkey : ''} \
           ${req.query.bip49 ? req.query.bip49 : ''} \
@@ -106,11 +109,11 @@ class MultiaddrRestApi {
       const entities = apiHelper.parseEntitiesParams(req.body)
 
       const result = await walletService.getWalletInfo(
-        entities.active,
-        entities.legacy,
-        entities.bip49,
-        entities.bip84,
-        entities.pubkey
+          entities.active,
+          entities.legacy,
+          entities.bip49,
+          entities.bip84,
+          entities.pubkey
       )
 
       HttpServer.sendOkDataOnly(res, result)
@@ -121,7 +124,7 @@ class MultiaddrRestApi {
     } finally {
       if (debugApi) {
         const strParams =
-          `${req.body.active ? req.body.active : ''} \
+            `${req.body.active ? req.body.active : ''} \
           ${req.body.new ? req.body.new : ''} \
           ${req.body.pubkey ? req.body.pubkey : ''} \
           ${req.body.bip49 ? req.body.bip49 : ''} \

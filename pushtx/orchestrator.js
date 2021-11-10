@@ -4,11 +4,11 @@
  */
 'use strict'
 
-const zmq = require('zeromq')
-const Sema = require('async-sema')
+const zmq = require('zeromq/v5-compat')
+const { Sema } = require('async-sema')
 const Logger = require('../lib/logger')
 const db = require('../lib/db/mysql-db-wrapper')
-const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
+const { createRpcClient, isConnectionError } = require('../lib/bitcoind-rpc/rpc-client')
 const network = require('../lib/bitcoin/network')
 const keys = require('../keys')[network.key]
 const pushTxProcessor = require('./pushtx-processor')
@@ -24,7 +24,7 @@ class Orchestrator {
    */
   constructor() {
     // RPC client
-    this.rpcClient = new RpcClient()
+    this.rpcClient = createRpcClient()
     // ZeroMQ socket for bitcoind blocks messages
     this.blkSock = null
     // Initialize a semaphor protecting the onBlockHash() method
@@ -77,7 +77,7 @@ class Orchestrator {
 
       // Retrieve the block height
       const blockHash = buf.toString('hex')
-      const header = await this.rpcClient.getblockheader(blockHash, true)
+      const header = await this.rpcClient.getblockheader({ blockhash: blockHash, verbose: true })
       const height = header.height
 
       Logger.info(`Orchestrator : Block ${height} ${blockHash}`)
@@ -94,13 +94,13 @@ class Orchestrator {
           break
 
         for (let tx of txs) {
-          let hasParentTx = (tx.schParentTxid != null) && (tx.schParentTxid != '')
+          let hasParentTx = (tx.schParentTxid != null) && (tx.schParentTxid !== '')
           let parentTx = null
 
           // Check if previous transaction has been confirmed
           if (hasParentTx) {
             try {
-              parentTx = await this.rpcClient.getrawtransaction(tx.schParentTxid, true)
+              parentTx = await this.rpcClient.getrawtransaction({ txid: tx.schParentTxid, verbose: true })
             } catch(e) {
               Logger.error(e, 'Orchestrator : Transaction.getTransaction()')
             }
@@ -116,7 +116,7 @@ class Orchestrator {
               Logger.error(e, `Orchestrator : Orchestrator.onBlockHash() : ${msg}`)
               // Check if it's an issue with the connection to the RPC API
               // (=> immediately stop the loop)
-              if (RpcClient.isConnectionError(e)) {
+              if (isConnectionError(e)) {
                 Logger.info('Orchestrator : Connection issue')
                 rpcConnOk = false
                 break
@@ -158,11 +158,11 @@ class Orchestrator {
   /**
    * Update triggers in chain of transactions
    * following a transaction identified by its txid
-   * @param {integer} parentId - parent id
-   * @param {integer} shift - delta to be added to the triggers
+   * @param {number} parentId - parent id
+   * @param {number} shift - delta to be added to the triggers
    */
   async updateTriggers(parentId, shift) {
-    if (shift == 0)
+    if (shift === 0)
       return
 
     const txs = await db.getNextScheduledTransactions(parentId)

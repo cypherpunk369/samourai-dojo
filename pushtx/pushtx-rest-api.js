@@ -40,35 +40,30 @@ class PushTxRestApi {
       jsonParser,
       authMgr.checkAuthentication.bind(authMgr),
       this.postScheduleTxs.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.post(
       '/',
       authMgr.checkAuthentication.bind(authMgr),
       this.postPushTx.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
       '/',
       authMgr.checkAuthentication.bind(authMgr),
       this.getPushTx.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
       `/${keys.prefixes.statusPushtx}/`,
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.getStatus.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
       `/${keys.prefixes.statusPushtx}/schedule`,
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.getStatusSchedule.bind(this),
-      HttpServer.sendAuthError
     )
 
     // Handle unknown paths, returning a help message
@@ -76,7 +71,6 @@ class PushTxRestApi {
       '/*',
       authMgr.checkAuthentication.bind(authMgr),
       this.getHelp.bind(this),
-      HttpServer.sendAuthError
     )
   }
 
@@ -199,7 +193,7 @@ class PushTxRestApi {
       HttpServer.sendOk(res)
     } catch(e) {
       // Returns code 200 if VIOLATION_STRICT_MODE_VOUTS
-      if (e.message && e.message.code && e.message.code == errors.pushtx.VIOLATION_STRICT_MODE_VOUTS) {
+      if (e.message && e.message.code && e.message.code === errors.pushtx.VIOLATION_STRICT_MODE_VOUTS) {
         e.message = JSON.stringify(e.message)
         this._traceError(res, e, 200)
       } else {
@@ -212,7 +206,7 @@ class PushTxRestApi {
    * Trace an error during push
    * @param {object} res - http response object
    * @param {object} err - error object
-   * @param {int} errorCode - error code (optional)
+   * @param {number} errorCode - error code (optional)
    */
   _traceError(res, err, errorCode) {
     let ret = null

@@ -10,7 +10,7 @@ const errors = require('../lib/errors')
 const db = require('../lib/db/mysql-db-wrapper')
 const network = require('../lib/bitcoin/network')
 const keys = require('../keys')[network.key]
-const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
+const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
 const pushTxProcessor = require('./pushtx-processor')
 
 
@@ -23,7 +23,7 @@ class TransactionsScheduler {
    * Constructor
    */
   constructor() {
-    this.rpcClient = new RpcClient()
+    this.rpcClient = createRpcClient()
   }
 
   /**
@@ -41,7 +41,7 @@ class TransactionsScheduler {
       script.sort((a,b) => a.hop - b.hop || a.nlocktime - b.nlocktime)
 
       // Get the height of last block seen
-      const info = await this.rpcClient.getBlockchainInfo()
+      const info = await this.rpcClient.getblockchaininfo()
       const lastHeight = info.blocks
 
       // Get the nLockTime associated to the first transaction
@@ -68,13 +68,13 @@ class TransactionsScheduler {
         // Decode the transaction
         const tx = bitcoin.Transaction.fromHex(entry.tx)
         // Check that nlocktimes are matching
-        if (!(tx.locktime && tx.locktime == entry.nlocktime)) {
+        if (!(tx.locktime && tx.locktime === entry.nlocktime)) {
           const msg = `TransactionsScheduler.schedule() : nLockTime mismatch : ${tx.locktime} - ${entry.nlocktime}`
           Logger.error(null, `PushTx : ${msg}`)
           throw errors.pushtx.NLOCK_MISMATCH
         }
         // Check that order of hop and nlocktime values are consistent
-        if (entry.hop != lastHopProcessed) {
+        if (entry.hop !== lastHopProcessed) {
           if (entry.nlocktime < lastLockTimeProcessed)
             throw errors.pushtx.SCHEDULED_BAD_ORDER
         }
@@ -105,7 +105,7 @@ class TransactionsScheduler {
         lastHopProcessed = entry.hop
         lastLockTimeProcessed = entry.nlocktime
         // Update scheduled height if needed
-        if (baseHeight != nltTx0)
+        if (baseHeight !== nltTx0)
           entry.nlocktime = baseHeight + entry.delta
       }
 
@@ -123,7 +123,7 @@ class TransactionsScheduler {
       let parentNlocktime = baseHeight
 
       // Check if first transactions should be sent immediately
-      while ((script.length > 0) && (script[0].nlocktime <= lastHeight) && (script[0].delta == 0)) {
+      while ((script.length > 0) && (script[0].nlocktime <= lastHeight) && (script[0].delta === 0)) {
         await pushTxProcessor.pushTx(script[0].tx)
         const tx = bitcoin.Transaction.fromHex(script[0].tx)
         parentTxid = tx.getId()

@@ -8,7 +8,7 @@ const { isMainThread, parentPort } = require('worker_threads')
 const network = require('../lib/bitcoin/network')
 const keys = require('../keys')[network.key]
 const db = require('../lib/db/mysql-db-wrapper')
-const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
+const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
 const Block = require('./block')
 
 
@@ -61,22 +61,22 @@ async function processMessage(msg) {
   try {
     switch(msg.op) {
       case OP_INIT:
-        if (status != IDLE)
+        if (status !== IDLE)
           throw 'Operation not allowed'
         res = await initBlock(msg.header)
         break
       case OP_PROCESS_OUTPUTS:
-        if (status != INITIALIZED)
+        if (status !== INITIALIZED)
           throw 'Operation not allowed'
         res = await processOutputs()
         break
       case OP_PROCESS_INPUTS:
-        if (status != OUTPUTS_PROCESSED)
+        if (status !== OUTPUTS_PROCESSED)
           throw 'Operation not allowed'
         res = await processInputs()
         break
       case OP_CONFIRM:
-        if (status != INPUTS_PROCESSED)
+        if (status !== INPUTS_PROCESSED)
           throw 'Operation not allowed'
         res = await confirmTransactions(msg.blockId)
         break
@@ -104,7 +104,7 @@ async function processMessage(msg) {
  */
 async function initBlock(header) {
   status = INITIALIZED
-  const hex = await rpcClient.getblock(header.hash, false)
+  const hex = await rpcClient.getblock({ blockhash: header.hash, verbosity: 0 })
   block = new Block(hex, header)
   return true
 }
@@ -130,7 +130,7 @@ async function processInputs() {
 
 /**
  * Confirm the transactions
- * @param {integer} blockId - id of the block in db
+ * @param {number} blockId - id of the block in db
  */
 async function confirmTransactions(blockId) {
   status = TXS_CONFIRMED
@@ -153,7 +153,7 @@ function reset() {
 /**
  * MAIN
  */
-const rpcClient = new RpcClient()
+const rpcClient = createRpcClient()
 let block = null
 let txsForBroadcast = []
 let status = IDLE
