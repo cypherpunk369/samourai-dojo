@@ -57,6 +57,11 @@ select_yaml_files() {
   echo "$yamlFiles"
 }
 
+# Disable docker compose v2
+configure_docker_compose() {
+  docker-compose --version | grep "v2" >/dev/null && docker-compose disable-v2
+}
+
 # Docker up
 docker_up() {
   yamlFiles=$(select_yaml_files)
@@ -201,6 +206,8 @@ install() {
 
   # Installation
   if [ $launchInstall -eq 0 ]; then
+    # Disable docker compose v2
+    configure_docker_compose
     # Initialize the config files
     init_config_files
     # Build and start Dojo
@@ -314,6 +321,8 @@ upgrade() {
 
   # Upgrade Dojo
   if [ $launchUpgrade -eq 0 ]; then
+    # Disable docker compose v2
+    configure_docker_compose
     # Select yaml files
     yamlFiles=$(select_yaml_files)
     # Check if dojo is running (check the db container)
