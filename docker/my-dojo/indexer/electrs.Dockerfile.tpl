@@ -1,8 +1,9 @@
 FROM    rust:1.44.1-slim-buster
 
 ENV     INDEXER_HOME        /home/indexer
-ENV     INDEXER_VERSION     0.8.10
+ENV     INDEXER_VERSION     0.9.3
 ENV     INDEXER_URL         https://github.com/romanz/electrs/archive
+ENV     RUST_LOG            DEBUG
 
 ARG     INDEXER_LINUX_GID
 ARG     INDEXER_LINUX_UID
@@ -46,7 +47,7 @@ RUN     set -ex && \
 USER    indexer
 
 RUN     cd "$INDEXER_HOME/electrs" && \
-        cargo install --locked --path . 
+        cargo install --locked --path .
 
 EXPOSE  50001
 EXPOSE  8080
