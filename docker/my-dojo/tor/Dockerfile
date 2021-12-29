@@ -13,6 +13,7 @@ ENV     TOR_GPG_KEY4        0x6AFEE6D49E92B601
 ENV     GOLANG_DL_URL       https://dl.google.com/go
 ENV     GOLANG_ARCHIVE      go1.17.linux-arm64.tar.gz
 ENV     GOLANG_SHA256       01a9af009ada22122d3fcb9816049c1d21842524b38ef5d5a0e2ee4b26d7c3e7
+
 ENV     OBFS4_URL           https://github.com/Yawning/obfs4.git
 ENV     OBFS4_VERSION       0.0.11
 
@@ -97,7 +98,7 @@ RUN     chown tor:tor /wait-for-it.sh && \
         chmod g+x /wait-for-it.sh
 
 # Expose socks port
-EXPOSE  9050
+EXPOSE  ${TOR_SOCKS_PORT}
 
 # Switch to user tor
 USER    tor
