@@ -20,10 +20,12 @@ source_file "$DIR/conf/docker-indexer.conf"
 source_file "$DIR/conf/docker-bitcoind.conf"
 source_file "$DIR/conf/docker-explorer.conf"
 source_file "$DIR/conf/docker-common.conf"
+source_file "$DIR/conf/docker-tor.conf"
 source_file "$DIR/.env"
 
 # Export some variables for compose
 export BITCOIND_RPC_EXTERNAL_IP INDEXER_RPC_PORT BITCOIND_RPC_USER BITCOIND_RPC_PASSWORD BITCOIND_RPC_PORT
+export TOR_SOCKS_PORT
 
 # Select YAML files
 select_yaml_files() {
@@ -330,6 +332,8 @@ upgrade() {
     # Cleanup
     cleanup
 
+    source_file "$DIR/conf/docker-tor.conf"
+    export TOR_SOCKS_PORT
     # Rebuild the images (with or without cache)
     if [ $noCache -eq 0 ]; then
       echo -e "\nDeleting Dojo containers and images."
