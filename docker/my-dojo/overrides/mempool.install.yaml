@@ -18,12 +18,12 @@ services:
             CORE_RPC_PORT: ${BITCOIND_RPC_PORT}
             CORE_RPC_USER: ${BITCOIND_RPC_USER}
             CORE_RPC_PASS: ${BITCOIND_RPC_PASSWORD}
-            ELECTRUM_HOST: "indexer"
+            ELECTRUM_HOST: ${INDEXER_IP}
             ELECTRUM_PORT: ${INDEXER_RPC_PORT}
             ELECTRUM_TLS: "false"
-            DATABASE_DATABASE: "mempool"
-            DATABASE_USERNAME: "mempool"
-            DATABASE_PASSWORD: "mempool"
+            DATABASE_DATABASE: ${MYSQL_DATABASE}
+            DATABASE_USERNAME: ${MYSQL_DB_USER}
+            DATABASE_PASSWORD: ${MYSQL_DB_PASS}
             MEMPOOL_HTTP_PORT: "8999"
             MEMPOOL_CACHE_DIR: "/backend/cache"
             MEMPOOL_CLEAR_PROTECTION_MINUTES: "20"
@@ -75,10 +75,10 @@ services:
             - ./.env
             - ./conf/docker-mempool.conf
         environment:
-            MYSQL_DATABASE: "mempool"
-            MYSQL_USER: "mempool"
-            MYSQL_PASSWORD: "mempool"
-            MYSQL_ROOT_PASSWORD: 
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_DB_USER}
+            MYSQL_PASSWORD: ${MYSQL_DB_PASS}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_DB_ROOT_PASSWORD}
         logging:
             driver: "json-file"
             options:

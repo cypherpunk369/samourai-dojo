@@ -9,17 +9,17 @@ MEMPOOL_INSTALL=off
 # User account used for db access
 # Warning: This option must not be modified after the first installation
 # Type: alphanumeric
-MYSQL_USER=mempool
+MYSQL_DB_USER=mempool
 
 # Password of of user account
 # Warning: This option must not be modified after the first installation
 # Type: alphanumeric
-MYSQL_PASS=mempool
+MYSQL_DB_PASS=mempool
 
 # Root password for database
 # Warning: This option must not be modified after the first installation
 # Type: alphanumeric
-MYSQL_ROOT_PASSWORD=admin
+MYSQL_DB_ROOT_PASSWORD=admin
 
 # Database name
 # Warning: This option must not be modified after the first installation
