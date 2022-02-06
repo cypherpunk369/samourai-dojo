@@ -13,8 +13,10 @@ services:
         env_file:
             - ./.env
             - ./conf/docker-mempool.conf
+            - ./conf/docker-bitcoind.conf
+            - ./conf/docker-indexer.conf
         environment:
-            CORE_RPC_HOST: "bitcoind"
+            CORE_RPC_HOST: ${BITCOIND_IP}
             CORE_RPC_PORT: ${BITCOIND_RPC_PORT}
             CORE_RPC_USER: ${BITCOIND_RPC_USER}
             CORE_RPC_PASS: ${BITCOIND_RPC_PASSWORD}
@@ -75,7 +77,7 @@ services:
             - ./.env
             - ./conf/docker-mempool.conf
         environment:
-            MYSQL_DATABASE: "mempool"
+            MYSQL_DATABASE: $MEMPOOL_MYSQL_DATABASE
             MYSQL_USER: $MEMPOOL_MYSQL_USER
             MYSQL_PASSWORD: $MEMPOOL_MYSQL_PASS
             MYSQL_ROOT_PASSWORD: $MEMPOOL_MYSQL_ROOT_PASSWORD
