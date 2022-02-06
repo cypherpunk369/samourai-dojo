@@ -21,9 +21,9 @@ services:
             ELECTRUM_HOST: ${INDEXER_IP}
             ELECTRUM_PORT: ${INDEXER_RPC_PORT}
             ELECTRUM_TLS: "false"
-            DATABASE_DATABASE: ${MYSQL_DATABASE}
-            DATABASE_USERNAME: ${MYSQL_DB_USER}
-            DATABASE_PASSWORD: ${MYSQL_DB_PASS}
+            DATABASE_DATABASE: "mempool"
+            DATABASE_USERNAME: $MEMPOOL_MYSQL_USER
+            DATABASE_PASSWORD: $MEMPOOL_MYSQL_PASS
             MEMPOOL_HTTP_PORT: "8999"
             MEMPOOL_CACHE_DIR: "/backend/cache"
             MEMPOOL_CLEAR_PROTECTION_MINUTES: "20"
@@ -75,10 +75,10 @@ services:
             - ./.env
             - ./conf/docker-mempool.conf
         environment:
-            MYSQL_DATABASE: ${MYSQL_DATABASE}
-            MYSQL_USER: ${MYSQL_DB_USER}
-            MYSQL_PASSWORD: ${MYSQL_DB_PASS}
-            MYSQL_ROOT_PASSWORD: ${MYSQL_DB_ROOT_PASSWORD}
+            MYSQL_DATABASE: "mempool"
+            MYSQL_USER: $MEMPOOL_MYSQL_USER
+            MYSQL_PASSWORD: $MEMPOOL_MYSQL_PASS
+            MYSQL_ROOT_PASSWORD: $MEMPOOL_MYSQL_ROOT_PASSWORD
         logging:
             driver: "json-file"
             options:
