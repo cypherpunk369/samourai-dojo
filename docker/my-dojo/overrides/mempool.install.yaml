@@ -19,8 +19,8 @@ services:
             MEMPOOL_BACKEND: "none"
             CORE_RPC_HOST: ${BITCOIND_IP}
             CORE_RPC_PORT: ${BITCOIND_RPC_PORT}
-            CORE_RPC_USER: ${BITCOIND_RPC_USER}
-            CORE_RPC_PASS: ${BITCOIND_RPC_PASSWORD}
+            CORE_RPC_USERNAME: ${BITCOIND_RPC_USER}
+            CORE_RPC_PASSWORD: ${BITCOIND_RPC_PASSWORD}
             ELECTRUM_HOST: ${INDEXER_IP}
             ELECTRUM_PORT: ${INDEXER_RPC_PORT}
             ELECTRUM_TLS: "false"
