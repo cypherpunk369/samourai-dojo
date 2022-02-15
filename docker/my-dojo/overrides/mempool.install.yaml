@@ -16,6 +16,7 @@ services:
             - ./conf/docker-bitcoind.conf
             - ./conf/docker-indexer.conf
         environment:
+            MEMPOOL_BACKEND: "none"
             CORE_RPC_HOST: ${BITCOIND_IP}
             CORE_RPC_PORT: ${BITCOIND_RPC_PORT}
             CORE_RPC_USER: ${BITCOIND_RPC_USER}
@@ -23,6 +24,7 @@ services:
             ELECTRUM_HOST: ${INDEXER_IP}
             ELECTRUM_PORT: ${INDEXER_RPC_PORT}
             ELECTRUM_TLS: "false"
+            DATABASE_ENABLED: "true"
             DATABASE_HOST: ${NET_MEMPOOL_DB_IPV4}
             DATABASE_PORT: "3306"
             DATABASE_DATABASE: ${MEMPOOL_MYSQL_DATABASE}
@@ -74,7 +76,6 @@ services:
         stop_grace_period: 1m
         volumes:
             - data-mempool_db:/var/lib/mysql
-            - ./mempool/mysql/db-scripts:/docker-entrypoint-initdb.d
         env_file:
             - ./.env
             - ./conf/docker-mempool.conf
