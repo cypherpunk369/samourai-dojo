@@ -73,31 +73,49 @@ init_config_files() {
   fi
 
   # Initialize config files for MyDojo
-  cp ./conf/docker-common.conf.tpl ./conf/docker-common.conf
+  if [ ! -f ./conf/docker-common.conf ]; then
+    cp ./conf/docker-common.conf.tpl ./conf/docker-common.conf
+  fi
   echo "Initialized docker-common.conf"
 
-  cp ./conf/docker-bitcoind.conf.tpl ./conf/docker-bitcoind.conf
+  if [ ! -f ./conf/docker-bitcoind.conf ]; then
+    cp ./conf/docker-bitcoind.conf.tpl ./conf/docker-bitcoind.conf
+  fi
   echo "Initialized docker-bitcoind.conf"
 
-  cp ./conf/docker-mysql.conf.tpl ./conf/docker-mysql.conf
+  if [ ! -f ./conf/docker-mysql.conf ]; then
+    cp ./conf/docker-mysql.conf.tpl ./conf/docker-mysql.conf
+  fi
   echo "Initialized docker-mysql.conf"
 
-  cp ./conf/docker-node.conf.tpl ./conf/docker-node.conf
+  if [ ! -f ./conf/docker-node.conf ]; then
+    cp ./conf/docker-node.conf.tpl ./conf/docker-node.conf
+  fi
   echo "Initialized docker-node.conf"
 
-  cp ./conf/docker-explorer.conf.tpl ./conf/docker-explorer.conf
+  if [ ! -f ./conf/docker-explorer.conf ]; then
+    cp ./conf/docker-explorer.conf.tpl ./conf/docker-explorer.conf
+  fi
   echo "Initialized docker-explorer.conf"
 
-  cp ./conf/docker-tor.conf.tpl ./conf/docker-tor.conf
+  if [ ! -f ./conf/docker-tor.conf ]; then
+    cp ./conf/docker-tor.conf.tpl ./conf/docker-tor.conf
+  fi
   echo "Initialized docker-tor.conf"
 
-  cp ./conf/docker-indexer.conf.tpl ./conf/docker-indexer.conf
+  if [ ! -f ./conf/docker-indexer.conf ]; then
+    cp ./conf/docker-indexer.conf.tpl ./conf/docker-indexer.conf
+  fi
   echo "Initialized docker-indexer.conf"
 
-  cp ./conf/docker-whirlpool.conf.tpl ./conf/docker-whirlpool.conf
+  if [ ! -f ./conf/docker-whirlpool.conf ]; then
+    cp ./conf/docker-whirlpool.conf.tpl ./conf/docker-whirlpool.conf
+  fi
   echo "Initialized docker-whirlpool.conf"
 
-  cp ./conf/docker-mempool.conf.tpl ./conf/docker-mempool.conf
+  if [ ! -f ./conf/docker-mempool.conf ]; then
+    cp ./conf/docker-mempool.conf.tpl ./conf/docker-mempool.conf
+  fi
   echo "Initialized docker-mempool.conf"
 
   if [ "$EXPLORER_INSTALL" == "on" ]; then
