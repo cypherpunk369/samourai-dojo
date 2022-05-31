@@ -24,8 +24,11 @@ source_file "$DIR/conf/docker-tor.conf"
 source_file "$DIR/.env"
 
 # Export some variables for compose
-export BITCOIND_RPC_EXTERNAL_IP INDEXER_RPC_PORT BITCOIND_RPC_USER BITCOIND_RPC_PASSWORD BITCOIND_RPC_PORT
+export BITCOIND_RPC_EXTERNAL_IP BITCOIND_IP INDEXER_IP INDEXER_RPC_PORT BITCOIND_RPC_USER BITCOIND_RPC_PASSWORD BITCOIND_RPC_PORT
 export TOR_SOCKS_PORT
+if [ "$MEMPOOL_INSTALL" == "on" ]; then
+  export MEMPOOL_MYSQL_USER MEMPOOL_MYSQL_PASS MEMPOOL_MYSQL_ROOT_PASSWORD MEMPOOL_MYSQL_DATABASE 
+fi
 
 # Select YAML files
 select_yaml_files() {
@@ -57,6 +60,12 @@ select_yaml_files() {
 
   # Return yamlFiles
   echo "$yamlFiles"
+}
+
+# Docker build
+docker_build() {
+  yamlFiles=$(select_yaml_files)
+  eval "docker-compose $yamlFiles build --parallel"
 }
 
 # Docker up
@@ -206,6 +215,7 @@ install() {
     # Initialize the config files
     init_config_files
     # Build and start Dojo
+    docker_build
     docker_up --remove-orphans
     buildResult=$?
     if [ $buildResult -eq 0 ]; then
@@ -340,7 +350,8 @@ upgrade() {
       eval "docker-compose $yamlFiles down --rmi all"
     fi
     echo -e "\nStarting the upgrade of Dojo.\n"
-    docker_up --build --force-recreate --remove-orphans
+    docker_build
+    docker_up --remove-orphans
     buildResult=$?
     if [ $buildResult -eq 0 ]; then
       # Post start clean-up

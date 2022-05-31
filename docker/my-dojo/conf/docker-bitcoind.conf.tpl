@@ -16,7 +16,7 @@ BITCOIND_MAX_CONNECTIONS=16
 
 # Mempool maximum size in MB
 # Type: integer
-BITCOIND_MAX_MEMPOOL=2048
+BITCOIND_MAX_MEMPOOL=1024
 
 # Db cache size in MB
 # Type: integer
