@@ -1,7 +1,7 @@
 FROM    rust:1.44.1-slim-buster
 
 ENV     INDEXER_HOME        /home/indexer
-ENV     INDEXER_VERSION     0.9.4
+ENV     INDEXER_VERSION     0.9.7
 ENV     INDEXER_URL         https://github.com/romanz/electrs/archive
 ENV     RUST_LOG            DEBUG
 
