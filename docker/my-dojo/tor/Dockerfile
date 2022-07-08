@@ -2,7 +2,7 @@ FROM    golang:1.16.6-buster AS builder
 
 ENV     TOR_URL             https://dist.torproject.org
 ENV     TOR_MIRROR_URL      https://tor.eff.org/dist
-ENV     TOR_VERSION         0.4.7.7
+ENV     TOR_VERSION         0.4.7.8
 ENV     TOR_GPG_KS_URI      hkps://keyserver.ubuntu.com:443
 ENV     TOR_GPG_KEYS        0xEB5A896A28988BF5 0xC218525819F78451 0x21194EBB165733EA 0x6AFEE6D49E92B601 B74417EDDF22AC9F9E90F49142E86A2A11F48D36 514102454D0A87DB0767A1EBBE6A0531C18A9179
 
@@ -93,13 +93,6 @@ COPY    ./restart.sh /restart.sh
 RUN     chown tor:tor /restart.sh && \
         chmod u+x /restart.sh && \
         chmod g+x /restart.sh
-
-# Copy wait-for-it script
-COPY    ./wait-for-it.sh /wait-for-it.sh
-
-RUN     chown tor:tor /wait-for-it.sh && \
-        chmod u+x /wait-for-it.sh && \
-        chmod g+x /wait-for-it.sh
 
 # Expose socks port
 EXPOSE  ${TOR_SOCKS_PORT}
