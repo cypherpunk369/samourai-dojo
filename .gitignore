@@ -11,3 +11,4 @@ static/admin/conf/index.js
 static/admin-legacy
 static/admin-legacy/
 *.log
+/pm2.config.cjs

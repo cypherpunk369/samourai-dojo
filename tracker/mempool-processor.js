@@ -79,9 +79,9 @@ class MempoolProcessor {
         clearInterval(this.processMempoolId)
         //clearInterval(this.displayStatsId)
 
-        this.txSock.disconnect(keys.bitcoind.zmqTx).close()
-        this.pushTxSock.disconnect(keys.ports.notifpushtx).close()
-        this.orchestratorSock.disconnect(keys.ports.orchestrator).close()
+        this.txSock.close()
+        this.pushTxSock.close()
+        this.orchestratorSock.close()
     }
 
     /**

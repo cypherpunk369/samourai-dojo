@@ -52,7 +52,25 @@ try {
     // Start the tracker
     tracker.start()
 
+    // Signal that the process is ready
+    process.send('ready')
+
+    const exit = async () => {
+        httpServer.stop()
+        await tracker.stop()
+        await db.disconnect()
+        process.exit(0)
+    }
+
+    process.on('SIGTERM', async () => {
+        await exit()
+    })
+
+    process.on('SIGINT', async () => {
+        await exit()
+    })
+
 } catch (error) {
-    console.error(error)
+    Logger.error(error, 'Tracker : Unhandled error, exiting...')
     process.exit(1)
 }

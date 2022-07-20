@@ -74,6 +74,13 @@ class NotificationsServer {
         })
     }
 
+    /**
+     * Close existing ZMQ connection
+     */
+    close() {
+        this.sock.close()
+    }
+
 }
 
 export default new NotificationsServer()
