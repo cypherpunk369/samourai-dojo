@@ -1,4 +1,4 @@
-FROM    node:14-alpine AS builder
+FROM    node:16-alpine AS builder
 
 ENV     NODE_ENV             production
 
@@ -11,6 +11,10 @@ ENV     EXPLORER_VERSION     3.3.0
 RUN     set -ex && \
         apk --no-cache add gcc g++ make python3 git netcat-openbsd
 
+# Update NPM to latest version
+RUN     set -ex && \
+        npm i -g npm
+
 # Download the source code and install it
 RUN     set -ex && \
         mkdir "$APP_DIR" && \
@@ -18,9 +22,9 @@ RUN     set -ex && \
         tar -xzvf explorer.tar.gz -C "$APP_DIR/" --strip-components 1 && \
         rm explorer.tar.gz && \
         cd "$APP_DIR" && \
-        npm install --only=prod
+        npm install --omit=dev
 
-FROM    node:14-alpine
+FROM    node:16-alpine
 
 ENV     NODE_ENV        production
 ENV     APP_DIR         /home/node/app

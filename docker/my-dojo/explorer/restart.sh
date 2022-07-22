@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/node/app
+cd "$APP_DIR"
 
 explorer_options=(
   --port 3002
