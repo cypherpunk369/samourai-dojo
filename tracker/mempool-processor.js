@@ -306,7 +306,7 @@ class MempoolProcessor {
             }
 
             // Tolerate a delay of 6 blocks
-            this.isActive = (highestHeader >= 550000) && (highestHeader <= highestBlock.blockHeight + 6)
+            this.isActive = (highestHeader >= 746400) && (highestHeader <= highestBlock.blockHeight + 6)
         } catch (error) {
             Logger.error(error, 'Tracker : MempoolProcessor._refreshActiveStatus()')
         }
