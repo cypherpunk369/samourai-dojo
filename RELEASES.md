@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.17.0](#samourai-dojo-v1170)
 - [v1.16.1](#samourai-dojo-v1161)
 - [v1.16.0](#samourai-dojo-v1160)
 - [v1.15.0](#samourai-dojo-v1150)
@@ -25,6 +26,24 @@
 - [v1.2.0](#samourai-dojo-v120)
 - [v1.1.0](#samourai-dojo-v110)
 
+## Samourai Dojo v1.17.0 ##
+
+### Change log ###
+
+#### Architecture ####
+- [9d84bfe6](https://code.samourai.io/dojo/samourai-dojo/-/commit/9d84bfe6) - upgrade Node.js
+- [90c7cd6d](https://code.samourai.io/dojo/samourai-dojo/-/commit/90c7cd6d) - use PM2 for process management
+- [515ae1b6](https://code.samourai.io/dojo/samourai-dojo/-/commit/515ae1b6) - bump block height defining IBD
+
+#### Bugfixes ####
+
+- [757cc927](https://code.samourai.io/dojo/samourai-dojo/-/commit/757cc927) - fix import/rescan with local importer
+- [9aa604c0](https://code.samourai.io/dojo/samourai-dojo/-/commit/9aa604c0) - fix tyxpos
+- [9b11bd56](https://code.samourai.io/dojo/samourai-dojo/-/commit/9b11bd56) - fix DB errors
+
+### Credits ###
+- pajasevi
+- Diverter
 
 ## Samourai Dojo v1.16.1 ##
 
