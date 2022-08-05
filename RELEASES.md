@@ -38,7 +38,7 @@
 #### Bugfixes ####
 
 - [757cc927](https://code.samourai.io/dojo/samourai-dojo/-/commit/757cc927) - fix import/rescan with local importer
-- [9aa604c0](https://code.samourai.io/dojo/samourai-dojo/-/commit/9aa604c0) - fix tyxpos
+- [9aa604c0](https://code.samourai.io/dojo/samourai-dojo/-/commit/9aa604c0) - fix typos
 - [9b11bd56](https://code.samourai.io/dojo/samourai-dojo/-/commit/9b11bd56) - fix DB errors
 
 ### Credits ###
