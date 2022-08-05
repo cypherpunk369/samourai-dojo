@@ -75,7 +75,25 @@ try {
     // Attach the web sockets server to the web server
     notifServer.attach(httpServer)
 
+    // Signal that the process is ready
+    process.send('ready')
+
+    const exit = async () => {
+        httpServer.stop()
+        notifServer.close()
+        await db.disconnect()
+        process.exit(0)
+    }
+
+    process.on('SIGTERM', async () => {
+        await exit()
+    })
+
+    process.on('SIGINT', async () => {
+        await exit()
+    })
+
 } catch (error) {
-    console.error(error)
+    Logger.error(error, 'Accounts : Unhandled error, exiting...')
     process.exit(1)
 }
