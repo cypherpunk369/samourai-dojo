@@ -54,7 +54,11 @@ class Status {
         }
 
         try {
-            const chaintip = await remote.getChainTipHeight()
+            // Timeout 5000ms for retrieving of chaintip
+            const chaintip = await Promise.race([
+                remote.getChainTipHeight(),
+                util.delay(5000).then(() => ({ chainTipHeight: null }))
+            ])
             indexerMaxHeight = chaintip.chainTipHeight
         } catch (error) {
             Logger.error(error, 'API : Status.getCurrent() :')
