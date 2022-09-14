@@ -62,54 +62,7 @@ First, we must prepare our host system for MyDojo by installing required operati
 
 #### 3.1.2/ Install Docker & Docker-Compose
 
-For an installation of Docker and Docker Compose with a different Linux distribution, please refer to the official [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) documentations.
-
-If Docker is already installed on the host machine remove old Docker versions installed on the computer
-
-```sh
-> sudo apt-get remove docker docker-engine docker.io containerd runc
-```
-
-__Download Docker's official PGP key__
-
-```sh
-> curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-> sudo apt-key fingerprint 0EBFCD88
-```
-
-Verify that you now have the key with the fingerprint `9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88`
-
-__Install Docker__
-
-```sh
-> sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-> sudo apt-get update
-> sudo apt-get install docker-ce docker-ce-cli containerd.io
-```
-
-__Test the installation of Docker__
-
-```sh
-> sudo docker --version
-```
-
-This command should return the version of Docker if installation was successful.
-
-
-__Install Docker Compose__
-
-```sh
-> sudo curl -L "https://github.com/docker/compose/releases/download/1.25.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-> sudo chmod +x /usr/local/bin/docker-compose
-```
-
-__Test the installation of Docker Compose__
-
-```sh
-> sudo docker-compose --version
-```
-
-This command should return the version of Docker Compose if installation was successful.
+Follow the [official insctruction manual](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) on the Docker documentation site.
 
 __Create a user account for MyDojo__
 
