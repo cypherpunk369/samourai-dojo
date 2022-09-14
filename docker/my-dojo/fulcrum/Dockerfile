@@ -1,4 +1,4 @@
-FROM    debian:buster-slim AS builder
+FROM    debian:bullseye-slim AS builder
 
 ENV     INDEXER_VERSION       1.7.0
 ENV     INDEXER_URL           https://github.com/cculianu/Fulcrum/releases/download
@@ -34,7 +34,7 @@ RUN     set -ex && \
         sha256sum -c $INDEXER_SHASUMS && \
         tar -xzvf ${INDEXER_FILE} -C "$INDEXER_FILES" --strip-components 1
 
-FROM    debian:buster-slim
+FROM    debian:bullseye-slim
 
 ENV     INDEXER_FILES         /var/fulcrum
 ENV     INDEXER_HOME          /home/fulcrum

@@ -1,4 +1,4 @@
-FROM    debian:buster-slim AS builder
+FROM    debian:bullseye-slim AS builder
 
 ENV     WHIRLPOOL_DIR                 /usr/local/whirlpool-cli
 
@@ -62,7 +62,7 @@ RUN     set -ex && \
         sha256sum -c WHIRLPOOL_CHECKSUMS 2>&1 | grep OK && \
         mv "$WHIRLPOOL_JAR" whirlpool-client-cli-run.jar
 
-FROM    debian:buster-slim
+FROM    debian:bullseye-slim
 
 ENV     TOR_HOME        /var/lib/tor
 ENV     TOR_BIN         /usr/local/bin/tor

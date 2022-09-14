@@ -1,4 +1,4 @@
-FROM    golang:1.16.6-buster AS builder
+FROM    golang:1.19.1-bullseye AS builder
 
 ENV     TOR_URL             https://dist.torproject.org
 ENV     TOR_MIRROR_URL      https://tor.eff.org/dist
@@ -54,7 +54,7 @@ RUN     git clone "$OBFS4_URL" /usr/local/src/obfs4proxy && \
         cd .. && \
         rm -rf obfs4proxy
 
-FROM    debian:buster-slim
+FROM    debian:bullseye-slim
 
 ENV     TOR_HOME        /var/lib/tor
 ENV     TOR_BIN         /usr/local/bin/tor
