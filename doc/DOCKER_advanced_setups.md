@@ -7,20 +7,18 @@ A word of caution, though, the default values of these options try to maximize y
 
 
 ## Table of Content ##
-- [Local indexer of Bitcoin addresses](#local_indexer)
-- [Local Fulcrum as a source of imports and use with external apps](#local_fulcrum)
+- [Local indexer of Bitcoin addresses](#local-indexer-of-bitcoin-addresses)
+- [Local Fulcrum as a source of imports and use with external apps](#local-fulcrum-as-a-source-of-imports-and-use-with-external-apps)
 - [Fulcrum API exposed to external apps](#fulcrum-api-exposed-to-external-apps)
-- [Local Electrum server used as data source for imports/rescans](#local_electrum)
-- [Local Whirlpool client](#local_whirlpool)
-- [External Bitcoin full node](#external_bitcoind)
-- [bitcoind RPC API and ZMQ notifications exposed to external apps](#exposed_rpc_zmq)
-- [Static onion address for bitcoind hidden service](#static_onion)
-- [Enable Bloom filters in Bitcoin Core](#bloom_filters)
-- [Configure Tor Bridges](#tor_bridges)
-- [Support of testnet](#testnet)
+- [Local Electrum server used as data source for imports/rescans](#local-electrum-server-used-as-data-source-for-importsrescans)
+- [Local Whirlpool client](#local-whirlpool-client)
+- [External Bitcoin full node](#external-bitcoin-full-node)
+- [bitcoind RPC API and ZMQ notifications exposed to external apps](#bitcoind-rpc-api-and-zmq-notifications-exposed-to-external-apps)
+- [Static onion address for bitcoind hidden service](#static-onion-address-for-bitcoind-hidden-service)
+- [Enable Bloom filters in Bitcoin Core](#enable-bloom-filters)
+- [Configure Tor Bridges](#configure-tor-bridges)
+- [Support of testnet](#support-of-testnet)
 
-
-<a name="local_indexer"/>
 
 ## Local indexer of Bitcoin addresses ##
 
@@ -85,8 +83,6 @@ nano ./conf/docker-node.conf
 #   `dojo.sh logs indexer`
 #
 ```
-
-<a name="local_fulcrum"/>
 
 ## Local Fulcrum as a source of imports and use with external apps ##
 
@@ -193,8 +189,6 @@ With this setting, external applications running on your local machine should be
 Note: this option has no effect if your setup relies on a external indexer or your indexer is not Fulcrum
 
 
-<a name="local_electrum"/>
-
 ## Local Electrum server used as data source for imports/rescans ##
 
 If you're running an instance of ElectrumX, Electrs or Fulcrum on your local network, Dojo allows you to define this instance as the data source used for imports and rescans. This setup is an alternative to the local indexer provided by MyDojo.
@@ -229,8 +223,6 @@ nano ./conf/docker-node.conf
 #
 ```
 
-
-<a name="local_whirlpool"/>
 
 ## Local Whirlpool client ##
 
@@ -303,8 +295,6 @@ These steps describe how to install the Whirlpool GUI application how a computer
   # The GUI will restart and prompt for you to enter your Samourai Wallet passphrase.
   # You are all set and ready to mix!
   ```
-
-<a name="external_bitcoind"/>
 
 ## External Bitcoin full node ##
 
@@ -393,8 +383,6 @@ Follow these steps if you want to speed up this operation by preloading an archi
 ```
 
 
-<a name="exposed_rpc_zmq"/>
-
 ## bitcoind RPC API and ZMQ notifications exposed to external apps ##
 
 By default, access to the RPC API of your bitcoind is restricted to Docker containers hosted on the "dojonet" network.
@@ -440,8 +428,6 @@ With this setting, external applications running on your local machine should be
 Note: this option has no effect if your setup relies on a external full node (i.e. if BITCOIND_INSTALL is set to "off").
 
 
-<a name="static_onion"/>
-
 ## Static onion address for bitcoind hidden service ##
 
 By default, Dojo creates a new onion address for your bitcoind at each startup.
@@ -467,8 +453,6 @@ nano ./conf/docker-bitcoind.conf
 ```
 
 Note: this option has no effect if your setup relies on a external full node (i.e. if BITCOIND_INSTALL is set to "off").
-
-<a name="bloom_filters"/>
 
 ## Enable Bloom filters ##
 
@@ -499,8 +483,6 @@ nano ./conf/docker-bitcoind.conf
 # Start your Dojo
 ./dojo.sh start
 ```
-
-<a name="tor_bridges"/>
 
 ## Configure Tor Bridges ##
 
@@ -539,8 +521,6 @@ nano ./conf/docker-tor.conf
 #
 ```
 
-
-<a name="testnet"/>
 
 ## Support of testnet ##
 
