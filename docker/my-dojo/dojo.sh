@@ -98,47 +98,9 @@ stop() {
     echo "Dojo is already stopped."
     exit
   fi
-  # Shutdown the bitcoin daemon
-  if [ "$BITCOIND_INSTALL" == "on" ]; then
-    # Renewal of bitcoind onion address
-    if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
-      if [ "$BITCOIND_EPHEMERAL_HS" = "on" ]; then
-        $( docker exec -it tor rm -rf /var/lib/tor/hsv3bitcoind ) &> /dev/null
-      fi
-    fi
-    # Stop the bitcoin daemon
-    $( docker exec -it bitcoind  bitcoin-cli \
-      -rpcconnect=bitcoind \
-      --rpcport="$BITCOIND_RPC_PORT" \
-      --rpcuser="$BITCOIND_RPC_USER" \
-      --rpcpassword="$BITCOIND_RPC_PASSWORD" \
-      stop ) &> /dev/null
-    # Check if the bitcoin daemon is still up
-    # wait 3mn max
-    i="0"
-    nbIters=$(( $BITCOIND_SHUTDOWN_DELAY / 10 ))
-    while [ $i -lt $nbIters ]
-    do
-      echo "Waiting for shutdown of Bitcoin server."
-      # Check if bitcoind rpc api is responding
-      $( timeout -k 12 10 docker exec -it bitcoind  bitcoin-cli \
-        -rpcconnect=bitcoind \
-        --rpcport="$BITCOIND_RPC_PORT" \
-        --rpcuser="$BITCOIND_RPC_USER" \
-        --rpcpassword="$BITCOIND_RPC_PASSWORD" \
-        getblockchaininfo &> /dev/null ) &> /dev/null
-      # rpc api is down
-      if [[ $? -gt 0 ]]; then
-        echo "Bitcoin server stopped."
-        break
-      fi
-      i=$[$i+1]
-    done
-    # Bitcoin daemon is still up
-    # => force close
-    if [ $i -eq $nbIters ]; then
-      echo "Force shutdown of Bitcoin server."
-    fi
+  # Renewal of bitcoind onion address
+  if [ "$BITCOIND_INSTALL" == "on" ] && [ "$BITCOIND_LISTEN_MODE" == "on" ] && [ "$BITCOIND_EPHEMERAL_HS" = "on" ]; then
+    docker exec -it tor rm -rf /var/lib/tor/hsv3bitcoind &> /dev/null
   fi
   # Stop docker containers
   yamlFiles=$(select_yaml_files)
