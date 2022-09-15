@@ -1,6 +1,6 @@
 FROM    debian:bullseye-slim AS builder
 
-ENV     INDEXER_VERSION       1.7.0
+ENV     INDEXER_VERSION       1.8.0
 ENV     INDEXER_URL           https://github.com/cculianu/Fulcrum/releases/download
 ENV     INDEXER_BUILD_AMD64   x86_64-linux
 ENV     INDEXER_BUILD_ARM64   arm64-linux
