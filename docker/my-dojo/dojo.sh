@@ -26,8 +26,7 @@ source_file "$DIR/conf/docker-tor.conf"
 source_file "$DIR/.env"
 
 # Export some variables for compose
-export BITCOIND_RPC_EXTERNAL_IP
-export TOR_SOCKS_PORT
+export BITCOIND_RPC_EXTERNAL_IP INDEXER_EXTERNAL_IP TOR_SOCKS_PORT
 
 # Select YAML files
 select_yaml_files() {
@@ -50,6 +49,10 @@ select_yaml_files() {
       yamlFiles="$yamlFiles -f $DIR/overrides/indexer.install.yaml"
     elif [ "$INDEXER_TYPE" == "fulcrum" ]; then
       yamlFiles="$yamlFiles -f $DIR/overrides/fulcrum.install.yaml"
+
+      if [ "$INDEXER_EXTERNAL" == "on" ]; then
+        yamlFiles="$yamlFiles -f $DIR/overrides/fulcrum.port.expose.yaml"
+      fi
     fi
   fi
 
@@ -343,6 +346,8 @@ upgrade() {
     # Load env vars for compose files
     source_file "$DIR/conf/docker-bitcoind.conf"
     export BITCOIND_RPC_EXTERNAL_IP
+    source_file "$DIR/conf/docker-indexer.conf"
+    export INDEXER_EXTERNAL_IP
     source_file "$DIR/conf/docker-tor.conf"
     export TOR_SOCKS_PORT
     # Rebuild the images (with or without cache)
