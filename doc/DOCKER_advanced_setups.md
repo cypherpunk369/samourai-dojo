@@ -9,6 +9,7 @@ A word of caution, though, the default values of these options try to maximize y
 ## Table of Content ##
 - [Local indexer of Bitcoin addresses](#local_indexer)
 - [Local Fulcrum as a source of imports and use with external apps](#local_fulcrum)
+- [Fulcrum API exposed to external apps](#fulcrum-api-exposed-to-external-apps)
 - [Local Electrum server used as data source for imports/rescans](#local_electrum)
 - [Local Whirlpool client](#local_whirlpool)
 - [External Bitcoin full node](#external_bitcoind)
@@ -150,6 +151,47 @@ nano ./conf/docker-node.conf
 # Afterwards, you can get the onion URI of your Fulcrum server with command:
 #   `dojo.sh onion`
 ```
+
+## Fulcrum API exposed to external apps ##
+
+By default, access to the electrum API of your Fulcrum instance is restricted to Docker containers hosted on the "dojonet" network.
+
+The following steps allow to expose the API to applications running on your local machine but outside of Docker.
+
+```sh
+#
+# If your Docker runs on macos or windows,
+# retrieve the local IP address of the VM
+# hosting your Docker containers
+#
+
+# Stop your Dojo
+./dojo.sh stop
+
+# If you're installing a new Dojo, edit the docker-bitcoind.conf.tpl file
+nano ./conf/docker-indexer.conf.tpl
+
+# Otherwise, edit the docker-bitcoind.conf file
+nano ./conf/docker-indexer.conf
+
+#
+# Set the value of INDEXER_EXTERNAL to "on"
+#
+# If your Docker runs on macos or windows,
+# set the value of INDEXER_EXTERNAL_IP to the IP address of the VM
+#
+# Save and exit nano
+#
+
+# Start your Dojo
+./dojo.sh start
+```
+
+With this setting, external applications running on your local machine should be able to access:
+* 50001: TCP port of your Fulcrum instance
+
+Note: this option has no effect if your setup relies on a external indexer or your indexer is not Fulcrum
+
 
 <a name="local_electrum"/>
 
