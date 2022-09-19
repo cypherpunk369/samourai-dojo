@@ -8,5 +8,5 @@ fulcrum_options=(
   --rpcpassword "$BITCOIND_RPC_PASSWORD"
 )
 
-cd "$INDEXER_HOME"/.fulcrum
+cd "$INDEXER_FILES"
 exec ./Fulcrum "${fulcrum_options[@]}" /etc/fulcrum.conf

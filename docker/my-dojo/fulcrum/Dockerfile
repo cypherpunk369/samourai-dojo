@@ -4,7 +4,7 @@ ENV     INDEXER_VERSION       1.8.0
 ENV     INDEXER_URL           https://github.com/cculianu/Fulcrum/releases/download
 ENV     INDEXER_BUILD_AMD64   x86_64-linux
 ENV     INDEXER_BUILD_ARM64   arm64-linux
-ENV     INDEXER_FILES         /var/fulcrum
+ENV     INDEXER_FILES         /usr/fulcrum
 
 RUN     apt-get update && \
         apt-get install -y wget curl gpg gpg-agent
@@ -36,7 +36,7 @@ RUN     set -ex && \
 
 FROM    debian:bullseye-slim
 
-ENV     INDEXER_FILES         /var/fulcrum
+ENV     INDEXER_FILES         /usr/fulcrum
 ENV     INDEXER_HOME          /home/fulcrum
 
 ARG     FULCRUM_LINUX_GID
@@ -47,12 +47,11 @@ RUN     addgroup --system -gid ${FULCRUM_LINUX_GID} fulcrum && \
         adduser --system --ingroup fulcrum -uid ${FULCRUM_LINUX_UID} fulcrum
 
 # Create data directory
-RUN     mkdir "$INDEXER_HOME/.fulcrum" && \
-        mkdir "$INDEXER_HOME/.fulcrum/db" && \
+RUN     mkdir -p "$INDEXER_HOME/.fulcrum/db" && \
         chown -h fulcrum:fulcrum "$INDEXER_HOME/.fulcrum" && \
         chown -h fulcrum:fulcrum "$INDEXER_HOME/.fulcrum/db"
 
-COPY    --from=builder "$INDEXER_FILES" "$INDEXER_HOME/.fulcrum"
+COPY    --from=builder "$INDEXER_FILES" "$INDEXER_FILES"
 
 # Copy restart script
 COPY    ./restart.sh /restart.sh
