@@ -72,7 +72,7 @@ COPY    --from=builder $OBFS_PROXY $OBFS_PROXY
 
 RUN     set -ex && \
         apt-get update && \
-        apt-get install -y libevent-dev
+        apt-get install -y libevent-dev netcat-openbsd
 
 # Create group & user tor
 RUN     addgroup --system -gid ${TOR_LINUX_GID} tor && \

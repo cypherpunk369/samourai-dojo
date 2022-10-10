@@ -16,6 +16,8 @@ tor_options=(
   --HiddenServiceDir /var/lib/tor/hsv3dojo
   --HiddenServiceVersion 3
   --HiddenServicePort "80 $NET_DMZ_NGINX_IPV4:80"
+  --CookieAuthentication 0
+  --ControlPort 9051
 )
 
 if [ "$BITCOIND_INSTALL" == "on" ]; then
