@@ -232,30 +232,13 @@ uninstall() {
   fi
 }
 
-# Clean-up (remove old docker images)
-del_images_for() {
-  # $1: image name
-  # $2: most recent version of the image (do not delete this one)
-  docker image ls | grep "$1" | sed "s/ \+/,/g" | cut -d"," -f2 | while read -r version ; do
-    if [ "$2" != "$version" ]; then
-      docker image rm -f "$1:$version"
-    fi
-  done
-}
-
 clean() {
-  del_images_for samouraiwallet/dojo-db "$DOJO_DB_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-bitcoind "$DOJO_BITCOIND_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-explorer "$DOJO_EXPLORER_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-nodejs "$DOJO_NODEJS_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-nginx "$DOJO_NGINX_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-fulcrum "$DOJO_FULCRUM_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
-  docker container prune -f
-  docker volume prune -f
-  docker image prune -f
+  # remove unused docker containers and associated volumes
+  docker rm -v $(docker ps --all --format "{{.ID}} {{.Image}}" --filter "status=exited" | grep "samouraiwallet/dojo-" | cut -d" " -f1) 2> /dev/null
+  # remove dangling docker images
+  docker rmi $(docker images --filter "dangling=true" -q) 2> /dev/null
+  # remove unused docker images
+  docker rmi $(docker images "samouraiwallet/dojo-*" -q) 2> /dev/null
 }
 
 # Upgrade
