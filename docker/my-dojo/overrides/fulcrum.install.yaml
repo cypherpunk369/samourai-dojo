@@ -16,8 +16,6 @@ services:
       - ./conf/docker-indexer.conf
     restart: always
     command: /restart.sh
-    expose:
-      - "50001"
     volumes:
       - data-fulcrum:/home/fulcrum
     logging:

@@ -38,9 +38,16 @@ FROM    debian:bullseye-slim
 
 ENV     INDEXER_FILES         /usr/fulcrum
 ENV     INDEXER_HOME          /home/fulcrum
+ENV     SSL_CERTFILE          ${INDEXER_HOME}/fulcrum.crt
+ENV     SSL_KEYFILE           ${INDEXER_HOME}/fulcrum.key
 
 ARG     FULCRUM_LINUX_GID
 ARG     FULCRUM_LINUX_UID
+
+RUN     apt-get update && \
+        apt-get install -y openssl && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Create group and user indexer
 RUN     addgroup --system -gid ${FULCRUM_LINUX_GID} fulcrum && \
@@ -65,6 +72,6 @@ RUN     chown fulcrum:fulcrum /etc/fulcrum.conf && \
 
 USER    fulcrum
 
-EXPOSE  50001
+EXPOSE  50001 50002
 
 STOPSIGNAL SIGINT
