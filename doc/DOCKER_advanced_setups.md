@@ -185,6 +185,7 @@ nano ./conf/docker-indexer.conf
 
 With this setting, external applications running on your local machine should be able to access:
 * 50001: TCP port of your Fulcrum instance
+* 50002: SSL port of your Fulcrum instance
 
 Note: this option has no effect if your setup relies on a external indexer or your indexer is not Fulcrum
 

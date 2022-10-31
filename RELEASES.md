@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.18.0](#samourai-dojo-v1180)
 - [v1.17.0](#samourai-dojo-v1170)
 - [v1.16.1](#samourai-dojo-v1161)
 - [v1.16.0](#samourai-dojo-v1160)
@@ -25,6 +26,46 @@
 - [v1.3.0](#samourai-dojo-v130)
 - [v1.2.0](#samourai-dojo-v120)
 - [v1.1.0](#samourai-dojo-v110)
+
+## Samourai Dojo v1.18.0 ##
+
+### Notable changes ###
+
+#### Added option to expose Fulcrum to local network ####
+Fulcrum can now be exposed to the local network using the `INDEXER_EXTERNAL` variable in `conf/docker-indexer.conf`.
+Fulcrum will expose both 50001 (TCP) and 50002 (SSL) ports.
+Restart your Dojo to apply this variable change after successfully upgrading.
+
+#### Added option to switch Tor circuits ####
+Dojo CLI now has an option to switch Tor identity. This should make new connections to go over new circuits.
+```shell
+./dojo.sh tor newnym
+```
+
+### Change log ###
+
+#### Features ####
+- [22776e23](https://code.samourai.io/dojo/samourai-dojo/-/commit/22776e23) - added SSL support for Fulcrum
+- [3e22100f](https://code.samourai.io/dojo/samourai-dojo/-/commit/3e22100f) - bump OBFS4
+- [f8de0ba6](https://code.samourai.io/dojo/samourai-dojo/-/commit/f8de0ba6) - bump Tor
+- [c4f6cdfb](https://code.samourai.io/dojo/samourai-dojo/-/commit/c4f6cdfb) - bump Fulcrum
+- [122f8cca](https://code.samourai.io/dojo/samourai-dojo/-/commit/122f8cca) - switch Tor circuits via CLI
+- [fa68a361](https://code.samourai.io/dojo/samourai-dojo/-/commit/fa68a361) - expose Fulcrum ports
+
+#### Bugfixes ####
+- [f1d2cfb2](https://code.samourai.io/dojo/samourai-dojo/-/commit/f1d2cfb2) - fixed indexer not starting on docker restart
+- [6f21f4d8](https://code.samourai.io/dojo/samourai-dojo/-/commit/6f21f4d8) - fix location of Fulcrum binaries
+
+#### Architecture ####
+- [4e96448d](https://code.samourai.io/dojo/samourai-dojo/-/commit/4e96448d) - fix docker cleanup
+- [f89fc7f5](https://code.samourai.io/dojo/samourai-dojo/-/commit/f89fc7f5) - let docker stop bitcoind via stopsignal
+- [cc9d4b8c](https://code.samourai.io/dojo/samourai-dojo/-/commit/cc9d4b8c) - use bullseye images instead of buster
+
+#### Other ####
+- [a788d279](https://code.samourai.io/dojo/samourai-dojo/-/commit/a788d279) - update docker installations instructions
+- [fb83db75](https://code.samourai.io/dojo/samourai-dojo/-/commit/fb83db75) - added timeout for retrieval of indexer chaintip
+- [9e26d736](https://code.samourai.io/dojo/samourai-dojo/-/commit/9e26d736) - log response status code
+- [086331ea](https://code.samourai.io/dojo/samourai-dojo/-/commit/086331ea) - updated dependencies
 
 ## Samourai Dojo v1.17.0 ##
 
