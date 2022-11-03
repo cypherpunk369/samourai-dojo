@@ -233,8 +233,10 @@ uninstall() {
 }
 
 clean() {
-  # remove unused docker containers and associated volumes
+  # remove unused docker containers
   docker rm -v $(docker ps --all --format "{{.ID}} {{.Image}}" --filter "status=exited" | grep "samouraiwallet/dojo-" | cut -d" " -f1) 2> /dev/null
+  # remove unused docker volumes
+  docker volume rm $(docker volume ls --format "{{.Name}}" | grep "my-dojo_data") 2> /dev/null
   # remove dangling docker images
   docker rmi $(docker images --filter "dangling=true" -q) 2> /dev/null
   # remove unused docker images
