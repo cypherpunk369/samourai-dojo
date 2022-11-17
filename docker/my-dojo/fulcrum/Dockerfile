@@ -1,10 +1,10 @@
-FROM    debian:buster-slim AS builder
+FROM    debian:bullseye-slim AS builder
 
-ENV     INDEXER_VERSION       1.7.0
+ENV     INDEXER_VERSION       1.8.1
 ENV     INDEXER_URL           https://github.com/cculianu/Fulcrum/releases/download
 ENV     INDEXER_BUILD_AMD64   x86_64-linux
 ENV     INDEXER_BUILD_ARM64   arm64-linux
-ENV     INDEXER_FILES         /var/fulcrum
+ENV     INDEXER_FILES         /usr/fulcrum
 
 RUN     apt-get update && \
         apt-get install -y wget curl gpg gpg-agent
@@ -34,25 +34,31 @@ RUN     set -ex && \
         sha256sum -c $INDEXER_SHASUMS && \
         tar -xzvf ${INDEXER_FILE} -C "$INDEXER_FILES" --strip-components 1
 
-FROM    debian:buster-slim
+FROM    debian:bullseye-slim
 
-ENV     INDEXER_FILES         /var/fulcrum
+ENV     INDEXER_FILES         /usr/fulcrum
 ENV     INDEXER_HOME          /home/fulcrum
+ENV     SSL_CERTFILE          ${INDEXER_HOME}/fulcrum.crt
+ENV     SSL_KEYFILE           ${INDEXER_HOME}/fulcrum.key
 
 ARG     FULCRUM_LINUX_GID
 ARG     FULCRUM_LINUX_UID
+
+RUN     apt-get update && \
+        apt-get install -y openssl && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Create group and user indexer
 RUN     addgroup --system -gid ${FULCRUM_LINUX_GID} fulcrum && \
         adduser --system --ingroup fulcrum -uid ${FULCRUM_LINUX_UID} fulcrum
 
 # Create data directory
-RUN     mkdir "$INDEXER_HOME/.fulcrum" && \
-        mkdir "$INDEXER_HOME/.fulcrum/db" && \
+RUN     mkdir -p "$INDEXER_HOME/.fulcrum/db" && \
         chown -h fulcrum:fulcrum "$INDEXER_HOME/.fulcrum" && \
         chown -h fulcrum:fulcrum "$INDEXER_HOME/.fulcrum/db"
 
-COPY    --from=builder "$INDEXER_FILES" "$INDEXER_HOME/.fulcrum"
+COPY    --from=builder "$INDEXER_FILES" "$INDEXER_FILES"
 
 # Copy restart script
 COPY    ./restart.sh /restart.sh
@@ -66,6 +72,6 @@ RUN     chown fulcrum:fulcrum /etc/fulcrum.conf && \
 
 USER    fulcrum
 
-EXPOSE  50001
+EXPOSE  50001 50002
 
 STOPSIGNAL SIGINT

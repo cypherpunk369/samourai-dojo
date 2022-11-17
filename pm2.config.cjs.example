@@ -8,7 +8,7 @@ module.exports = {
         {
             name: `Samourai Dojo - Accounts (${NAMESPACE})`,
             namespace: NAMESPACE,
-            script: './index.js', // OR ./index-cluster.js
+            script: './index.js',
             cwd: path.join(__dirname, 'accounts'),
             interpreter: INTERPRETER,
             out_file: './output-2022-01-01.log',

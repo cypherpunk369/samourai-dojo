@@ -14,10 +14,8 @@ services:
       - ./conf/docker-common.conf
       - ./conf/docker-bitcoind.conf
       - ./conf/docker-indexer.conf
-    restart: on-failure
+    restart: always
     command: /restart.sh
-    expose:
-      - "50001"
     volumes:
       - data-fulcrum:/home/fulcrum
     logging:

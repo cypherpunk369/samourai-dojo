@@ -33,6 +33,22 @@ INDEXER_BATCH_SUPPORT=inactive
 # Value: tcp | tls
 INDEXER_PROTOCOL=tcp
 
+# Expose the electrum API to external apps
+# Has effect only if INDEXER_TYPE=fulcrum
+# Warning: Do not expose your electrum API to internet!
+# See INDEXER_EXTERNAL_IP
+# Value: on | off
+INDEXER_EXTERNAL=off
+
+# IP address used to expose the electrum API to external apps
+# This parameter is inactive if INDEXER_EXTERNAL isn't set to 'on'
+# Warning: Do not expose your RPC API to internet!
+# Recommended value:
+#   linux: 127.0.0.1
+#   macos or windows: IP address of the VM running the docker host
+# Type: string
+INDEXER_EXTERNAL_IP=127.0.0.1
+
 
 #
 # EXPERT SETTINGS

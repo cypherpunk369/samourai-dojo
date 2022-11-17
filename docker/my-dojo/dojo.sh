@@ -26,8 +26,7 @@ source_file "$DIR/conf/docker-tor.conf"
 source_file "$DIR/.env"
 
 # Export some variables for compose
-export BITCOIND_RPC_EXTERNAL_IP
-export TOR_SOCKS_PORT
+export BITCOIND_RPC_EXTERNAL_IP INDEXER_EXTERNAL_IP TOR_SOCKS_PORT
 
 # Select YAML files
 select_yaml_files() {
@@ -50,6 +49,10 @@ select_yaml_files() {
       yamlFiles="$yamlFiles -f $DIR/overrides/indexer.install.yaml"
     elif [ "$INDEXER_TYPE" == "fulcrum" ]; then
       yamlFiles="$yamlFiles -f $DIR/overrides/fulcrum.install.yaml"
+
+      if [ "$INDEXER_EXTERNAL" == "on" ]; then
+        yamlFiles="$yamlFiles -f $DIR/overrides/fulcrum.port.expose.yaml"
+      fi
     fi
   fi
 
@@ -64,13 +67,13 @@ select_yaml_files() {
 # Docker build
 docker_build() {
   yamlFiles=$(select_yaml_files)
-  eval "docker-compose $yamlFiles build --parallel $@"
+  eval "docker compose $yamlFiles build --parallel $@"
 }
 
 # Docker up
 docker_up() {
   yamlFiles=$(select_yaml_files)
-  eval "docker-compose $yamlFiles up $@ -d"
+  eval "docker compose $yamlFiles up $@ -d"
 }
 
 # Start
@@ -95,51 +98,13 @@ stop() {
     echo "Dojo is already stopped."
     exit
   fi
-  # Shutdown the bitcoin daemon
-  if [ "$BITCOIND_INSTALL" == "on" ]; then
-    # Renewal of bitcoind onion address
-    if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
-      if [ "$BITCOIND_EPHEMERAL_HS" = "on" ]; then
-        $( docker exec -it tor rm -rf /var/lib/tor/hsv3bitcoind ) &> /dev/null
-      fi
-    fi
-    # Stop the bitcoin daemon
-    $( docker exec -it bitcoind  bitcoin-cli \
-      -rpcconnect=bitcoind \
-      --rpcport="$BITCOIND_RPC_PORT" \
-      --rpcuser="$BITCOIND_RPC_USER" \
-      --rpcpassword="$BITCOIND_RPC_PASSWORD" \
-      stop ) &> /dev/null
-    # Check if the bitcoin daemon is still up
-    # wait 3mn max
-    i="0"
-    nbIters=$(( $BITCOIND_SHUTDOWN_DELAY / 10 ))
-    while [ $i -lt $nbIters ]
-    do
-      echo "Waiting for shutdown of Bitcoin server."
-      # Check if bitcoind rpc api is responding
-      $( timeout -k 12 10 docker exec -it bitcoind  bitcoin-cli \
-        -rpcconnect=bitcoind \
-        --rpcport="$BITCOIND_RPC_PORT" \
-        --rpcuser="$BITCOIND_RPC_USER" \
-        --rpcpassword="$BITCOIND_RPC_PASSWORD" \
-        getblockchaininfo &> /dev/null ) &> /dev/null
-      # rpc api is down
-      if [[ $? -gt 0 ]]; then
-        echo "Bitcoin server stopped."
-        break
-      fi
-      i=$[$i+1]
-    done
-    # Bitcoin daemon is still up
-    # => force close
-    if [ $i -eq $nbIters ]; then
-      echo "Force shutdown of Bitcoin server."
-    fi
+  # Renewal of bitcoind onion address
+  if [ "$BITCOIND_INSTALL" == "on" ] && [ "$BITCOIND_LISTEN_MODE" == "on" ] && [ "$BITCOIND_EPHEMERAL_HS" = "on" ]; then
+    docker exec -it tor rm -rf /var/lib/tor/hsv3bitcoind &> /dev/null
   fi
   # Stop docker containers
   yamlFiles=$(select_yaml_files)
-  eval "docker-compose $yamlFiles stop"
+  eval "docker compose $yamlFiles stop"
 }
 
 # Restart dojo
@@ -259,7 +224,7 @@ uninstall() {
 
   if [ $launchUninstall -eq 0 ]; then
     yamlFiles=$(select_yaml_files)
-    eval "docker-compose $yamlFiles down --rmi all"
+    eval "docker compose $yamlFiles down --rmi all"
     docker volume prune -f
     return 0
   else
@@ -267,30 +232,15 @@ uninstall() {
   fi
 }
 
-# Clean-up (remove old docker images)
-del_images_for() {
-  # $1: image name
-  # $2: most recent version of the image (do not delete this one)
-  docker image ls | grep "$1" | sed "s/ \+/,/g" | cut -d"," -f2 | while read -r version ; do
-    if [ "$2" != "$version" ]; then
-      docker image rm -f "$1:$version"
-    fi
-  done
-}
-
 clean() {
-  del_images_for samouraiwallet/dojo-db "$DOJO_DB_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-bitcoind "$DOJO_BITCOIND_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-explorer "$DOJO_EXPLORER_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-nodejs "$DOJO_NODEJS_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-nginx "$DOJO_NGINX_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-fulcrum "$DOJO_FULCRUM_VERSION_TAG"
-  del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
-  docker container prune -f
-  docker volume prune -f
-  docker image prune -f
+  # remove unused docker containers
+  docker rm -v $(docker ps --all --format "{{.ID}} {{.Image}}" --filter "status=exited" | grep "samouraiwallet/dojo-" | cut -d" " -f1) 2> /dev/null
+  # remove unused docker volumes
+  docker volume rm $(docker volume ls --format "{{.Name}}" | grep "my-dojo_data") 2> /dev/null
+  # remove dangling docker images
+  docker rmi $(docker images --filter "dangling=true" -q) 2> /dev/null
+  # remove unused docker images
+  docker rmi $(docker images "samouraiwallet/dojo-*" -q) 2> /dev/null
 }
 
 # Upgrade
@@ -343,12 +293,14 @@ upgrade() {
     # Load env vars for compose files
     source_file "$DIR/conf/docker-bitcoind.conf"
     export BITCOIND_RPC_EXTERNAL_IP
+    source_file "$DIR/conf/docker-indexer.conf"
+    export INDEXER_EXTERNAL_IP
     source_file "$DIR/conf/docker-tor.conf"
     export TOR_SOCKS_PORT
     # Rebuild the images (with or without cache)
     if [ $noCache -eq 0 ]; then
       echo -e "\nDeleting Dojo containers and images."
-      eval "docker-compose $yamlFiles down --rmi all"
+      eval "docker compose $yamlFiles down --rmi all"
     fi
     echo -e "\nStarting the upgrade of Dojo.\n"
     if [ $noCache -eq 0 ]; then
@@ -440,7 +392,7 @@ whirlpool() {
       eval "docker exec -it whirlpool rm -f /home/whirlpool/.whirlpool-cli/*.json"
       eval "docker exec -it whirlpool rm -f /home/whirlpool/.whirlpool-cli/whirlpool-cli-config.properties"
       yamlFiles=$(select_yaml_files)
-      eval "docker-compose $yamlFiles restart whirlpool"
+      eval "docker compose $yamlFiles restart whirlpool"
       ;;
     * )
       echo -e "Unknown action for the whirlpool command"
@@ -448,13 +400,24 @@ whirlpool() {
   esac
 }
 
+tor() {
+  case $1 in
+    newnym )
+      echo "echo -e 'AUTHENTICATE\r\nsignal NEWNYM\r\nQUIT' | nc 127.0.0.1 9051" | eval "docker exec -i tor bash"
+      ;;
+    * )
+      echo -e "Unknown action for the tor command"
+    ;;
+  esac
+}
+
 # Display logs
 display_logs() {
   yamlFiles=$(select_yaml_files)
   if [ $2 -eq 0 ]; then
-    docker-compose $yamlFiles logs --tail=50 --follow $1
+    docker compose $yamlFiles logs --tail=50 --follow $1
   else
-    docker-compose $yamlFiles logs --tail=$2 $1
+    docker compose $yamlFiles logs --tail=$2 $1
   fi
 }
 
@@ -587,6 +550,10 @@ help() {
   echo "                                Available actions:"
   echo "                                  apikey : display the API key generated by whirlpool-cli."
   echo "                                  reset  : reset the whirlpool-cli instance (delete configuration file)."
+  echo "  tor [action]                  Interact with the Tor module."
+  echo " "
+  echo "                                Available actions:"
+  echo "                                  newnym : switch to clean circuits, so new application requests don't share any circuits with old ones."
 }
 
 
@@ -681,4 +648,7 @@ case "$subcommand" in
   whirlpool )
     whirlpool "$@"
     ;;
+  tor )
+      tor "$@"
+      ;;
 esac

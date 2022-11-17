@@ -1,4 +1,4 @@
-FROM    debian:buster-slim AS builder
+FROM    debian:bullseye-slim AS builder
 
 
 #################################################################
@@ -69,7 +69,7 @@ RUN     set -ex && \
         tar -xzvf "$FILE" -C /usr/local --strip-components=1 --exclude=*-qt && \
         rm -rf /tmp/*
 
-FROM    debian:buster-slim
+FROM    debian:bullseye-slim
 
 ENV     BITCOIN_HOME        /home/bitcoin
 
