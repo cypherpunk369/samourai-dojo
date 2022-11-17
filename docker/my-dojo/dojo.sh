@@ -67,13 +67,13 @@ select_yaml_files() {
 # Docker build
 docker_build() {
   yamlFiles=$(select_yaml_files)
-  eval "docker-compose $yamlFiles build --parallel $@"
+  eval "docker compose $yamlFiles build --parallel $@"
 }
 
 # Docker up
 docker_up() {
   yamlFiles=$(select_yaml_files)
-  eval "docker-compose $yamlFiles up $@ -d"
+  eval "docker compose $yamlFiles up $@ -d"
 }
 
 # Start
@@ -104,7 +104,7 @@ stop() {
   fi
   # Stop docker containers
   yamlFiles=$(select_yaml_files)
-  eval "docker-compose $yamlFiles stop"
+  eval "docker compose $yamlFiles stop"
 }
 
 # Restart dojo
@@ -224,7 +224,7 @@ uninstall() {
 
   if [ $launchUninstall -eq 0 ]; then
     yamlFiles=$(select_yaml_files)
-    eval "docker-compose $yamlFiles down --rmi all"
+    eval "docker compose $yamlFiles down --rmi all"
     docker volume prune -f
     return 0
   else
@@ -233,8 +233,10 @@ uninstall() {
 }
 
 clean() {
-  # remove unused docker containers and associated volumes
+  # remove unused docker containers
   docker rm -v $(docker ps --all --format "{{.ID}} {{.Image}}" --filter "status=exited" | grep "samouraiwallet/dojo-" | cut -d" " -f1) 2> /dev/null
+  # remove unused docker volumes
+  docker volume rm $(docker volume ls --format "{{.Name}}" | grep "my-dojo_data") 2> /dev/null
   # remove dangling docker images
   docker rmi $(docker images --filter "dangling=true" -q) 2> /dev/null
   # remove unused docker images
@@ -298,7 +300,7 @@ upgrade() {
     # Rebuild the images (with or without cache)
     if [ $noCache -eq 0 ]; then
       echo -e "\nDeleting Dojo containers and images."
-      eval "docker-compose $yamlFiles down --rmi all"
+      eval "docker compose $yamlFiles down --rmi all"
     fi
     echo -e "\nStarting the upgrade of Dojo.\n"
     if [ $noCache -eq 0 ]; then
@@ -390,7 +392,7 @@ whirlpool() {
       eval "docker exec -it whirlpool rm -f /home/whirlpool/.whirlpool-cli/*.json"
       eval "docker exec -it whirlpool rm -f /home/whirlpool/.whirlpool-cli/whirlpool-cli-config.properties"
       yamlFiles=$(select_yaml_files)
-      eval "docker-compose $yamlFiles restart whirlpool"
+      eval "docker compose $yamlFiles restart whirlpool"
       ;;
     * )
       echo -e "Unknown action for the whirlpool command"
@@ -413,9 +415,9 @@ tor() {
 display_logs() {
   yamlFiles=$(select_yaml_files)
   if [ $2 -eq 0 ]; then
-    docker-compose $yamlFiles logs --tail=50 --follow $1
+    docker compose $yamlFiles logs --tail=50 --follow $1
   else
-    docker-compose $yamlFiles logs --tail=$2 $1
+    docker compose $yamlFiles logs --tail=$2 $1
   fi
 }
 
