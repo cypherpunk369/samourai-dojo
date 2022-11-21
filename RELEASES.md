@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.18.1](#samourai-dojo-v1181)
 - [v1.18.0](#samourai-dojo-v1180)
 - [v1.17.0](#samourai-dojo-v1170)
 - [v1.16.1](#samourai-dojo-v1161)
@@ -26,6 +27,14 @@
 - [v1.3.0](#samourai-dojo-v130)
 - [v1.2.0](#samourai-dojo-v120)
 - [v1.1.0](#samourai-dojo-v110)
+
+## Samourai Dojo v1.18.1 ##
+
+### Change log ###
+
+#### Bugfixes ####
+- [314f9e7f](https://code.samourai.io/dojo/samourai-dojo/-/commit/314f9e7f) - added fallback for docker compose compatibility
+
 
 ## Samourai Dojo v1.18.0 ##
 
