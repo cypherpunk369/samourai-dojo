@@ -80,11 +80,11 @@ class UnspentRestApi {
         } finally {
             if (debugApi) {
                 const stringParameters =
-                    `${req.query.active ? req.query.active : ''} \
-                     ${req.query.new ? req.query.new : ''} \
-                     ${req.query.pubkey ? req.query.pubkey : ''} \
-                     ${req.query.bip49 ? req.query.bip49 : ''} \
-                     ${req.query.bip84 ? req.query.bip84 : ''}`
+                    `${req.query.active ?? ''} \
+                     ${req.query.new ?? ''} \
+                     ${req.query.pubkey ?? ''} \
+                     ${req.query.bip49 ?? ''} \
+                     ${req.query.bip84 ?? ''}`
 
                 Logger.info(`API : Completed GET /unspent ${stringParameters}`)
             }
@@ -121,11 +121,11 @@ class UnspentRestApi {
         } finally {
             if (debugApi) {
                 const stringParameters =
-                    `${req.body.active ? req.body.active : ''} \
-                     ${req.body.new ? req.body.new : ''} \
-                     ${req.body.pubkey ? req.body.pubkey : ''} \
-                     ${req.body.bip49 ? req.body.bip49 : ''} \
-                     ${req.body.bip84 ? req.body.bip84 : ''}`
+                    `${req.body.active ?? ''} \
+                     ${req.body.new ?? ''} \
+                     ${req.body.pubkey ?? ''} \
+                     ${req.body.bip49 ?? ''} \
+                     ${req.body.bip84 ?? ''}`
 
                 Logger.info(`API : Completed POST /unspent ${stringParameters}`)
             }
