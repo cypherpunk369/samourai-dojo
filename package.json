@@ -4,7 +4,7 @@
   "description": "Backend server for Samourai Wallet",
   "main": "accounts/index.js",
   "engines": {
-    "node": "14.x.x || 16.x.x"
+    "node": ">=14.x.x"
   },
   "type": "module",
   "scripts": {
