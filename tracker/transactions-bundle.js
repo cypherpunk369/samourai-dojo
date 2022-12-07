@@ -105,15 +105,15 @@ class TransactionsBundle {
                 continue
 
             for (const index_ in tx.outs) {
-                try {
-                    const script = tx.outs[index_].script
-                    const address = addrHelper.outputScript2Address(script)
+                const script = tx.outs[index_].script
+                const address = addrHelper.outputScript2Address(script)
+
+                if (address) {
                     addresses.push(address)
                     if (!indexedOutputs[address])
                         indexedOutputs[address] = []
                     indexedOutputs[address].push(index)
-                    // eslint-disable-next-line no-empty
-                } catch {}
+                }
             }
         }
 

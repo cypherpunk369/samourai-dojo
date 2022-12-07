@@ -71,11 +71,14 @@ class PushTxProcessor {
                 throw errors.txout.VOUT
             const output = tx.outs[vout]
             const address = addrHelper.outputScript2Address(output.script)
-            const nbTxs = await db.getAddressNbTransactions(address)
-            if (nbTxs == null || nbTxs > 0 || addrMap.has(address)) {
-                faultyOutputs.push(vout)
-            } else {
-                addrMap.set(address, vout)
+
+            if (address) {
+                const nbTxs = await db.getAddressNbTransactions(address)
+                if (nbTxs == null || nbTxs > 0 || addrMap.has(address)) {
+                    faultyOutputs.push(vout)
+                } else {
+                    addrMap.set(address, vout)
+                }
             }
         }
 
