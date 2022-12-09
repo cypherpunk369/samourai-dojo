@@ -113,7 +113,6 @@ export default {
             activeStrategy: 'localApiKey',
             // Flag indicating if authenticated access is mandatory
             // (useful for launch, othewise should be true)
-            // @todo Set to true !!!
             mandatory: true,
             // List of available authentication strategies
             strategies: {

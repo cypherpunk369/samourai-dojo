@@ -35,8 +35,6 @@
     "milliparsec": "2.2.2",
     "mysql2": "2.3.3",
     "nocache": "3.0.4",
-    "passport": "0.4.1",
-    "passport-localapikey-update": "0.6.0",
     "quick-lru": "6.1.1",
     "rpc-bitcoin": "2.0.0",
     "sirv": "2.0.2",
