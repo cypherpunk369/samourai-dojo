@@ -9,6 +9,7 @@
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script src="lib/qrcode.min.js" defer></script>
   <script src="conf/index.js" defer></script>
   <script src="lib/common-script.js" defer></script>
   <script src="lib/api-wrapper.js" defer></script>
@@ -37,16 +38,21 @@
 
     <!-- LOGIN FORM -->
     <div id="inputs" class="row">
-      <div class="col-xs-4"></div>
-      <div class="col-xs-4 box-content">
-        <input type="password" id="apikey" placeholder="ENTER YOUR ADMIN KEY">
-        <div class="box-actions">
-          <button id="signin"
-                  class="btn btn-success"
-                  type="button">CONNECT</button>
+      <div class="col-xs-2"></div>
+      <div class="col-xs-8 box-content signin-box">
+        <form id="signin" class="signin">
+          <label for="apikey">ADMIN KEY</label>
+          <input type="password" id="apikey" placeholder="ENTER YOUR ADMIN KEY">
+          <div class="box-actions">
+            <button class="btn btn-success"
+                    type="submit">CONNECT</button>
+          </div>
+        </form>
+        <div id="qr-auth47" class="auth47-box">
+
         </div>
       </div>
-      <div class="col-xs-4"></div>
+      <div class="col-xs-2"></div>
     </div>
   </div>
   <!-- MSG BOX -->
