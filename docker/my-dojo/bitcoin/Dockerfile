@@ -4,7 +4,7 @@ FROM    debian:bullseye-slim AS builder
 #################################################################
 # INSTALL BITCOIN
 #################################################################
-ENV     BITCOIN_VERSION     24.0
+ENV     BITCOIN_VERSION     24.0.1
 ENV     BITCOIN_URL         https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}
 ENV     BITCOIN_FILE_AMD64  bitcoin-${BITCOIN_VERSION}-x86_64-linux-gnu.tar.gz
 ENV     BITCOIN_FILE_ARM64  bitcoin-${BITCOIN_VERSION}-aarch64-linux-gnu.tar.gz
@@ -37,7 +37,8 @@ ENV     KEYS 71A3B16735405025D447E8F274810B012346C9A6 \
              ED9BDF7AD6A55E232E84524257FF9BDBCC301009 \
              3EB0DEE6004A13BE5A0CC758BF2978B068054311 \
              F19F5FF2B0589EC341220045BA03F4DBE0C63FB4 \
-             101598DC823C1B5F9A6624ABA5E0907A0380E6C3
+             101598DC823C1B5F9A6624ABA5E0907A0380E6C3 \
+             79D00BAC68B56D422F945A8F8E3A8F3247DBCBBF
 
 
 RUN     set -ex && \
