@@ -102,9 +102,11 @@ export default {
                     // List of API keys (alphanumeric characters)
                     apiKeys: ['<myApiKey>', '<myApiKey2>'],
                     // Admin key (alphanumeric characters)
-                    adminKey: '<myAdminKey>',
-                    // DO NOT MODIFY
-                    configurator: 'localapikey-strategy-configurator'
+                    adminKey: '<myAdminKey>'
+                },
+                auth47: {
+                    hostname: '<dojoHostname>',
+                    paymentCodes: ['<myPaymentCode>']
                 }
             },
             // Configuration of Json Web Tokens
@@ -274,8 +276,11 @@ export default {
             strategies: {
                 localApiKey: {
                     apiKeys: ['<myApiKey>', '<myApiKey2>'],
-                    adminKey: '<myAdminKey>',
-                    configurator: 'localapikey-strategy-configurator'
+                    adminKey: '<myAdminKey>'
+                },
+                auth47: {
+                    hostname: '<dojoHostname>',
+                    paymentCodes: ['<myPaymentCode>']
                 }
             },
             jwt: {

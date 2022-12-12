@@ -449,7 +449,7 @@ button {
   color: #e0e0e3;
 }
 
-#login-page #signin {
+#login-page #signin .btn {
 	margin-top: 10px;
 }
 
@@ -459,6 +459,47 @@ button {
 
 #login-page span {
   display:inline;
+}
+
+#login-page .qr-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  padding: 10px;
+  border-radius: 4px;
+  transform: translate(-50%, -50%);
+  background-color: #d0011c;
+  background-image: url('../icons/samourai-logo.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+#login-page .signin-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+#login-page .signin {
+  padding: 2rem;
+  padding-right: 0;
+}
+
+#login-page .signin.with-auth47 {
+  padding-right: 2rem;
+  border-right: 1px solid #ccc;
+}
+
+#login-page .auth47-box {
+  position: relative;
+}
+
+#login-page .auth47-box.active {
+  padding: 2rem;
 }
 
 /* PAGES - STATUS */

@@ -16,6 +16,7 @@ tor_options=(
   --HiddenServiceDir /var/lib/tor/hsv3dojo
   --HiddenServiceVersion 3
   --HiddenServicePort "80 $NET_DMZ_NGINX_IPV4:80"
+  --HiddenServiceDirGroupReadable 1
   --CookieAuthentication 0
   --ControlPort 9051
 )
@@ -60,5 +61,6 @@ if [ "$INDEXER_INSTALL" == "on" ]; then
   fi
 fi
 
+test -d /var/lib/tor/hsv3dojo && chmod 750 /var/lib/tor/hsv3dojo
 
 exec tor "${tor_options[@]}"

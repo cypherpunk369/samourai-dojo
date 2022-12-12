@@ -14,6 +14,10 @@ NODE_API_KEY=myApiKey
 # Type: alphanumeric
 NODE_ADMIN_KEY=myAdminKey
 
+# BIP47 Payment Code used for admin authentication
+# Type: alphanumeric
+NODE_PAYMENT_CODE=
+
 # Secret used by the server for signing Json Web Token
 # Keep this value secret!
 # Provide a value with a high entropy!

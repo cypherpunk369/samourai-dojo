@@ -23,6 +23,23 @@ const lib_api = {
     },
 
     /**
+     * Get new AUTH47 URI
+     */
+    getAuth47Uri: () => {
+        const uri = `${lib_api.baseUri}/auth/auth47/uri`
+        return lib_api.sendGetJson(uri, {})
+    },
+
+    /**
+     * Get status of AUTH47 request
+     * @param nonce {string}
+     */
+    getAuth47Status: (nonce) => {
+        const uri = `${lib_api.baseUri}/auth/auth47/status/${nonce}`
+        return lib_api.sendGetJson(uri, {})
+    },
+
+    /**
      * API Status
      */
     getApiStatus: () => {

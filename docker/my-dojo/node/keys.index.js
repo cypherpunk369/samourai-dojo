@@ -14,13 +14,19 @@ const bitcoinNetwork = (process.env.COMMON_BTC_NETWORK === 'testnet')
 let explorerActive = 'oxt'
 let explorerUrl = 'https://oxt.me'
 let explorerPassword = ''
+let auth47Hostname = ''
 if (process.env.EXPLORER_INSTALL === 'on') {
     try {
         explorerUrl = fs.readFileSync('/var/lib/tor/hsv3explorer/hostname', 'utf8').replace('\n', '')
         explorerPassword = process.env.EXPLORER_KEY
         explorerActive = 'btc_rpc_explorer'
-        // eslint-disable-next-line no-empty
-    } catch {}
+    } catch { /* empty */ }
+}
+
+try {
+    auth47Hostname = `http://${fs.readFileSync('/var/lib/tor/hsv3dojo/hostname', 'utf8').trim()}`
+} catch (error) {
+    console.error(error)
 }
 
 
@@ -124,6 +130,10 @@ export default {
                     adminKey: process.env.NODE_ADMIN_KEY,
                     // DO NOT MODIFY
                     configurator: 'localapikey-strategy-configurator'
+                },
+                auth47: {
+                    hostname: auth47Hostname,
+                    paymentCodes: [process.env.NODE_PAYMENT_CODE]
                 }
             },
             // Configuration of Json Web Tokens
