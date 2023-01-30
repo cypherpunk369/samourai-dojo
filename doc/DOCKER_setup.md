@@ -154,7 +154,6 @@ This procedure allows to install a new Dojo from scratch.
     These parameters will protect the access to your Dojo. Be sure to provide alphanumeric values with enough entropy.
 
   * Edit docker-explorer.conf.tpl and provide a new value for the following parameter:
-      * `EXPLORER_KEY` = password that will be required to access the block explorer,
       * If you want to deactivate the block explorer, set the value of `EXPLORER_INSTALL` to `off`.
     See this [section](#explorer) for more details about the block explorer.
 
@@ -309,8 +308,6 @@ You can retrieve the onion address of the block explorer with the command
 ```sh
 ./dojo.sh onion
 ```
-
-Sign in with a login (can be any value) and the password set in your Dojo configuration (value entered for `EXPLORER_KEY`).
 
 Notes:
 

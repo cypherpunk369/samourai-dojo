@@ -187,9 +187,7 @@ export default {
             // Values: oxt | btc_rpc_explorer
             active: 'oxt',
             // URI of the explorer
-            uri: 'https://oxt.me',
-            // Password (value required for btc_rpc_explorer)
-            password: '<password>'
+            uri: 'https://oxt.me'
         },
         /*
      * Max number of transactions per address
@@ -318,8 +316,7 @@ export default {
         },
         explorer: {
             active: 'none',
-            uri: '',
-            password: '<password>'
+            uri: ''
         },
         addrFilterThreshold: 1000,
         addrDerivationPool: {

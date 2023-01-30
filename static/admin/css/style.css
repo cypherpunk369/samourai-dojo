@@ -514,20 +514,17 @@ button {
 }
 
 /* PAGES - PAIRING */
-#qr-label,
-#qr-explorer-label {
+#qr-label {
   margin: 0 0 20px 0;
   text-align: center;
   display: inline-block;
 }
 
-#qr-container,
-#qr-explorer-container {
+#qr-container {
   display: inline-block;
 }
 
-#qr-pairing,
-#qr-explorer-pairing {
+#qr-pairing {
   width: 276px;
   height: 276px;
   padding: 10px;

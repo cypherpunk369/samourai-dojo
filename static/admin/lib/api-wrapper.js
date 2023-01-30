@@ -58,15 +58,6 @@ const lib_api = {
     },
 
     /**
-     * Get block explorer pairing info
-     */
-    getExplorerPairingInfo: () => {
-        let prefix = conf.prefixes.support
-        let uri = `${lib_api.baseUri}/${prefix}/pairing/explorer`
-        return lib_api.sendGetUriEncoded(uri, {})
-    },
-
-    /**
      * PushTx Status
      */
     getPushtxStatus: () => {

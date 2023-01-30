@@ -13,12 +13,10 @@ const bitcoinNetwork = (process.env.COMMON_BTC_NETWORK === 'testnet')
 // Retrieve explorer config from conf files
 let explorerActive = 'oxt'
 let explorerUrl = 'https://oxt.me'
-let explorerPassword = ''
 let auth47Hostname = ''
 if (process.env.EXPLORER_INSTALL === 'on') {
     try {
-        explorerUrl = fs.readFileSync('/var/lib/tor/hsv3explorer/hostname', 'utf8').replace('\n', '')
-        explorerPassword = process.env.EXPLORER_KEY
+        explorerUrl = `http://${fs.readFileSync('/var/lib/tor/hsv3explorer/hostname', 'utf8').trim()}`
         explorerActive = 'btc_rpc_explorer'
     } catch { /* empty */ }
 }
@@ -216,9 +214,7 @@ export default {
             // Values: oxt | btc_rpc_explorer
             active: explorerActive,
             // URI of the explorer
-            uri: explorerUrl,
-            // Password (value required for btc_rpc_explorer)
-            password: explorerPassword
+            uri: explorerUrl
         },
         /*
          * Max number of transactions per address
