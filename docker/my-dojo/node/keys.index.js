@@ -131,7 +131,7 @@ export default {
                 },
                 auth47: {
                     hostname: auth47Hostname,
-                    paymentCodes: [process.env.NODE_PAYMENT_CODE]
+                    paymentCodes: process.env.NODE_PAYMENT_CODE ? process.env.NODE_PAYMENT_CODE.split(',').map((str) => str.trim()) : []
                 }
             },
             // Configuration of Json Web Tokens
