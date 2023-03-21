@@ -121,7 +121,7 @@ class XPubRestApi {
             }
 
             // Define default forceOverride if needed
-            const forceOverride = argumentForceOverride ? argumentForceOverride : false
+            const forceOverride = argumentForceOverride === 'true'
 
             // Process action
             if (argumentAction === 'new') {

@@ -62,7 +62,7 @@ db          | WARNING: no logs are available with the 'db' log driver
 ./dojo.sh onion
 ```
 Use Tor Browser for:
-- Explorer: <explorer-onion-address>.onion (username=any, password=<EXPLORER_KEY>)
+- Explorer: <explorer-onion-address>.onion
 - Maintenance tool: <api-onion-address>.onion/admin (password=<NODE_ADMIN_KEY>)
 
 ## Upgrade

@@ -79,9 +79,9 @@ class MempoolProcessor {
         clearInterval(this.processMempoolId)
         //clearInterval(this.displayStatsId)
 
-        this.txSock.close()
-        this.pushTxSock.close()
-        this.orchestratorSock.close()
+        this.txSock && this.txSock.close()
+        this.pushTxSock && this.pushTxSock.close()
+        this.orchestratorSock && this.orchestratorSock.close()
     }
 
     /**

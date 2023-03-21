@@ -10,7 +10,7 @@ RUN     set -ex && \
 # Install Tor
 ENV     WHIRLPOOL_TOR_URL             https://dist.torproject.org
 ENV     WHIRLPOOL_TOR_MIRROR_URL      https://tor.eff.org/dist
-ENV     WHIRLPOOL_TOR_VERSION         0.4.7.11
+ENV     WHIRLPOOL_TOR_VERSION         0.4.7.13
 ENV     WHIRLPOOL_TOR_GPG_KS_URI      hkps://keyserver.ubuntu.com:443
 ENV     WHIRLPOOL_TOR_GPG_KEYS        0xEB5A896A28988BF5 0xC218525819F78451 0x21194EBB165733EA 0x6AFEE6D49E92B601 B74417EDDF22AC9F9E90F49142E86A2A11F48D36 514102454D0A87DB0767A1EBBE6A0531C18A9179
 
@@ -48,10 +48,10 @@ RUN     set -ex && \
 
 # Install whirlpool-cli
 ENV     WHIRLPOOL_URL                 https://code.samourai.io/whirlpool/whirlpool-client-cli/uploads
-ENV     WHIRLPOOL_VERSION             0.10.15
-ENV     WHIRLPOOL_VERSION_HASH        3259fdd4a6ea87de3e138db592593558
+ENV     WHIRLPOOL_VERSION             0.10.16
+ENV     WHIRLPOOL_VERSION_HASH        63621e145967f536a562851853bd0990
 ENV     WHIRLPOOL_JAR                 "whirlpool-client-cli-$WHIRLPOOL_VERSION-run.jar"
-ENV     WHIRLPOOL_SHA256              3cfbfddbd3be66b66d37a55d65d99824730d01cd226ca192f4f9591e7bc2e03d
+ENV     WHIRLPOOL_SHA256              01e9c49cfaa207f31b3fb85ed4175d8e6fee663dbb46b4486162ea12dd40047c
 
 
 RUN     set -ex && \

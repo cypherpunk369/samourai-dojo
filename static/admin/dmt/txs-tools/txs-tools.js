@@ -25,8 +25,8 @@ const screenTxsToolsScript = {
     },
 
     getExplorerInfo: () => {
-        lib_api.getExplorerPairingInfo().then(explorerInfo => {
-            screenTxsToolsScript.explorerInfo = explorerInfo
+        lib_api.getPairingInfo().then(pairingInfo => {
+            screenTxsToolsScript.explorerInfo = pairingInfo.explorer
         }).catch(error => {
             lib_errors.processError(error)
         })

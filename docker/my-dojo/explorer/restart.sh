@@ -5,7 +5,6 @@ cd "$APP_DIR"
 explorer_options=(
   --port 3002
   --host "$NET_DOJO_EXPLORER_IPV4"
-  --basic-auth-password "$EXPLORER_KEY"
   --coin BTC
   --bitcoind-host "$BITCOIND_IP"
   --bitcoind-port "$BITCOIND_RPC_PORT"

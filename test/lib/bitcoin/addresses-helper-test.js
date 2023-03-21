@@ -261,10 +261,10 @@ describe('AddressesHelper', () => {
             }
         })
 
-        it('should throw an error on invalid sciptpubkey', () => {
+        it('should return null on invalid sciptpubkey', () => {
             const randomData = Buffer.from('5120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc48705', 'hex')
 
-            assert.throws(() => addrHelper.outputScript2Address(randomData))
+            assert.strictEqual(addrHelper.outputScript2Address(randomData), null)
         })
     })
 

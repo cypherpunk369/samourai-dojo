@@ -78,7 +78,7 @@ class NotificationsServer {
      * Close existing ZMQ connection
      */
     close() {
-        this.sock.close()
+        this.sock && this.sock.close()
     }
 
 }

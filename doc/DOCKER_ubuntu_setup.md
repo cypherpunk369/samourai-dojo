@@ -250,23 +250,6 @@ INDEXER_INSTALL=on
 Save and exit the file with `CTRL+X`, `Y` and `ENTER`.
 
 
-#### 3.3.5/ Explorer configuration
-
-Edit the `docker-explorer.conf.tpl` file.
-
-```sh
-> nano docker-explorer.conf.tpl
-```
-
-Customize the content of the file
-
-```sh
-EXPLORER_KEY=<provide_this_value>
-```
-
-Save and exit the file with `CTRL+X`, `Y` and `ENTER`.
-
-
 ### 3.6/ Execute the first installation of MyDojo
 
 From this point on the install process is automatic. Launch the installation of MyDojo

@@ -16,7 +16,7 @@ export default {
         /*
          * Dojo version
          */
-        dojoVersion: '1.18.1',
+        dojoVersion: '1.19.0',
         /*
          * Bitcoind
          */
@@ -102,9 +102,11 @@ export default {
                     // List of API keys (alphanumeric characters)
                     apiKeys: ['<myApiKey>', '<myApiKey2>'],
                     // Admin key (alphanumeric characters)
-                    adminKey: '<myAdminKey>',
-                    // DO NOT MODIFY
-                    configurator: 'localapikey-strategy-configurator'
+                    adminKey: '<myAdminKey>'
+                },
+                auth47: {
+                    hostname: '<dojoHostname>',
+                    paymentCodes: ['<myPaymentCode>']
                 }
             },
             // Configuration of Json Web Tokens
@@ -185,9 +187,7 @@ export default {
             // Values: oxt | btc_rpc_explorer
             active: 'oxt',
             // URI of the explorer
-            uri: 'https://oxt.me',
-            // Password (value required for btc_rpc_explorer)
-            password: '<password>'
+            uri: 'https://oxt.me'
         },
         /*
      * Max number of transactions per address
@@ -235,7 +235,7 @@ export default {
    * Testnet parameters
    */
     testnet: {
-        dojoVersion: '1.18.1',
+        dojoVersion: '1.19.0',
         bitcoind: {
             rpc: {
                 user: 'user',
@@ -274,8 +274,11 @@ export default {
             strategies: {
                 localApiKey: {
                     apiKeys: ['<myApiKey>', '<myApiKey2>'],
-                    adminKey: '<myAdminKey>',
-                    configurator: 'localapikey-strategy-configurator'
+                    adminKey: '<myAdminKey>'
+                },
+                auth47: {
+                    hostname: '<dojoHostname>',
+                    paymentCodes: ['<myPaymentCode>']
                 }
             },
             jwt: {
@@ -313,8 +316,7 @@ export default {
         },
         explorer: {
             active: 'none',
-            uri: '',
-            password: '<password>'
+            uri: ''
         },
         addrFilterThreshold: 1000,
         addrDerivationPool: {

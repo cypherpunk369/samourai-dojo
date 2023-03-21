@@ -69,6 +69,9 @@ class SupportRestApi {
             this.getXpubDelete.bind(this),
         )
 
+        /**
+         * @deprecated
+         */
         this.httpServer.app.get(
             `/${keys.prefixes.support}/pairing/explorer`,
             authMgr.checkHasAdminProfile.bind(authMgr),
@@ -280,10 +283,14 @@ class SupportRestApi {
     async getPairing(req, res) {
         try {
             const returnValue = {
-                'pairing': {
-                    'type': 'dojo.api',
-                    'version': keys.dojoVersion,
-                    'apikey': keys.auth.strategies.localApiKey.apiKeys[0]
+                pairing: {
+                    type: 'dojo.api',
+                    version: keys.dojoVersion,
+                    apikey: keys.auth.strategies.localApiKey.apiKeys[0]
+                },
+                explorer: {
+                    type: `explorer.${keys.explorer.active}`,
+                    url: keys.explorer.uri
                 }
             }
             HttpServer.sendRawData(res, JSON.stringify(returnValue, null, 2))
@@ -300,14 +307,14 @@ class SupportRestApi {
 
     /**
      * Get pairing info for the local block explorer
+     * @deprecated
      */
     async getPairingExplorer(req, res) {
         try {
             const returnValue = {
-                'pairing': {
-                    'type': `explorer.${keys.explorer.active}`,
-                    'url': keys.explorer.uri,
-                    'key': keys.explorer.password
+                pairing: {
+                    type: `explorer.${keys.explorer.active}`,
+                    url: keys.explorer.uri
                 }
             }
             HttpServer.sendRawData(res, JSON.stringify(returnValue, null, 2))
