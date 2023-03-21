@@ -69,7 +69,7 @@ class TransactionsRestApi {
         } catch (error) {
             HttpServer.sendError(res, error)
         } finally {
-            const stringParameters = `${req.query.fees ?? ''}`
+            const stringParameters = `${req.query.fees || ''}`
             debugApi && Logger.info(`API : Completed GET /tx/${req.params.txid} ${stringParameters}`)
         }
     }
@@ -124,8 +124,8 @@ class TransactionsRestApi {
         } finally {
             const stringParameters =
                 `${req.query.active} \
-        ${req.query.page ?? ''} \
-        ${req.query.count ?? ''}`
+        ${req.query.page || ''} \
+        ${req.query.count || ''}`
 
             debugApi && Logger.info(`API : Completed GET /txs ${stringParameters}`)
         }

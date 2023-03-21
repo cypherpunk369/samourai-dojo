@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.19.0](#samourai-dojo-v1190)
 - [v1.18.1](#samourai-dojo-v1181)
 - [v1.18.0](#samourai-dojo-v1180)
 - [v1.17.0](#samourai-dojo-v1170)
@@ -27,6 +28,45 @@
 - [v1.3.0](#samourai-dojo-v130)
 - [v1.2.0](#samourai-dojo-v120)
 - [v1.1.0](#samourai-dojo-v110)
+
+## Samourai Dojo v1.19.0 ##
+
+### Notable changes ###
+
+#### Updated Bitcoin Core v24.0.1 ####
+This version of Bitcoin Core has a support for `-mempoolfullrbf` option. This option is disabled by default in Samourai Dojo.
+
+#### Added option to use Auth47 for DMT auth ####
+Users are now able to add their payment code. Inside `conf/docker-node.conf` just assign your payment code to the `NODE_PAYMENT_CODE` variable.
+
+#### Updated Whirlpool CLI v0.10.16 ####
+This version of WHirlpool CLI brings several stability improvements that will help mixing to keep running even with Tor network disruptions.
+
+### Change log ###
+
+#### Features ####
+- [5115cc46](https://code.samourai.io/dojo/samourai-dojo/-/commit/5115cc46) - updated to Bitcoin Core v24.0.1
+- [f9674dd9](https://code.samourai.io/dojo/samourai-dojo/-/commit/f9674dd9) - updated Whirlpool CLI to v0.10.16
+- [02cc549e](https://code.samourai.io/dojo/samourai-dojo/-/commit/02cc549e) - updated to Tor v0.4.7.13
+- [3df9b526](https://code.samourai.io/dojo/samourai-dojo/-/commit/3df9b526) - updated bitcoinjs-lib
+- [dc0edf9f](https://code.samourai.io/dojo/samourai-dojo/-/commit/dc0edf9f) - added noscript warning to DMT
+- [991546a4](https://code.samourai.io/dojo/samourai-dojo/-/commit/991546a4) - added option to log-in via Auth47
+
+#### Architecture ####
+- [eb4e1ba4](https://code.samourai.io/dojo/samourai-dojo/-/commit/eb4e1ba4) - read address from scriptPubKey object
+- [1a9ae068](https://code.samourai.io/dojo/samourai-dojo/-/commit/1a9ae068) - removed passport.js
+
+#### Other ####
+- [cfa68b01](https://code.samourai.io/dojo/samourai-dojo/-/commit/cfa68b01), [8a72a093](https://code.samourai.io/dojo/samourai-dojo/-/commit/8a72a093) updated Node.js dependencies
+- [2d7e408c](https://code.samourai.io/dojo/samourai-dojo/-/commit/2d7e408c) - fixed ESLint errors
+- [eb2d4c5e](https://code.samourai.io/dojo/samourai-dojo/-/commit/eb2d4c5e) - updated engines field
+- [f3767966](https://code.samourai.io/dojo/samourai-dojo/-/commit/f3767966) - remove basic auth for BTC-RPC Explorer
+- [e5de92d8](https://code.samourai.io/dojo/samourai-dojo/-/commit/e5de92d8) - use custom version of BTC-RPC Explorer to prevent leaks
+- [3675df6f](https://code.samourai.io/dojo/samourai-dojo/-/commit/3675df6f) - inter-process communication for importer
+
+### Credits ###
+- DojoCoder
+- dammkewl
 
 ## Samourai Dojo v1.18.1 ##
 

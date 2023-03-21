@@ -94,7 +94,8 @@ function initAuth47() {
     // Dynamic loading of html and scripts
     lib_cmn.includeHTML()
     initAuth47()
-    document.querySelector('#signin').addEventListener('submit', () => {
+    document.querySelector('#signin').addEventListener('submit', (event) => {
+        event.preventDefault()
         login()
     })
 })()
