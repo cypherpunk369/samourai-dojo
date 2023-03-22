@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.19.1](#samourai-dojo-v1191)
 - [v1.19.0](#samourai-dojo-v1190)
 - [v1.18.1](#samourai-dojo-v1181)
 - [v1.18.0](#samourai-dojo-v1180)
@@ -28,6 +29,13 @@
 - [v1.3.0](#samourai-dojo-v130)
 - [v1.2.0](#samourai-dojo-v120)
 - [v1.1.0](#samourai-dojo-v110)
+
+## Samourai Dojo v1.19.1 ##
+
+### Change log ###
+
+#### Fixes ####
+- [b639c60f](https://code.samourai.io/dojo/samourai-dojo/-/commit/b639c60f) - allow apikey to be passed as query parameter
 
 ## Samourai Dojo v1.19.0 ##
 
