@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.19.2](#samourai-dojo-v1192)
 - [v1.19.1](#samourai-dojo-v1191)
 - [v1.19.0](#samourai-dojo-v1190)
 - [v1.18.1](#samourai-dojo-v1181)
@@ -29,6 +30,14 @@
 - [v1.3.0](#samourai-dojo-v130)
 - [v1.2.0](#samourai-dojo-v120)
 - [v1.1.0](#samourai-dojo-v110)
+
+## Samourai Dojo v1.19.2 ##
+
+### Change log ###
+
+#### Changes ####
+- [d4b70286](d4b70286) - tweak IPC for remote importer
+- [fb35ebf9](fb35ebf9) - added IPC to auth REST API
 
 ## Samourai Dojo v1.19.1 ##
 
