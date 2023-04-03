@@ -10,6 +10,9 @@ import util from '../lib/util.js'
 import db from '../lib/db/mysql-db-wrapper.js'
 import addrHelper from '../lib/bitcoin/addresses-helper.js'
 
+/**
+ * @typedef {import('bitcoinjs-lib').Transaction} Transaction
+ */
 
 /**
  * A base class defining a set of transactions (mempool, block)
@@ -19,16 +22,19 @@ class TransactionsBundle {
     /**
      * Constructor
      * @constructor
-     * @param {object[]=} txs - array of bitcoin transaction objects
+     * @param {Transaction[]=} txs - array of bitcoin transaction objects
      */
     constructor(txs) {
-        // List of transactions
+        /**
+         * List of transactions
+         * @type Transaction[]
+          */
         this.transactions = (txs == null) ? [] : txs
     }
 
     /**
      * Adds a transaction
-     * @param {object} tx - transaction object
+     * @param {Transaction} tx - transaction object
      */
     addTransaction(tx) {
         if (tx) {
@@ -45,7 +51,7 @@ class TransactionsBundle {
 
     /**
      * Return the bundle as an array of transactions
-     * @returns {object[]}
+     * @returns {Transaction[]}
      */
     toArray() {
         return [...this.transactions]
@@ -62,7 +68,7 @@ class TransactionsBundle {
     /**
      * Find the transactions of interest
      * based on theirs inputs
-     * @returns {Promise<object[]>} returns an array of transactions objects
+     * @returns {Promise<Transaction[]>} returns an array of transactions objects
      */
     async prefilterByInputs() {
         // Process transactions by slices of 5000 transactions
@@ -75,7 +81,7 @@ class TransactionsBundle {
     /**
      * Find the transactions of interest
      * based on theirs outputs
-     * @returns {Promise<object[]>} returns an array of transactions objects
+     * @returns {Promise<Transaction[]>} returns an array of transactions objects
      */
     async prefilterByOutputs() {
         // Process transactions by slices of 5000 transactions
@@ -88,8 +94,8 @@ class TransactionsBundle {
     /**
      * Find the transactions of interest
      * based on theirs outputs (internal implementation)
-     * @params {object[]} txs - array of transactions objects
-     * @returns {Promise<object[]>} returns an array of transactions objects
+     * @params {Transaction[]} txs - array of transactions objects
+     * @returns {Promise<Transaction[]>} returns an array of transactions objects
      */
     async _prefilterByOutputs(txs) {
         let addresses = []
@@ -135,8 +141,8 @@ class TransactionsBundle {
     /**
      * Find the transactions of interest
      * based on theirs inputs (internal implementation)
-     * @params {object[]} txs - array of transactions objects
-     * @returns {Promise<object[]>} returns an array of transactions objects
+     * @params {Transaction[]} txs - array of transactions objects
+     * @returns {Promise<Transaction[]>} returns an array of transactions objects
      */
     async _prefilterByInputs(txs) {
         let inputs = []
