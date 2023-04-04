@@ -199,7 +199,7 @@ TransactionsBundle.cache = new QuickLRU({
     // Maximum number of txids to store in cache
     maxSize: 100000,
     // Maximum age for items in the cache. Items do not expire
-    maxAge: Number.POSITIVE_INFINITY
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
 })
 
 
