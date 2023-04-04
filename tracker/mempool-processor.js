@@ -151,30 +151,20 @@ class MempoolProcessor {
         const activeLbl = this.isActive ? 'active' : 'inactive'
         Logger.info(`Tracker : Processing ${activeLbl} Mempool (${this.mempoolBuffer.size()} transactions)`)
 
-        let currentMempool = new TransactionsBundle(this.mempoolBuffer.toArray())
+        const currentMempool = this.mempoolBuffer.toArray()
         this.mempoolBuffer.clear()
 
-        const txsForBroadcast = new Map()
-
-        let filteredTxs = await currentMempool.prefilterByOutputs()
-        await util.parallelCall(filteredTxs, async filteredTx => {
-            const tx = new Transaction(filteredTx)
-            await tx.processOutputs()
-            if (tx.doBroadcast)
-                txsForBroadcast[tx.txid] = tx.tx
-        })
-
-        filteredTxs = await currentMempool.prefilterByInputs()
-        await util.parallelCall(filteredTxs, async filteredTx => {
-            const tx = new Transaction(filteredTx)
-            await tx.processInputs()
-            if (tx.doBroadcast)
-                txsForBroadcast[tx.txid] = tx.tx
-        })
-
-        // Send the notifications
-        for (let tx of txsForBroadcast.values())
-            this.notifyTx(tx)
+        for (const mempoolTx of currentMempool) {
+            if (!TransactionsBundle.cache.has(mempoolTx.getId())) {
+                // Process the transaction
+                const tx = new Transaction(mempoolTx)
+                const txCheck = await tx.checkTransaction()
+                // Notify the transaction if needed
+                if (txCheck && tx.doBroadcast) {
+                    this.notifyTx(tx.tx)
+                }
+            }
+        }
     }
 
     /**
