@@ -115,14 +115,12 @@ async function processWorkerMessage(msg) {
             break
         case blockWorker.OP_CONFIRM:
             // Notify new transactions and blocks
-            await Promise.all([
-                util.parallelCall(txsForBroadcast, async tx => {
-                    notifyTx(tx)
-                }),
-                util.parallelCall(headersChunk, async header => {
-                    notifyBlock(header)
-                })
-            ])
+            for (const tx of txsForBroadcast) {
+                notifyTx(tx)
+            }
+            for (const header of headersChunk) {
+                notifyBlock(header)
+            }
             // Process complete. Reset the workers
             processTask(blockWorker.OP_RESET)
             break
