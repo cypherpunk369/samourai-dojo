@@ -12,6 +12,9 @@ import db from '../lib/db/mysql-db-wrapper.js'
 import Transaction from './transaction.js'
 import TransactionsBundle from './transactions-bundle.js'
 
+/**
+ * @typedef {import('bitcoinjs-lib').Transaction} bitcoin.Transaction
+ */
 
 /**
  * A class allowing to process a transaction
@@ -21,7 +24,7 @@ class Block extends TransactionsBundle {
     /**
      * Constructor
      * @param {string} hex - block in hex format
-     * @param {string} header - block header
+     * @param {object} header - block header
      */
     constructor(hex, header) {
         super()
@@ -51,6 +54,10 @@ class Block extends TransactionsBundle {
 
         const t0 = Date.now()
 
+        /**
+         * Deduplicated transactions for broadcast
+         * @type {Map<string, bitcoin.Transaction>}
+         */
         const txsForBroadcast = new Map()
 
         const txsForBroadcast1 = await this.processOutputs()
@@ -81,9 +88,12 @@ class Block extends TransactionsBundle {
 
     /**
      * Process the transaction outputs
-     * @returns {Promise<object[]>} returns an array of transactions to be broadcast
+     * @returns {Promise<bitcoin.Transaction[]>} returns an array of transactions to be broadcast
      */
     async processOutputs() {
+        /**
+         * @type {bitcoin.Transaction[]}
+         */
         const txsForBroadcast = []
         const filteredTxs = await this.prefilterByOutputs()
         await util.seriesCall(filteredTxs, async filteredTx => {
@@ -97,9 +107,12 @@ class Block extends TransactionsBundle {
 
     /**
      * Process the transaction inputs
-     * @returns {Promise<object[]>} returns an array of transactions to be broadcast
+     * @returns {Promise<bitcoin.Transaction[]>} returns an array of transactions to be broadcast
      */
     async processInputs() {
+        /**
+         * @type {bitcoin.Transaction[]}
+         */
         const txsForBroadcast = []
         const filteredTxs = await this.prefilterByInputs()
         await util.seriesCall(filteredTxs, async filteredTx => {
@@ -135,7 +148,7 @@ class Block extends TransactionsBundle {
      * Confirm the transactions in db
      * @param {string[]} txids - set of transactions IDs stored in db
      * @param {number} blockId - id of the block
-     * @returns {Promise}
+     * @returns {Promise<any[]>}
      */
     async confirmTransactions(txids, blockId) {
         const txidLists = util.splitList(txids, 100)

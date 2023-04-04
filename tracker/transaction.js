@@ -17,7 +17,7 @@ const keys = keysFile[network.key]
 const gapLimit = [keys.gap.external, keys.gap.internal]
 
 /**
- * @typedef {import('bitcoinjs-lib').Transaction} Transaction
+ * @typedef {import('bitcoinjs-lib').Transaction} bitcoin.Transaction
  */
 
 /**
@@ -27,7 +27,7 @@ class Transaction {
 
     /**
      * Constructor
-     * @param {Transaction} tx - transaction object
+     * @param {bitcoin.Transaction} tx - transaction object
      */
     constructor(tx) {
         this.tx = tx
@@ -73,7 +73,7 @@ class Transaction {
 
     /**
      * Process transaction inputs
-     * @returns {Promise}
+     * @returns {Promise<void>}
      */
     async processInputs() {
         // Array of inputs spent
@@ -151,7 +151,7 @@ class Transaction {
 
     /**
      * Process transaction outputs
-     * @returns {Promise}
+     * @returns {Promise<void>}
      */
     async processOutputs() {
         // Store outputs, keyed by address. Values are arrays of outputs

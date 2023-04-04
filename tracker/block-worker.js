@@ -16,6 +16,7 @@ const keys = keysFile[network.key]
 
 /**
  * @typedef {import('bitcoinjs-lib').Transaction} Transaction
+ * @typedef {{ op: number, header?: object, blockId?: number }} IncommingMessage
  */
 
 /**
@@ -47,7 +48,7 @@ export const OP_RESET = 4
 
 /**
  * Process message received by the worker
- * @param {object} msg - message received by the worker
+ * @param {IncommingMessage} msg - message received by the worker
  */
 async function processMessage(msg) {
     let res = null
@@ -96,7 +97,7 @@ async function processMessage(msg) {
 /**
  * Initialize the block
  * @param {object} header - block header
- * @returns {boolean}
+ * @returns {Promise<boolean>}
  */
 async function initBlock(header) {
     status = INITIALIZED
@@ -107,7 +108,7 @@ async function initBlock(header) {
 
 /**
  * Process the transactions outputs
- * @returns {boolean}
+ * @returns {Promise<boolean>}
  */
 async function processOutputs() {
     status = OUTPUTS_PROCESSED
@@ -120,7 +121,7 @@ async function processOutputs() {
 
 /**
  * Process the transactions inputs
- * @returns {boolean}
+ * @returns {Promise<boolean>}
  */
 async function processInputs() {
     status = INPUTS_PROCESSED
@@ -134,7 +135,7 @@ async function processInputs() {
 /**
  * Confirm the transactions
  * @param {number} blockId - id of the block in db
- * @returns {Transaction[]}
+ * @returns {Promise<Transaction[]>}
  */
 async function confirmTransactions(blockId) {
     status = TXS_CONFIRMED
@@ -145,6 +146,7 @@ async function confirmTransactions(blockId) {
 
 /**
  * Reset
+ * @returns {boolean}
  */
 function reset() {
     status = IDLE

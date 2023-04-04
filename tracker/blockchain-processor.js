@@ -278,7 +278,7 @@ class BlockchainProcessor {
      * Zip back up the blockchain until a known prevHash is found, returning all
      * block headers from last header in the array to the block after last known.
      * @param {object[]} headers - array of block headers
-     * @returns {Promise}
+     * @returns {Promise<any[]>}
      */
     async chainBacktrace(headers) {
         // Block deepest in the blockchain is the last on the list
@@ -325,7 +325,7 @@ class BlockchainProcessor {
      * Rescan a range of blocks
      * @param {number} fromHeight - height of first block
      * @param {number} toHeight - height of last block
-     * @returns {Promise}
+     * @returns {Promise<any[]>}
      */
     async rescanBlocks(fromHeight, toHeight) {
         // Get highest block processed by the tracker

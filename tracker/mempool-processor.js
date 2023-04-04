@@ -225,7 +225,7 @@ class MempoolProcessor {
 
     /**
      * Notify a new block
-     * @param {string} header - block header
+     * @param {object} header - block header
      */
     notifyBlock(header) {
         // Notify clients of the block
