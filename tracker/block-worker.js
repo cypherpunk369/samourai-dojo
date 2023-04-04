@@ -15,6 +15,10 @@ import Block from './block.js'
 const keys = keysFile[network.key]
 
 /**
+ * @typedef {import('bitcoinjs-lib').Transaction} Transaction
+ */
+
+/**
  * STATUS
  */
 export const IDLE = 0
@@ -92,6 +96,7 @@ async function processMessage(msg) {
 /**
  * Initialize the block
  * @param {object} header - block header
+ * @returns {boolean}
  */
 async function initBlock(header) {
     status = INITIALIZED
@@ -102,31 +107,39 @@ async function initBlock(header) {
 
 /**
  * Process the transactions outputs
+ * @returns {boolean}
  */
 async function processOutputs() {
     status = OUTPUTS_PROCESSED
-    txsForBroadcast = await block.processOutputs()
+    const processed = await block.processOutputs()
+    for (const tx of processed) {
+        txsForBroadcast.set(tx.getId(), tx)
+    }
     return true
 }
 
 /**
  * Process the transactions inputs
+ * @returns {boolean}
  */
 async function processInputs() {
     status = INPUTS_PROCESSED
-    const txs = await block.processInputs()
-    txsForBroadcast = [...txsForBroadcast, ...txs]
+    const processed = await block.processInputs()
+    for (const tx of processed) {
+        txsForBroadcast.set(tx.getId(), tx)
+    }
     return true
 }
 
 /**
  * Confirm the transactions
  * @param {number} blockId - id of the block in db
+ * @returns {Transaction[]}
  */
 async function confirmTransactions(blockId) {
     status = TXS_CONFIRMED
-    const aTxsForBroadcast = [...new Set(txsForBroadcast)]
-    await block.confirmTransactions(aTxsForBroadcast, blockId)
+    const aTxsForBroadcast = [...txsForBroadcast.values()]
+    await block.confirmTransactions([...txsForBroadcast.keys()], blockId)
     return aTxsForBroadcast
 }
 
@@ -136,7 +149,7 @@ async function confirmTransactions(blockId) {
 function reset() {
     status = IDLE
     block = null
-    txsForBroadcast = []
+    txsForBroadcast.clear()
     return true
 }
 
@@ -145,8 +158,12 @@ function reset() {
  * MAIN
  */
 const rpcClient = createRpcClient()
+/**
+ * Deduplicated transactions
+ * @type {Map<string, Transaction>}
+ */
+const txsForBroadcast = new Map()
 let block = null
-let txsForBroadcast = []
 let status = IDLE
 
 if (!isMainThread) {

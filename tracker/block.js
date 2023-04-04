@@ -67,7 +67,7 @@ class Block extends TransactionsBundle {
 
         const blockId = await this.registerBlock()
 
-        await this.confirmTransactions(aTxsForBroadcast, blockId)
+        await this.confirmTransactions([...txsForBroadcast.keys()], blockId)
 
         // Logs and result returned
         const ntx = this.transactions.length
@@ -84,15 +84,15 @@ class Block extends TransactionsBundle {
      * @returns {Promise<object[]>} returns an array of transactions to be broadcast
      */
     async processOutputs() {
-        const txsForBroadcast = new Set()
+        const txsForBroadcast = []
         const filteredTxs = await this.prefilterByOutputs()
-        await util.parallelCall(filteredTxs, async filteredTx => {
+        await util.seriesCall(filteredTxs, async filteredTx => {
             const tx = new Transaction(filteredTx)
             await tx.processOutputs()
             if (tx.doBroadcast)
-                txsForBroadcast.add(tx.tx)
+                txsForBroadcast.push(tx.tx)
         })
-        return [...txsForBroadcast]
+        return txsForBroadcast
     }
 
     /**
@@ -100,15 +100,15 @@ class Block extends TransactionsBundle {
      * @returns {Promise<object[]>} returns an array of transactions to be broadcast
      */
     async processInputs() {
-        const txsForBroadcast = new Set()
+        const txsForBroadcast = []
         const filteredTxs = await this.prefilterByInputs()
-        await util.parallelCall(filteredTxs, async filteredTx => {
+        await util.seriesCall(filteredTxs, async filteredTx => {
             const tx = new Transaction(filteredTx)
             await tx.processInputs()
             if (tx.doBroadcast)
-                txsForBroadcast.add(tx.tx)
+                txsForBroadcast.push(tx.tx)
         })
-        return [...txsForBroadcast]
+        return txsForBroadcast
     }
 
     /**
@@ -133,12 +133,11 @@ class Block extends TransactionsBundle {
 
     /**
      * Confirm the transactions in db
-     * @param {Set} txs - set of transactions stored in db
+     * @param {string[]} txids - set of transactions IDs stored in db
      * @param {number} blockId - id of the block
      * @returns {Promise}
      */
-    async confirmTransactions(txs, blockId) {
-        const txids = txs.map(t => t.getId())
+    async confirmTransactions(txids, blockId) {
         const txidLists = util.splitList(txids, 100)
         return util.parallelCall(txidLists, list => db.confirmTransactions(list, blockId))
     }
