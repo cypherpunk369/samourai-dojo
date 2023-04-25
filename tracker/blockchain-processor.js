@@ -8,6 +8,7 @@ import zmq from 'zeromq/v5-compat.js'
 import { Sema } from 'async-sema'
 
 import util from '../lib/util.js'
+import { FifoQueue } from '../lib/queue.js'
 import Logger from '../lib/logger.js'
 import db from '../lib/db/mysql-db-wrapper.js'
 import network from '../lib/bitcoin/network.js'
@@ -101,9 +102,9 @@ class BlockchainProcessor {
             // If no header or block loaded by bitcoind => try later
             if (daemonNbHeaders === 0 || daemonNbBlocks === 0) {
                 Logger.info('Tracker : New attempt scheduled in 30s (waiting for block headers)')
-                return util.delay(30000).then(() => {
-                    return this.catchupIBDMode()
-                })
+                await util.delay(30000)
+
+                return this.catchupIBDMode()
 
                 // If we have more blocks to load in db
             } else if (daemonNbHeaders - 1 > dbMaxHeight) {
@@ -111,9 +112,9 @@ class BlockchainProcessor {
                 // If blocks need to be downloaded by bitcoind => try later
                 if (daemonNbBlocks - 1 <= dbMaxHeight) {
                     Logger.info('Tracker : New attempt scheduled in 10s (waiting for blocks)')
-                    return util.delay(10000).then(() => {
-                        return this.catchupIBDMode()
-                    })
+                    await util.delay(10000)
+
+                    return this.catchupIBDMode()
 
                     // If some blocks are ready for an import in db
                 } else {
@@ -121,17 +122,40 @@ class BlockchainProcessor {
 
                     Logger.info(`Tracker : Sync ${blockRange.length} blocks`)
 
-                    await util.seriesCall(blockRange, async height => {
+                    // create a FIFO queue instance that will process block headers as they arrive
+                    const headerQueue = new FifoQueue(async (header) => {
                         try {
-                            const blockHash = await this.client.getblockhash({ height })
-                            const header = await this.client.getblockheader({ blockhash: blockHash, verbose: true })
                             // eslint-disable-next-line require-atomic-updates
                             previousBlockId = await this.processBlockHeader(header, previousBlockId)
                         } catch (error) {
                             Logger.error(error, 'Tracker : BlockchainProcessor.catchupIBDMode()')
                             process.exit()
                         }
-                    }, 'Tracker syncing', true)
+                    }, 10000)
+
+                    // cut block range into chunks of 40 items
+                    const blockRangeChunks = util.splitList(blockRange, 40)
+
+                    for (const blockRangeChunk of blockRangeChunks) {
+                        // wait until block header queue length is under high watermark
+                        await headerQueue.waitOnWaterMark()
+
+                        // process bitcoin RPC requests in a pool of 4 tasks at once
+                        const headers = await util.asyncPool(4, blockRangeChunk, async (height) => {
+                            try {
+                                const blockHash = await this.client.getblockhash({ height })
+                                return await this.client.getblockheader({ blockhash: blockHash, verbose: true })
+                            } catch (error) {
+                                Logger.error(error, 'Tracker : BlockchainProcessor.catchupIBDMode()')
+                                process.exit()
+                            }
+                        })
+
+                        headerQueue.push(...headers)
+                    }
+
+                    // wait until block header queue is processed
+                    await headerQueue.waitOnFinished()
 
                     // Schedule a new iteration (in case more blocks need to be loaded)
                     Logger.info('Tracker : Start a new iteration')
