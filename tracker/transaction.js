@@ -186,7 +186,7 @@ class Transaction {
         const result = await db.getHDAccountsByAddresses(addresses)
 
         // Get outputs spending to loose addresses first
-        const aLooseAddr = await this._processOutputsLooseAddresses(result.loose, indexedOutputs)
+        const aLooseAddr = this._processOutputsLooseAddresses(result.loose, indexedOutputs)
         fundedAddresses = [...fundedAddresses, ...aLooseAddr]
 
         // Get outputs spending to a tracked account
@@ -222,10 +222,10 @@ class Transaction {
      * Process outputs sending to tracked loose addresses
      * @param {object[]} addresses - array of address objects
      * @param {object} indexedOutputs - outputs indexed by address
-     * @returns {Promise<object[]>} return an array of funded addresses
+     * @returns {object[]} return an array of funded addresses
      *  {addrID: ..., outIndex: ..., outAmount: ..., outScript: ...}
      */
-    async _processOutputsLooseAddresses(addresses, indexedOutputs) {
+    _processOutputsLooseAddresses(addresses, indexedOutputs) {
         // Store a list of known addresses that received funds
         const fundedAddresses = []
 
