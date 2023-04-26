@@ -152,7 +152,7 @@ class Block extends TransactionsBundle {
      */
     async confirmTransactions(txids, blockId) {
         const txidLists = util.splitList(txids, 100)
-        return util.parallelCall(txidLists, list => db.confirmTransactions(list, blockId))
+        return util.asyncPool(10, txidLists, list => db.confirmTransactions(list, blockId))
     }
 
     /**
