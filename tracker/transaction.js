@@ -30,21 +30,29 @@ class Transaction {
      * @param {bitcoin.Transaction} tx - transaction object
      */
     constructor(tx) {
+        /**
+         * @type {bitcoin.Transaction}
+         */
         this.tx = tx
+        /**
+         * @type {string}
+         */
         this.txid = this.tx.getId()
         // Id of transaction stored in db
+        /**
+         * @type {number | null}
+         */
         this.storedTxnID = null
-        // Should this transaction be broadcast out to connected clients?
+        /**
+         * Should this transaction be broadcast out to connected clients?
+         * @type {boolean}
+         */
         this.doBroadcast = false
     }
 
     /**
      * Register transaction in db if it's a transaction of interest
-     * @returns {object} returns a composite result object
-     *  {
-     *    tx: <transaction_as_stored_in_db>,
-     *    broadcast: <boolean>
-     *  }
+     * @returns {{ tx:object, broadcast: boolean }} returns a composite result object
      */
     async checkTransaction() {
         try {

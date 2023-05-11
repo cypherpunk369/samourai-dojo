@@ -68,7 +68,7 @@ class TransactionsBundle {
     /**
      * Find the transactions of interest
      * based on theirs inputs
-     * @returns {Promise<Transaction[]>} returns an array of transactions objects
+     * @returns {Awaited<Promise<Transaction[]>>} returns an array of transactions objects
      */
     async prefilterByInputs() {
         // Process transactions by slices of 5000 transactions
@@ -81,7 +81,7 @@ class TransactionsBundle {
     /**
      * Find the transactions of interest
      * based on theirs outputs
-     * @returns {Promise<Transaction[]>} returns an array of transactions objects
+     * @returns {Awaited<Promise<Transaction[]>>} returns an array of transactions objects
      */
     async prefilterByOutputs() {
         // Process transactions by slices of 5000 transactions
