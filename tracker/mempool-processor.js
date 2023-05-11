@@ -44,6 +44,8 @@ class MempoolProcessor {
         // Processor is deactivated if the tracker is late
         // (priority is given to the blockchain processor)
         this.isActive = false
+        // Flag indicating that processing of unconfirmed transactions is currently running
+        this.processingUnconfirmedTxs = false
     }
 
     /**
@@ -239,6 +241,9 @@ class MempoolProcessor {
      * @returns {Promise<void>}
      */
     async checkUnconfirmed() {
+        // check that processing isn't already running
+        if (this.processingUnconfirmedTxs) return
+
         const t0 = Date.now()
 
         Logger.info('Tracker : Processing unconfirmed transactions')
@@ -246,6 +251,8 @@ class MempoolProcessor {
         const unconfirmedTxs = await db.getUnconfirmedTransactions()
 
         if (unconfirmedTxs.length > 0) {
+            this.processingUnconfirmedTxs = true
+
             const unconfirmedTxLists = util.splitList(unconfirmedTxs, 10)
 
             await util.asyncPool(3, unconfirmedTxLists, async (txList) => {
@@ -270,6 +277,8 @@ class MempoolProcessor {
                     }
                 })
             })
+
+            this.processingUnconfirmedTxs = false
         }
 
         // Logs
