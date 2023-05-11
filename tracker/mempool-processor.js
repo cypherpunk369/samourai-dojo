@@ -246,9 +246,9 @@ class MempoolProcessor {
         const unconfirmedTxs = await db.getUnconfirmedTransactions()
 
         if (unconfirmedTxs.length > 0) {
-            const unconfirmedTxLists = util.splitList(unconfirmedTxs, 20)
+            const unconfirmedTxLists = util.splitList(unconfirmedTxs, 10)
 
-            await util.seriesCall(unconfirmedTxLists, async (txList) => {
+            await util.asyncPool(3, unconfirmedTxLists, async (txList) => {
                 const rpcRequests = txList.map((tx) => ({ method: 'getrawtransaction', params: { txid: tx.txnTxid, verbose: true }, id: tx.txnTxid }))
                 const txs = await this.client.batch(rpcRequests)
 
