@@ -47,7 +47,7 @@ class Block extends TransactionsBundle {
 
     /**
      * Register the block and transactions of interest in db
-     * @returns {Promise<object[]>} returns an array of transactions to be broadcast
+     * @returns {Promise<bitcoin.Transaction[]>} returns an array of transactions to be broadcast
      */
     async processBlock() {
         Logger.info('Tracker : Beginning to process new block.')
@@ -56,17 +56,17 @@ class Block extends TransactionsBundle {
 
         /**
          * Deduplicated transactions for broadcast
-         * @type {Map<string, Transaction>}
+         * @type {Map<string, bitcoin.Transaction>}
          */
         const txsForBroadcast = new Map()
 
         const [txsForBroadcast1, txsForBroadcast2] = await Promise.all([this.processOutputs(), this.processInputs()])
         for (const tx of txsForBroadcast1) {
-            txsForBroadcast.set(tx.txid, tx)
+            txsForBroadcast.set(tx.getId(), tx)
         }
 
         for (const tx of txsForBroadcast2) {
-            txsForBroadcast.set(tx.txid, tx)
+            txsForBroadcast.set(tx.getId(), tx)
         }
 
         const aTxsForBroadcast = [...txsForBroadcast.values()]
@@ -87,7 +87,7 @@ class Block extends TransactionsBundle {
 
     /**
      * Process the transaction outputs
-     * @returns {Promise<Transaction[]>} returns an array of transactions to be broadcast
+     * @returns {Promise<bitcoin.Transaction[]>} returns an array of transactions to be broadcast
      */
     async processOutputs() {
         /**
@@ -105,7 +105,7 @@ class Block extends TransactionsBundle {
 
     /**
      * Process the transaction inputs
-     * @returns {Promise<Transaction[]>} returns an array of transactions to be broadcast
+     * @returns {Promise<bitcoin.Transaction[]>} returns an array of transactions to be broadcast
      */
     async processInputs() {
         /**
@@ -148,6 +148,7 @@ class Block extends TransactionsBundle {
      * @returns {Promise<any[]>}
      */
     async confirmTransactions(txids, blockId) {
+        console.log('DEBUG:', txids)
         const txidLists = util.splitList(txids, 100)
         return util.asyncPool(10, txidLists, list => db.confirmTransactions(list, blockId))
     }

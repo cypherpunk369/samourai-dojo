@@ -98,17 +98,31 @@ class TransactionsBundle {
      * @returns {Awaited<Promise<Transaction[]>>} returns an array of transactions objects
      */
     async _prefilterByOutputs(txs) {
-        let addresses = []
-        let filteredIndexTxs = []
-        let indexedOutputs = {}
+        /**
+         * @type {Transaction[]}
+         */
+        const alreadySeenTXsOfInterest = []
+        const addresses = []
+        const filteredIndexTxs = []
+        const indexedOutputs = {}
 
         // Index the transaction outputs
         for (const index in txs) {
             const tx = txs[index]
             const txid = tx.txid
 
-            if (TransactionsCache.has(txid))
+            /**
+             * Check if transaction has been checked in the past.
+             * If it has been, check for value:
+             *  - true = is transaction of interest, save and skip processing
+             *  - false = skip entirely
+             */
+            if (TransactionsCache.has(txid)) {
+                if (TransactionsCache.get(txid)) {
+                    alreadySeenTXsOfInterest.push(tx)
+                }
                 continue
+            }
 
             for (const index_ in tx.tx.outs) {
                 const script = tx.tx.outs[index_].script
@@ -135,7 +149,7 @@ class TransactionsBundle {
             }
         }
 
-        return filteredIndexTxs.map(x => txs[x])
+        return [...alreadySeenTXsOfInterest, ...filteredIndexTxs.map(x => txs[x])]
     }
 
     /**
@@ -145,16 +159,30 @@ class TransactionsBundle {
      * @returns {Awaited<Promise<Transaction[]>>} returns an array of transactions objects
      */
     async _prefilterByInputs(txs) {
-        let inputs = []
-        let filteredIndexTxs = []
-        let indexedInputs = {}
+        /**
+         * @type {Transaction[]}
+         */
+        const alreadySeenTXsOfInterest = []
+        const inputs = []
+        const filteredIndexTxs = []
+        const indexedInputs = {}
 
         for (const index in txs) {
             const tx = txs[index]
             const txid = tx.txid
 
-            if (TransactionsCache.has(txid))
+            /**
+             * Check if transaction has been checked in the past.
+             * If it has been, check for value:
+             *  - true = is transaction of interest, save and skip processing
+             *  - false = skip entirely
+             */
+            if (TransactionsCache.has(txid)) {
+                if (TransactionsCache.get(txid)) {
+                    alreadySeenTXsOfInterest.push(tx)
+                }
                 continue
+            }
 
             for (const index_ in tx.tx.ins) {
                 const spendHash = tx.tx.ins[index_].hash
@@ -182,7 +210,7 @@ class TransactionsBundle {
             }
         }
 
-        return filteredIndexTxs.map(x => txs[x])
+        return [...alreadySeenTXsOfInterest, ...filteredIndexTxs.map(x => txs[x])]
     }
 
 }

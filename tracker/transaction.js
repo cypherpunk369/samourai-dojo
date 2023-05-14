@@ -61,7 +61,7 @@ class Transaction {
 
             // If this point reached with no errors,
             // store the fact that this transaction was checked.
-            TransactionsCache.set(this.txid, Date.now())
+            TransactionsCache.set(this.txid, this.doBroadcast)
 
             return {
                 broadcast: this.doBroadcast

@@ -387,7 +387,7 @@ class BlockchainProcessor {
             const txsForBroadcast = await block.processBlock()
 
             for (const tx of txsForBroadcast) {
-                this.notifSock.send(['transaction', tx.txid])
+                this.notifSock.send(['transaction', tx.getId()])
             }
 
             this.notifSock.send(['block', JSON.stringify({ height: block.header.height, hash: block.header.hash })])
