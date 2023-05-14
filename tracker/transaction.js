@@ -11,7 +11,7 @@ import hdaHelper from '../lib/bitcoin/hd-accounts-helper.js'
 import db from '../lib/db/mysql-db-wrapper.js'
 import network from '../lib/bitcoin/network.js'
 import keysFile from '../keys/index.js'
-import TransactionsBundle from './transactions-bundle.js'
+import { TransactionsCache } from './transactions-cache.js'
 
 const keys = keysFile[network.key]
 const gapLimit = [keys.gap.external, keys.gap.internal]
@@ -38,7 +38,7 @@ class Transaction {
          * @type {string}
          */
         this.txid = this.tx.getId()
-        // Id of transaction stored in db
+        // ID of transaction stored in db
         /**
          * @type {number | null}
          */
@@ -52,7 +52,7 @@ class Transaction {
 
     /**
      * Register transaction in db if it's a transaction of interest
-     * @returns {{ tx:object, broadcast: boolean }} returns a composite result object
+     * @returns {Promise<{ tx:object, broadcast: boolean }>} returns a composite result object
      */
     async checkTransaction() {
         try {
@@ -64,7 +64,7 @@ class Transaction {
 
             // If this point reached with no errors,
             // store the fact that this transaction was checked.
-            TransactionsBundle.cache.set(this.txid, Date.now())
+            TransactionsCache.set(this.txid, Date.now())
 
             const tx = await db.getTransaction(this.txid)
 
@@ -151,7 +151,7 @@ class Transaction {
             const txs = await db.getTransactionsById(doubleSpentTxnIDs)
 
             for (let tx of txs)
-                TransactionsBundle.cache.delete(tx.txnTxid)
+                TransactionsCache.delete(tx.txnTxid)
 
             await db.deleteTransactionsByID(doubleSpentTxnIDs)
         }

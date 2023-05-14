@@ -15,6 +15,7 @@ import { createRpcClient } from '../lib/bitcoind-rpc/rpc-client.js'
 import keysFile from '../keys/index.js'
 import Transaction from './transaction.js'
 import TransactionsBundle from './transactions-bundle.js'
+import { TransactionsCache } from './transactions-cache.js'
 
 const keys = keysFile[network.key]
 
@@ -157,13 +158,12 @@ class MempoolProcessor {
         this.mempoolBuffer.clear()
 
         for (const mempoolTx of currentMempool) {
-            if (!TransactionsBundle.cache.has(mempoolTx.getId())) {
+            if (!TransactionsCache.has(mempoolTx.txid)) {
                 // Process the transaction
-                const tx = new Transaction(mempoolTx)
-                const txCheck = await tx.checkTransaction()
+                const txCheck = await mempoolTx.checkTransaction()
                 // Notify the transaction if needed
-                if (txCheck && tx.doBroadcast) {
-                    this.notifyTx(tx.tx)
+                if (txCheck && mempoolTx.doBroadcast) {
+                    this.notifyTx(mempoolTx.tx)
                 }
             }
         }
@@ -199,7 +199,7 @@ class MempoolProcessor {
 
             Logger.info(`Tracker : Processing tx for pushtx ${txid}`)
 
-            if (!TransactionsBundle.cache.has(txid)) {
+            if (!TransactionsCache.has(txid)) {
                 // Process the transaction
                 const tx = new Transaction(pushedTx)
                 const txCheck = await tx.checkTransaction()
@@ -263,7 +263,7 @@ class MempoolProcessor {
                     if (rtx.error) {
                         Logger.error(rtx.error.message, 'Tracker : MempoolProcessor.checkUnconfirmed()')
                         // Transaction not in mempool. Update LRU cache and database
-                        TransactionsBundle.cache.delete(rtx.id)
+                        TransactionsCache.delete(rtx.id)
                         // TODO: Notify clients of orphaned transaction
                         return db.deleteTransaction(rtx.id)
                     } else {
