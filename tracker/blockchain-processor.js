@@ -409,8 +409,8 @@ class BlockchainProcessor {
                     return new Block({
                         height: height,
                         time: block.timestamp,
-                        hash: block.getHash().toString('hex'),
-                        previousblockhash: block.prevHash.toString('hex')
+                        hash: block.getId(),
+                        previousblockhash: block.prevHash.reverse().toString()
                     }, block.transactions)
                 } catch (error) {
                     Logger.error(error, 'Tracker : BlockchainProcessor.processBlockRange()')
