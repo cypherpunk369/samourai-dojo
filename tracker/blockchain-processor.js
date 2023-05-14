@@ -57,7 +57,9 @@ class BlockchainProcessor {
     /**
      * Start processing the blockchain
      */
-    async stop() {}
+    async stop() {
+        this.blkSock && this.blkSock.close()
+    }
 
     /**
      * Tracker process startup
