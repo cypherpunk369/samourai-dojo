@@ -95,7 +95,7 @@ class Block extends TransactionsBundle {
          */
         const txsForBroadcast = []
         const filteredTxs = await this.prefilterByOutputs()
-        await util.seriesCall(filteredTxs, async (filteredTx) => {
+        await util.asyncPool(10, filteredTxs, async (filteredTx) => {
             await filteredTx.processOutputs()
             if (filteredTx.doBroadcast)
                 txsForBroadcast.push(filteredTx.tx)
@@ -113,7 +113,7 @@ class Block extends TransactionsBundle {
          */
         const txsForBroadcast = []
         const filteredTxs = await this.prefilterByInputs()
-        await util.seriesCall(filteredTxs, async (filteredTx) => {
+        await util.asyncPool(10, filteredTxs, async (filteredTx) => {
             await filteredTx.processInputs()
             if (filteredTx.doBroadcast)
                 txsForBroadcast.push(filteredTx.tx)
