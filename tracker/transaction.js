@@ -56,20 +56,14 @@ class Transaction {
      */
     async checkTransaction() {
         try {
-            // Process transaction inputs
-            await this.processInputs()
-
-            // Process transaction outputs
-            await this.processOutputs()
+            // Process transaction inputs and outputs
+            await Promise.all([this.processInputs(), this.processOutputs()])
 
             // If this point reached with no errors,
             // store the fact that this transaction was checked.
             TransactionsCache.set(this.txid, Date.now())
 
-            const tx = await db.getTransaction(this.txid)
-
             return {
-                tx: tx,
                 broadcast: this.doBroadcast
             }
 
