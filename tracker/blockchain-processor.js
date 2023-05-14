@@ -39,8 +39,6 @@ class BlockchainProcessor {
         this.blkSock = null
         // Initialize a semaphor protecting the onBlockHash() method
         this._onBlockHashSemaphor = new Sema(1, { capacity: 50 })
-        // Array of worker threads used for parallel processing of blocks
-        this.blockWorkers = []
         // Flag tracking Initial Block Download Mode
         this.isIBD = true
         // Instance of ZMQ notification socket
@@ -384,13 +382,13 @@ class BlockchainProcessor {
     async processBlockRange(heights) {
         // Init a processing queue with maximum number of 500 items
         const blocksQueue = new FifoQueue(async (block) => {
-            const txsForBroadcast =  await block.processBlock()
+            const txsForBroadcast = await block.processBlock()
 
             for (const tx of txsForBroadcast) {
-                this.notifSock.send(['transaction', JSON.stringify(tx)])
+                this.notifSock.send(['transaction', tx.txid])
             }
 
-            this.notifSock.send(['block', JSON.stringify(block.header)])
+            this.notifSock.send(['block', JSON.stringify({ height: block.header.height, hash: block.header.hash })])
         }, 500)
 
         // cut block range into chunks of 10 items
@@ -410,7 +408,7 @@ class BlockchainProcessor {
                         height: height,
                         time: block.timestamp,
                         hash: block.getId(),
-                        previousblockhash: block.prevHash.reverse().toString()
+                        previousblockhash: Buffer.from(block.prevHash.reverse()).toString('hex')
                     }, block.transactions)
                 } catch (error) {
                     Logger.error(error, 'Tracker : BlockchainProcessor.processBlockRange()')
