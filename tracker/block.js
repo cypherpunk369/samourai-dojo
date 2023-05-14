@@ -60,12 +60,11 @@ class Block extends TransactionsBundle {
          */
         const txsForBroadcast = new Map()
 
-        const txsForBroadcast1 = await this.processOutputs()
+        const [txsForBroadcast1, txsForBroadcast2] = await Promise.all([this.processOutputs(), this.processInputs()])
         for (const tx of txsForBroadcast1) {
             txsForBroadcast.set(tx.txid, tx)
         }
 
-        const txsForBroadcast2 = await this.processInputs()
         for (const tx of txsForBroadcast2) {
             txsForBroadcast.set(tx.txid, tx)
         }
