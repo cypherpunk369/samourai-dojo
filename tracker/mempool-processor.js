@@ -163,7 +163,7 @@ class MempoolProcessor {
                 const txCheck = await mempoolTx.checkTransaction()
                 // Notify the transaction if needed
                 if (txCheck && mempoolTx.doBroadcast) {
-                    this.notifyTx(mempoolTx.tx)
+                    this.notifyTx(mempoolTx.txid)
                 }
             }
         }
@@ -205,7 +205,7 @@ class MempoolProcessor {
                 const txCheck = await tx.checkTransaction()
                 // Notify the transaction if needed
                 if (txCheck && txCheck.broadcast)
-                    this.notifyTx(txCheck.tx)
+                    this.notifyTx(txid)
             }
         } catch (error) {
             Logger.error(error, 'Tracker : MempoolProcessor.onPushTx()')
@@ -215,24 +215,25 @@ class MempoolProcessor {
 
     /**
      * Notify a new transaction
-     * @param {object} tx - bitcoin transaction
+     * @param {string} txid - bitcoin transaction ID
      */
-    notifyTx(tx) {
+    notifyTx(txid) {
         // Real-time client updates for this transaction.
         // Any address input or output present in transaction
         // is a potential client to notify.
         if (this.notifSock)
-            this.notifSock.send(['transaction', JSON.stringify(tx)])
+            this.notifSock.send(['transaction', txid])
     }
 
     /**
      * Notify a new block
-     * @param {object} header - block header
+     * @param {number} height - block height
+     * @param {string} hash - block hash
      */
-    notifyBlock(header) {
+    notifyBlock(height, hash) {
         // Notify clients of the block
         if (this.notifSock)
-            this.notifSock.send(['block', JSON.stringify(header)])
+            this.notifSock.send(['block', JSON.stringify({ height: height, hash: hash })])
     }
 
 
