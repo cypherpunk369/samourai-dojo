@@ -4,8 +4,6 @@
  */
 
 
-import mysql from 'mysql2'
-import bitcoin from 'bitcoinjs-lib'
 import bs58check from 'bs58check'
 
 import db from '../../lib/db/mysql-db-wrapper.js'
@@ -45,8 +43,7 @@ function xlatXPUB(xpub, targetType) {
  * Retrieve hd accounts from db
  */
 async function getHdAccounts() {
-    const sqlQuery = 'SELECT `hdID`, `hdXpub`, `hdType`  FROM `hd`'
-    const query = mysql.format(sqlQuery)
+    const query = 'SELECT `hdID`, `hdXpub`, `hdType`  FROM `hd`'
     return db._query(query)
 }
 
@@ -54,10 +51,9 @@ async function getHdAccounts() {
  * Update the xpub of a hdaccount
  */
 async function updateHdAccount(hdId, xpub) {
-    const sqlQuery = 'UPDATE `hd` SET `hdXpub` = ? WHERE `hdID` = ?'
+    const query = 'UPDATE `hd` SET `hdXpub` = ? WHERE `hdID` = ?'
     const parameters = [xpub, hdId]
-    const query = mysql.format(sqlQuery, parameters)
-    return db._query(query)
+    return db._query(query, parameters)
 }
 
 /**
@@ -80,7 +76,7 @@ async function run() {
                 console.log(`Updated ${hdId} (${xpub} => ${xlatedXpub})`)
             }
         }
-    } catch(error) {
+    } catch (error) {
         console.log('A problem was met')
         console.log(error)
     }

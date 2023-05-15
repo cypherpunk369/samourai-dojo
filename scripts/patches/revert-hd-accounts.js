@@ -4,11 +4,6 @@
  */
 
 
-import mysql from 'mysql2'
-import bitcoin from 'bitcoinjs-lib'
-import bs58check from 'bs58check'
-import bs58 from 'bs58'
-
 import db from '../../lib/db/mysql-db-wrapper.js'
 import hdaHelper from '../../lib/bitcoin/hd-accounts-helper.js'
 
@@ -16,8 +11,7 @@ import hdaHelper from '../../lib/bitcoin/hd-accounts-helper.js'
  * Retrieve hd accounts from db
  */
 async function getHdAccounts() {
-    const sqlQuery = 'SELECT `hdID`, `hdXpub`, `hdType`  FROM `hd`'
-    const query = mysql.format(sqlQuery)
+    const query = 'SELECT `hdID`, `hdXpub`, `hdType`  FROM `hd`'
     return db._query(query)
 }
 
@@ -25,10 +19,9 @@ async function getHdAccounts() {
  * Update the xpub of a hdaccount
  */
 async function updateHdAccount(hdId, xpub) {
-    const sqlQuery = 'UPDATE `hd` SET `hdXpub` = ? WHERE `hdID` = ?'
+    const query = 'UPDATE `hd` SET `hdXpub` = ? WHERE `hdID` = ?'
     const parameters = [xpub, hdId]
-    const query = mysql.format(sqlQuery, parameters)
-    return db._query(query)
+    return db._query(query, parameters)
 }
 
 /**
