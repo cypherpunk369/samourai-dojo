@@ -310,7 +310,7 @@ class BlockchainProcessor {
      */
     async chainBacktrace(headers) {
         // Block deepest in the blockchain is the last on the list
-        const deepest = headers[headers.length - 1]
+        const deepest = headers.at(-1)
 
         if (headers.length > 1)
             Logger.info(`Tracker : chainBacktrace @ height ${deepest.height}, ${headers.length} blocks`)
