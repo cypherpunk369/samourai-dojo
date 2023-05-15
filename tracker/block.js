@@ -148,7 +148,6 @@ class Block extends TransactionsBundle {
      * @returns {Promise<any[]>}
      */
     async confirmTransactions(txids, blockId) {
-        console.log('DEBUG:', txids)
         const txidLists = util.splitList(txids, 100)
         return util.asyncPool(10, txidLists, list => db.confirmTransactions(list, blockId))
     }
