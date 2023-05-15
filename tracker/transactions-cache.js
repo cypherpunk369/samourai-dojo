@@ -16,6 +16,6 @@ import QuickLRU from 'quick-lru'
 export const TransactionsCache = new QuickLRU({
     // Maximum number of txids to store in cache
     maxSize: 100000,
-    // Maximum age for items in the cache. Items do not expire
+    // Maximum age for items in the cache.
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
 })
